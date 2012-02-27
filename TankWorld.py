@@ -4,6 +4,7 @@ How do we store game data in an accessible way? Probably through the TankWorld
 How do we move the Tank? Set Velocity directly, apply accel/braking forces, what is friction...
 
 """
+from Tank import *
 import sys, os
 from panda3d.core import Vec3, Point3, BitMask32, Spotlight, AmbientLight
 from pandac.PandaModules import PandaNode
