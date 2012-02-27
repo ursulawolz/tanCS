@@ -14,23 +14,23 @@ Variables: 	.node > BulletRigidBodyNode for physics simulation
 	#@param world: A BulletWorld for this to be simulated in
 	#@param attach: a NodePath to attach this WorldObject to. By default send some ShowBase.render		
 
-		self.nodePath = attach.attachNewNode(BulletRigidBodyNode(name)) 	#Bullet node for rendering and physics - this is what this class manipulates
-		self.world = world
-		self.nodePath.node().setMass(mass)					#Only static objects should have 0 mass
+		self._nodePath = attach.attachNewNode(BulletRigidBodyNode(name)) 	#Bullet node for rendering and physics - this is what this class manipulates
+		self._world = world
+		self._nodePath.node().setMass(mass)					#Only static objects should have 0 mass
 		
 		#The NodePath holds rendering state variables	
-		self.nodePath.setPos(xCoord, yCoord, zCoord) 
- 		self.nodePath.setHpr(heading, pitch, roll)		
+		self._nodePath.setPos(xCoord, yCoord, zCoord) 
+ 		self._nodePath.setHpr(heading, pitch, roll)		
 
 		#Bullet's Node holds other physics-based state variables
-		self.nodePath.node().setLinearVelocity(Vec3(xVel, yVel, zVel))
-		self.nodePath.node().addShape(shape)
-		self.world.attachRigidBody(self.nodePath.node())
+		self._nodePath.node().setLinearVelocity(Vec3(xVel, yVel, zVel))
+		self._nodePath.node().addShape(shape)
+		self._world.attachRigidBody(self.nodePath.node())
 
 
 	def getVel(self):
-		return self.nodePath.node().getLinearVelocity()
+		return self._nodePath.node().getLinearVelocity()
 
 	def getPos(self):
-		return self.nodePath.getPos() 	
+		return self._nodePath.getPos() 	
 
