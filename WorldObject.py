@@ -29,4 +29,4 @@ Variables: 	.node > BulletRigidBodyNode for physics simulation
 
 	def getPos(self):
 		return self._nodePath.getPos() 	
-
+	

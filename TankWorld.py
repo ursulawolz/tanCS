@@ -32,6 +32,9 @@ class TankWorld(ShowBase):
 
 		taskMgr.add(self.__update,"update") #This creates a task named update and runs every frame
 		
+		self.drawDebugNode()
+		
+		self.testTankWorld()
 		#test function/
 		#self.makeTeapot()				
 	def __setupLighting(self):
@@ -52,6 +55,7 @@ class TankWorld(ShowBase):
 		render.setLight(self.alight);
 		
 		render.setShaderAuto() #shader generation on
+		
 	def __setupUserInput(self):
 		'''
 		Sets up user input
@@ -87,7 +91,17 @@ class TankWorld(ShowBase):
 
 
 	
-
+	def drawDebugNode():
+		debugNode = BulletDebugNode('Debug')
+		debugNode.showWireframe(True)
+		debugNode.showConstraints(True)
+		debugNode.showBoundingBoxes(False)
+		debugNode.showNormals(False)
+		debugNP = render.attachNewNode(debugNode)
+		debugNP.show()
+		 
+		
+		world.setDebugNode(debugNP.node())
 
 	def makeTeapot(self):
 		'''
@@ -99,4 +113,7 @@ class TankWorld(ShowBase):
 		
 		self.base = loader.loadModel('box')
 		self.base.reparentTo(render)
-		self.base.setScale(100,100,.2)	
+		self.base.setScale(100,100,.2)
+	def testTankWorld(self):
+		tank = Tank(self,render,'test Tank')
+		#weopon = 
