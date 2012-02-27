@@ -12,7 +12,7 @@ class Tank(DynamicWorldObject):
 	Includes a Turret and whatever Bullets it fires and are still alive. (Bullets not written yet.)
 
 	'''
-	def __init__(self, world, attach, name = '', xCoord = 0, yCoord = 0, zCoord = 0, heading = 0, pitch = 0, roll = 0, turretPitch = 0):
+	def __init__(self, world, attach, weapon = None, name = '', xCoord = 0, yCoord = 0, zCoord = 0, heading = 0, pitch = 0, roll = 0, turretPitch = 0):
 		
 		#Constant Relevant Instatiation Parameters
 		tankSideLength = 7
@@ -24,22 +24,22 @@ class Tank(DynamicWorldObject):
 		
 		WorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, shape, heading, pitch, roll, 0, 0, 0, mass = 800.0) #Initial velocity must be 0
 		
-		self.nodePath.node().setFriction(friction)		
+		self._nodePath.node().setFriction(friction)		
 		
 		#Set up turret nodepath - nodepaths are how objects are managed in Panda3d
-		self._turret = self.nodePath.attachNewNode(PandaNode(name + "Turret"))
+		self._weapon = weapon
 		
-		self.setTurretHp(0,turretPitch) #set up the initial conditions
+		self._ #set up the weapon initial conditions
 		#Make collide mask (What collides with what)
-		self.nodePath.setCollideMask(0xFFFF0000)
+		self._nodePath.setCollideMask(0xFFFF0000)
 
 	
-	def setTurretHp(heading, pitch):
+	def setWeaponHp(heading, pitch):
 		'''
 		float heading
 		float pitch
 		'''
 		
 		#Note: currently instantaneous - we need to figure out how to move continuously (or not, Turrets don't collide...)
-		self._turret.setHp(heading,pitch)
+		self._weapon.setHp(heading,pitch)
 
