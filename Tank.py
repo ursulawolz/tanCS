@@ -4,8 +4,8 @@ from direct.showbase.ShowBase import ShowBase
 from panda3d.bullet import BulletRigidBodyNode, BulletBoxShape, BulletWorld, BulletCapsuleShape
 from WorldObject import WorldObject
 import math
-	
-class Tank(WorldObject):
+from DynamicWorldObject import *
+class Tank(DynamicWorldObject):
 
 	'''Child of WorldObject, with all of the things that makes a Tank a tank.
 
@@ -18,9 +18,10 @@ class Tank(WorldObject):
 		tankSideLength = 7
 		friction = .3
 		turretRelPos = (0, 0, 0) #Relative to tank
-
+		
 		shape = BulletBoxShape(Vec3(tankSideLength, tankSideLength, tankSideLength)) #Create the tank's shape here
-	
+		
+		
 		WorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, shape, heading, pitch, roll, 0, 0, 0, mass = 800.0) #Initial velocity must be 0
 		
 		self.nodePath.node().setFriction(friction)		
@@ -32,6 +33,7 @@ class Tank(WorldObject):
 		#Make collide mask (What collides with what)
 		self.nodePath.setCollideMask(0xFFFF0000)
 
+	
 	def setTurretHp(heading, pitch):
 		'''
 		float heading
