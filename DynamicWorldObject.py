@@ -1,6 +1,6 @@
 from WorldObject import *
 
-class DyanmicWorldObject(WorldObject):
+class DynamicWorldObject(WorldObject):
 
 	"""Class DynamicWorldObject: This is a child of WorldObject that can move. This object must have a positive mass, and can be moved by BulletWorld.
 
