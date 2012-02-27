@@ -2,13 +2,14 @@ from panda3d.core import Vec3, Point3, BitMask32
 from pandac.PandaModules import PandaNode
 from direct.showbase.ShowBase import ShowBase
 from panda3d.bullet import BulletRigidBodyNode, BulletBoxShape, BulletWorld, BulletCapsuleShape
+from WorldObject import WorldObject
 import math
 
 class DyanmicWorldObject(WorldObject):
 
-"""Class DynamicWorldObject: This is a child of WorldObject that can move. This object must have a positive mass, and can be moved by BulletWorld.
+	"""Class DynamicWorldObject: This is a child of WorldObject that can move. This object must have a positive mass, and can be moved by BulletWorld.
 
-"""
+	"""
 	def __init__(self, world, attach, name = '', xCoord = 0, yCoord = 0, zCoord = 0, shape = BulletBoxShape(Vec3(.1, .1, .1)), heading = 0, pitch = 0, roll = 0, xVel = 0, yVel = 0, zVel = 0, mass = 0.1):
 		
 		if (mass <=0):
