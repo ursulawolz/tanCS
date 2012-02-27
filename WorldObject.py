@@ -1,8 +1,4 @@
-from panda3d.core import Vec3, Point3, BitMask32
-from pandac.PandaModules import PandaNode
-from direct.showbase.ShowBase import ShowBase
-from panda3d.bullet import BulletRigidBodyNode, BulletBoxShape, BulletWorld, BulletCapsuleShape
-import math
+from TankWorld import *
 
 class WorldObject:
 	"""Parent Class for all physical objects present in TankWorld. 
