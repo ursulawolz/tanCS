@@ -9,7 +9,7 @@ class Tank(WorldObject):
 
 """Child of WorldObject, with all of the things that makes a Tank a tank.
 
-Includes a Turret and whatever Bullets it fires and are still alive. (Bullets not written yet.)
+Includes a weapon that can fire projectiles
 
 """
 	def __init__(self, world, attach, name = '', xCoord = 0, yCoord = 0, zCoord = 0, heading = 0, pitch = 0, roll = 0, turretPitch = 0):
