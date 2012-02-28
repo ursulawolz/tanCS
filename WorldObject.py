@@ -1,4 +1,5 @@
-from TankWorld import *
+from Imports import *
+
 
 class WorldObject:
 	"""Parent Class for all physical objects present in TankWorld. 
@@ -13,7 +14,7 @@ Variables: 	.node > BulletRigidBodyNode for physics simulation
 		self._nodePath = attach.attachNewNode(BulletRigidBodyNode(name)) 	#Bullet node for rendering and physics - this is what this class manipulates
 		self._world = world
 		self._nodePath.node().setMass(mass)					#Only static objects should have 0 mass
-		
+	
 		#The NodePath holds rendering state variables	
 		self._nodePath.setPos(xCoord, yCoord, zCoord) 
  		self._nodePath.setHpr(heading, pitch, roll)		
@@ -40,4 +41,6 @@ Variables: 	.node > BulletRigidBodyNode for physics simulation
 		return self._nodePath.node().getMass()
 	
 	def setTankWorld(self, ourTankWorld):
-		self._tankWorld = ourTankworld
+		self._tankWorld = ourTankWorld
+		self._tankWorld.getPhysics()
+

@@ -1,10 +1,5 @@
-from panda3d.core import Vec3, Point3, BitMask32
-from pandac.PandaModules import PandaNode
-from direct.showbase.ShowBase import ShowBase
-from panda3d.bullet import BulletRigidBodyNode, BulletBoxShape, BulletWorld, BulletCapsuleShape
-from WorldObject import WorldObject
-import math
-from DynamicWorldObject import *
+from DynamicWorldObject import DynamicWorldObject
+
 class Tank(DynamicWorldObject):
 
     '''Child of WorldObject, with all of the things that makes a Tank a tank.
@@ -17,6 +12,7 @@ class Tank(DynamicWorldObject):
         #Constant Relevant Instatiation Parameters
         tankSideLength = 7
         friction = .3
+        self._maxVel = 20 #Rewrite constructor to include this, or setMaxVel somewhere?
         turretRelPos = (0, 0, 0) #Relative to tank
         
         self._shape = BulletBoxShape(Vec3(tankSideLength, tankSideLength, tankSideLength)) #Create the tank's shape here
@@ -50,8 +46,8 @@ class Tank(DynamicWorldObject):
         '''change acceleration'''
         pass
 
-    def setVel(self,goal=maxVel):
-        pass
+    def setVel(self, goal	):
+        pass 
 
     def move(self, dist):   
         pass
@@ -71,7 +67,7 @@ class Tank(DynamicWorldObject):
     def applyRotThrusters(self,amt=1):
         pass
 
-    def setRotVel(self, goal = maxRotVel):
+    def setRotVel(self, goal):
         pass
 
     def gotoAngle(self,deg):
@@ -79,3 +75,5 @@ class Tank(DynamicWorldObject):
 
     def fire(self):
         pass
+
+

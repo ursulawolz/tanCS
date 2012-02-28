@@ -1,4 +1,4 @@
-from WorldObject import *
+from WorldObject import WorldObject
 
 class DynamicWorldObject(WorldObject):
 
