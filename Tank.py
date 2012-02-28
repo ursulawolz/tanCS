@@ -43,3 +43,35 @@ class Tank(DynamicWorldObject):
 		#Note: currently instantaneous - we need to figure out how to move continuously (or not, Turrets don't collide...)
 		self._weapon.setHp(heading,pitch)
 
+
+#####methods to write
+
+    def applyThrusters(self, amt=1):    #set acceleration
+        '''change acceleration'''
+      
+
+    def setVel(self,goal=maxVel):   #set velocity
+
+
+    def move(self, dist):   #move tank
+
+
+    def backward(self,dist):
+		if (dist <=0):
+			raise ValueError("Distance must be positive")
+        else:
+            self.move(-1*distance) #pass 
+    
+    def forward(self, distance):
+		if (dist <=0):
+			raise ValueError("Distance must be positive")
+        else:
+            self.move(distance) #pass 
+
+    def applyRotThrusters(self,amt=1):
+
+    def setRotVel(self, goal = maxRotVel):
+
+    def gotoAngle(self,deg):
+
+    def fire(self):
