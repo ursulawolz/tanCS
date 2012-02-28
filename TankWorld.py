@@ -8,7 +8,7 @@ import sys, os
 from panda3d.core import Vec3, Point3, BitMask32, Spotlight, AmbientLight
 from pandac.PandaModules import PandaNode
 from direct.showbase.ShowBase import ShowBase
-from panda3d.bullet import BulletRigidBodyNode, BulletBoxShape, BulletWorld, BulletCapsuleShape
+from panda3d.bullet import BulletRigidBodyNode, BulletBoxShape, BulletWorld, BulletCapsuleShape, BulletDebugNode
 from direct.interval.IntervalGlobal import *
 from direct.showbase.InputStateGlobal import inputState
 from direct.task import Task
@@ -21,7 +21,7 @@ class TankWorld(ShowBase):
 
 	def __init__(self, physics = BulletWorld()):
 		ShowBase.__init__(self)
-		self.__bulletBullet = physics	
+		self.__bulletWorld = physics	
 				
 		self.__setupLighting()
 		
@@ -102,7 +102,7 @@ class TankWorld(ShowBase):
 		debugNP.show()
 		 
 		
-		world.setDebugNode(debugNP.node())
+		self.__bulletWorld.setDebugNode(debugNP.node())
 
 	def makeTeapot(self):
 		'''
@@ -116,5 +116,5 @@ class TankWorld(ShowBase):
 		self.base.reparentTo(render)
 		self.base.setScale(100,100,.2)
 	def testTankWorld(self):
-		self.tank = Tank(self,render,'test Tank')
-		#weopon = 
+		self.tank = Tank(self.__bulletWorld,self.render,'test Tank')
+		#weapon = 
