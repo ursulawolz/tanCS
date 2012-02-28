@@ -21,12 +21,21 @@ Variables: 	.node > BulletRigidBodyNode for physics simulation
 		#Bullet's Node holds other physics-based state variables
 		self._nodePath.node().setLinearVelocity(Vec3(xVel, yVel, zVel))
 		self._nodePath.node().addShape(shape)
-		self._world.attachRigidBody(self.nodePath.node())
+		self._world.attachRigidBody(self._nodePath.node())
 
 
 	def getVel(self):
 		return self._nodePath.node().getLinearVelocity()
 
 	def getPos(self):
-		return self._nodePath.getPos() 	
+		return self._nodePath.getPos()
+
+	def getHpr(self):
+		return self._nodePath.setHpr()
+
+	def getShape(self):
+		return self.shape ##I'm not sure this is the correct implimentation.
+
+	def getMass(self):
+		return self._nodePath.node().getMass()
 	
