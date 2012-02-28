@@ -4,7 +4,6 @@ How do we store game data in an accessible way? Probably through the TankWorld
 How do we move the Tank? Set Velocity directly, apply accel/braking forces, what is friction...
 
 """
-from Tank import *
 import sys, os
 from panda3d.core import Vec3, Point3, BitMask32, Spotlight, AmbientLight
 from pandac.PandaModules import PandaNode
@@ -14,7 +13,8 @@ from direct.interval.IntervalGlobal import *
 from direct.showbase.InputStateGlobal import inputState
 from direct.task import Task
 import math
-
+from Tank import Tank
+	
 class TankWorld(ShowBase):
 
 	"""Main runner class. Runs user scripts and manages objects in the world"""
@@ -92,7 +92,7 @@ class TankWorld(ShowBase):
 
 
 	
-	def drawDebugNode():
+	def drawDebugNode(self):
 		debugNode = BulletDebugNode('Debug')
 		debugNode.showWireframe(True)
 		debugNode.showConstraints(True)
@@ -116,5 +116,5 @@ class TankWorld(ShowBase):
 		self.base.reparentTo(render)
 		self.base.setScale(100,100,.2)
 	def testTankWorld(self):
-		tank = Tank(self,render,'test Tank')
+		self.tank = Tank(self,render,'test Tank')
 		#weopon = 

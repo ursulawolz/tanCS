@@ -19,7 +19,7 @@ class Tank(DynamicWorldObject):
 		friction = .3
 		turretRelPos = (0, 0, 0) #Relative to tank
 		
-		shape = BulletBoxShape(Vec3(tankSideLength, tankSideLength, tankSideLength)) #Create the tank's shape here
+		self._shape = BulletBoxShape(Vec3(tankSideLength, tankSideLength, tankSideLength)) #Create the tank's shape here
 		
 		
 		WorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, shape, heading, pitch, roll, 0, 0, 0, mass = 800.0) #Initial velocity must be 0
