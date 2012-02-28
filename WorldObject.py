@@ -39,3 +39,5 @@ Variables: 	.node > BulletRigidBodyNode for physics simulation
 	def getMass(self):
 		return self._nodePath.node().getMass()
 	
+	def setTankWorld(self, ourTankWorld):
+		self._tankWorld = ourTankworld
