@@ -28,5 +28,14 @@ Variables: 	.node > BulletRigidBodyNode for physics simulation
 		return self._nodePath.node().getLinearVelocity()
 
 	def getPos(self):
-		return self._nodePath.getPos() 	
+		return self._nodePath.getPos()
+
+	def getHpr(self):
+		return self._nodePath.setHpr()
+
+	def getShape(self):
+		return self.shape ##I'm not sure this is the correct implimentation.
+
+	def getMass(self):
+		return self._nodePath.node().getMass()
 	
