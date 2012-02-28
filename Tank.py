@@ -22,19 +22,19 @@ class Tank(DynamicWorldObject):
 		self._shape = BulletBoxShape(Vec3(tankSideLength, tankSideLength, tankSideLength)) #Create the tank's shape here
 		
 		
-		WorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, shape, heading, pitch, roll, 0, 0, 0, mass = 800.0) #Initial velocity must be 0
+		DynamicWorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, self._shape, heading, pitch, roll, 0, 0, 0, mass = 800.0) #Initial velocity must be 0
 		
 		self._nodePath.node().setFriction(friction)		
 		
 		#Set up turret nodepath - nodepaths are how objects are managed in Panda3d
 		self._weapon = weapon
 		
-		self._ #set up the weapon initial conditions
+		#self._ #set up the weapon initial conditions
 		#Make collide mask (What collides with what)
 		self._nodePath.setCollideMask(0xFFFF0000)
 
 	
-	def setWeaponHp(heading, pitch):
+	def setWeaponHp(self, heading, pitch):
 		'''
 		float heading
 		float pitch
