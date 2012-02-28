@@ -25,3 +25,16 @@ class Weapon(object):
 		Returns Vec3 of direction
 		'''
 		return self._direction;	
+
+###Methods to add
+    def setPitchVel(self,amt=1):
+
+    def setPitch(self,goal):
+
+    def setHeadingVel(self,amt=1):
+
+    def setHeading(self,goal):
+
+    def fire(self,power=1):
+
+
