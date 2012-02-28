@@ -34,7 +34,7 @@ class Tank(DynamicWorldObject):
 		self._nodePath.setCollideMask(0xFFFF0000)
 
 	
-	def setWeaponHp(heading, pitch):
+	def setWeaponHp(self,heading, pitch):
 		'''
 		float heading
 		float pitch

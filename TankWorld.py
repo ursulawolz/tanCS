@@ -117,4 +117,4 @@ class TankWorld(ShowBase):
 		self.base.setScale(100,100,.2)
 	def testTankWorld(self):
 		self.tank = Tank(self,render,'test Tank')
-		#weopon = 
+		#weapon = 
