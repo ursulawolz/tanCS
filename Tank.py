@@ -52,6 +52,24 @@ class Tank(DynamicWorldObject):
         #Note: currently instantaneous - we need to figure out how to move continuously (or not, Turrets don't collide...)
         self._weapon.setHp(heading,pitch)
 
+    def scan(self):
+        distanceOfMap = 1000
+        found = []
+        numFound = 0
+        lastNode = None 
+        pos = self._nodePath.getPos()   
+        for i in range(360):
+            pFrom = Point3(math.sin(i * math.pi / 180) * 1.1 * self._tankSideLength + pos[0], math.cos(i * math.pi / 180) * 1.1 *  self._tankSideLength + pos[1], pos[2])
+            pTo = Point3(math.sin(i * math.pi / 180) * distanceOfMap + pos[0], math.cos(i * math.pi / 180) * distanceOfMap + pos[1], pos[2])
+            result = self._tankWorld.getPhysics().rayTestClosest(pFrom, pTo)    
+            if result.hasHit():
+                if lastNode != result.getNode():
+                    lastNode = result.getNode()
+                    print found
+                    print numFound
+                    found.append([lastNode.getShapePos(0), lastNode.getName()])
+                    numFound = numFound + 1         
+        return found
 
     ### METHODS TO DEFINE:
 
