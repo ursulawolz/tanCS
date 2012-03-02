@@ -1,4 +1,11 @@
+<<<<<<< HEAD
 from DynamicWorldObject import *
+=======
+####### WE NEED TO START DEFINING IN HERE WHAT THE VARIABLES DO. #######
+####### Currently it is impossible to tell what heading, etc are #######
+
+from DynamicWorldObject import DynamicWorldObject
+>>>>>>> 384873c965b41dc24ad96b477723afbe0ec3bdae
 
 class Tank(DynamicWorldObject):
 
@@ -12,21 +19,27 @@ class Tank(DynamicWorldObject):
         #Constant Relevant Instatiation Parameters
         tankSideLength = 7
         friction = .3
-        self._maxVel = 20 #Rewrite constructor to include this, or setMaxVel somewhere?
+
+        # Rewrite constructor to include these?
+        self._maxVel = 20
+        self._maxThrusterAccel = 4
         turretRelPos = (0, 0, 0) #Relative to tank
         
-        self._shape = BulletBoxShape(Vec3(tankSideLength, tankSideLength, tankSideLength)) #Create the tank's shape here
-		
-	
+        # Create the tank's shape
+        self._shape = BulletBoxShape(Vec3(tankSideLength, tankSideLength, tankSideLength)) 
         DynamicWorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, self._shape, heading, pitch, roll, 0, 0, 0, mass = 800.0) #Initial velocity must be 0
 		
         self._nodePath.node().setFriction(friction)		
 		
-        #Set up turret nodepath - nodepaths are how objects are managed in Panda3d
+        # Set up turret nodepath
+        # (Nodepaths are how objects are managed in Panda3d)
         self._weapon = weapon
-		
-        #self._ #set up the weapon initial conditions
-        #Make collide mask (What collides with what)
+	
+        ## FILLER:
+        ## Set up the weapon initial conditions !!!
+        ## END FILLER
+
+        # Make collide mask (What collides with what)
         self._nodePath.setCollideMask(0xFFFF0000)
 
 	
@@ -40,10 +53,11 @@ class Tank(DynamicWorldObject):
         self._weapon.setHp(heading,pitch)
 
 
-#####methods to write
+    ### METHODS TO DEFINE:
 
     def applyThrusters(self, amt=1):    #set acceleration
-        '''change acceleration'''
+        '''change acceleration to a percent of the maximum acceleration'''
+        self.
         pass
 
     def setVel(self, goal	):
@@ -75,5 +89,3 @@ class Tank(DynamicWorldObject):
 
     def fire(self):
         pass
-
-
