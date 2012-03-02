@@ -1,3 +1,6 @@
+####### WE NEED TO START DEFINING IN HERE WHAT THE VARIABLES DO. #######
+####### Currently it is impossible to tell what heading, etc are #######
+
 from DynamicWorldObject import DynamicWorldObject
 
 class Tank(DynamicWorldObject):
@@ -13,11 +16,10 @@ class Tank(DynamicWorldObject):
         tankSideLength = 7
         friction = .3
         self._maxVel = 20 #Rewrite constructor to include this, or setMaxVel somewhere?
+        self._maxThrusterAccel = 4
         turretRelPos = (0, 0, 0) #Relative to tank
         
         self._shape = BulletBoxShape(Vec3(tankSideLength, tankSideLength, tankSideLength)) #Create the tank's shape here
-		
-	
         DynamicWorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, self._shape, heading, pitch, roll, 0, 0, 0, mass = 800.0) #Initial velocity must be 0
 		
         self._nodePath.node().setFriction(friction)		
@@ -43,7 +45,8 @@ class Tank(DynamicWorldObject):
 #####methods to write
 
     def applyThrusters(self, amt=1):    #set acceleration
-        '''change acceleration'''
+        '''change acceleration to a percent of the maximum acceleration'''
+        self.
         pass
 
     def setVel(self, goal	):
