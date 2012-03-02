@@ -1,4 +1,4 @@
-from DynamicWorldObject import DynamicWorldObject
+from DynamicWorldObject import *
 
 class Tank(DynamicWorldObject):
 
