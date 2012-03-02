@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 from DynamicWorldObject import *
+from direct.task import Task
 =======
 ####### WE NEED TO START DEFINING IN HERE WHAT THE VARIABLES DO. #######
 ####### Currently it is impossible to tell what heading, etc are #######
@@ -14,8 +15,8 @@ class Tank(DynamicWorldObject):
     Includes a Turret and whatever Bullets it fires and are still alive. (Bullets not written yet.)
 
     '''
-    def __init__(self, world, attach, weapon = None, name = '', xCoord = 0, yCoord = 0, zCoord = 0, heading = 0, pitch = 0, roll = 0, turretPitch = 0):
-		
+    def __init__(self, world, attach, weapon = None, name = '', xCoord = 0, yCoord = 0, zCoord = 0, heading = 0, pitch = 0, roll = 0, turretPitch = 0): 
+
         #Constant Relevant Instatiation Parameters
         tankSideLength = 7
         friction = .3
