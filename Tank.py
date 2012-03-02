@@ -52,23 +52,52 @@ class Tank(DynamicWorldObject):
         #Note: currently instantaneous - we need to figure out how to move continuously (or not, Turrets don't collide...)
         self._weapon.setHp(heading,pitch)
 
-    def scan(self):
+    def perfectScan(self):
+        '''
+        This scan projects rays from the objects in the field toward the tank in question. This scan does not perform as well as scan when the 
+        objects are bunched together. 
+
+        Using this scan, large objects can hide behind small objects
+        '''
+
+        potentialNPs = self._tankWorld.render.getChildren()
+        found = []
+
+        for np in potentialNPs:
+            if type(np.node()) == BulletRigidBodyNode and np != self:
+                pFrom = np.getPos() 
+                pTo = self.getPos() + self.getPos() - pFrom #Creates a Vec3, turned to a point in the call
+                result = self._tankWorld.getPhysics().rayTestClosest(pFrom, Point3(pTo[0], pTo[1], pTo[2]))
+                if result.hasHit() and result.getNode() == self._nodePath.node():
+                    found.append((np.node().getPrevTransform(), np.node().getName()))      
+        return found
+
+
+
+    
+    def scan(self, numPoints = 360, relAngleRange = (-180, 180)):
+        '''
+        This function scans the map to find the other objects on it. The scan works iteratively, based on the angle range (given relative to the tank's current heading)
+        and the number of points given. This is a more realistic scan.
+        '''
         distanceOfMap = 1000
         found = []
         numFound = 0
-        lastNode = None 
+        scanResolution = numPoints / 360.0
         pos = self._nodePath.getPos()   
-        for i in range(360):
-            pFrom = Point3(math.sin(i * math.pi / 180) * 1.1 * self._tankSideLength + pos[0], math.cos(i * math.pi / 180) * 1.1 *  self._tankSideLength + pos[1], pos[2])
-            pTo = Point3(math.sin(i * math.pi / 180) * distanceOfMap + pos[0], math.cos(i * math.pi / 180) * distanceOfMap + pos[1], pos[2])
+        prevNodes = dict()
+        heading = self._nodePath.getH()
+        for i in range(int(relAngleRange[0] * scanResolution), int(relAngleRange[1] * scanResolution) + 1):
+            angle = i * math.pi / (180 * scanResolution) + heading
+            pFrom = Point3(math.sin(angle) * self._tankSideLength + pos[0], math.cos(angle) *  self._tankSideLength + pos[1], pos[2])
+            pTo = Point3(math.sin(angle) * distanceOfMap + pos[0], math.cos(angle) * distanceOfMap + pos[1], pos[2])
             result = self._tankWorld.getPhysics().rayTestClosest(pFrom, pTo)    
             if result.hasHit():
-                if lastNode != result.getNode():
-                    lastNode = result.getNode()
-                    print found
-                    print numFound
-                    found.append([lastNode.getShapePos(0), lastNode.getName()])
-                    numFound = numFound + 1         
+                newNode = result.getNode()
+                if newNode not in prevNodes:
+                    found.append((newNode.getPrevTransform(), newNode.getName()))
+                    prevNodes[newNode] = 0
+                    numFound = numFound + 1     
         return found
 
     ### METHODS TO DEFINE:
