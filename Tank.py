@@ -1,12 +1,11 @@
-<<<<<<< HEAD
+
 from DynamicWorldObject import *
 from direct.task import Task
-=======
+
 ####### WE NEED TO START DEFINING IN HERE WHAT THE VARIABLES DO. #######
 ####### Currently it is impossible to tell what heading, etc are #######
 
 from DynamicWorldObject import DynamicWorldObject
->>>>>>> 384873c965b41dc24ad96b477723afbe0ec3bdae
 
 class Tank(DynamicWorldObject):
 
@@ -58,7 +57,6 @@ class Tank(DynamicWorldObject):
 
     def applyThrusters(self, amt=1):    #set acceleration
         '''change acceleration to a percent of the maximum acceleration'''
-        self.
         pass
 
     def setVel(self, goal	):
