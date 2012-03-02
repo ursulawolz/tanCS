@@ -36,7 +36,7 @@ class TankWorld(ShowBase):
 		
 		self.drawDebugNode()
 		
-		self.testTankWorld()
+		#self.testTankWorld()
 		#test function/
 		#self.makeTeapot()				
 	def __setupLighting(self):
@@ -77,7 +77,7 @@ class TankWorld(ShowBase):
 		moveAmount = 50*dt;
 		changeY =  (inputState.isSet('foward')-inputState.isSet('backward'))*moveAmount
 		changeX = (inputState.isSet('right')-inputState.isSet('left'))*moveAmount;
-		
+		self.__bulletWorld.doPhysics(dt)
 		base.cam.setPos(base.cam,changeX,changeY,0);	
 		hpr = base.cam.getHpr();
 		if base.mouseWatcherNode.hasMouse():	
@@ -101,9 +101,9 @@ class TankWorld(ShowBase):
 		debugNode.showNormals(False)
 		debugNP = render.attachNewNode(debugNode)
 		debugNP.show()
-		 
+		print "debug node activated" 
 		
-		self.__bulletWorld.setDebugNode(debugNP.node())
+		self.__bulletWorld.setDebugNode(debugNode)
 
 	def makeTeapot(self):
 		'''

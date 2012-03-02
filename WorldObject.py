@@ -27,6 +27,7 @@ class WorldObject:
         #Bullet's Node holds other physics-based state variables
         self._nodePath.node().setLinearVelocity(Vec3(xVel, yVel, zVel))
         self._nodePath.node().addShape(shape)
+        print self._world
         self._world.attachRigidBody(self._nodePath.node())
 
 
