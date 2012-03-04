@@ -91,6 +91,9 @@ class TankWorld(ShowBase):
 	def getPhysics(self):
 		return self.__bulletWorld
 
+	def attachRigidBody(self, node):
+		self.__bulletWorld.attachRigidBody(node)
+
 
 	
 	def drawDebugNode(self):
