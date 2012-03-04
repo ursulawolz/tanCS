@@ -17,7 +17,7 @@ class Tank(DynamicWorldObject):
     def __init__(self, world, attach, weapon = None, name = '', xCoord = 0, yCoord = 0, zCoord = 0, heading = 0, pitch = 0, roll = 0, turretPitch = 0): 
 
         #Constant Relevant Instatiation Parameters
-        tankSideLength = 7
+        self._tankSideLength = 7
         friction = .3
 
         # Rewrite constructor to include these?
@@ -104,7 +104,15 @@ class Tank(DynamicWorldObject):
 
     def applyThrusters(self, amt=1):    #set acceleration
         '''change acceleration to a percent of the maximum acceleration'''
-        pass
+        if amt > 1 or amt < 0:
+            raise ValueError("amt must be between 0 and 1")
+        else:
+            angle = self.nodePath.getH() #Apply force in current direction
+            magnitude = amt * (self._maxThrusterAccel + self.nodePath.node().getFriction() ) * self._nodePath.node(),getMass()
+            force = Vec3(magnitude * math.cos(angle), magnitude * math.sin(angle), 0)
+            self.nodePath.node().applyForce(force)
+
+        
 
     def setVel(self, goal	):
         pass 
@@ -135,3 +143,4 @@ class Tank(DynamicWorldObject):
 
     def fire(self):
         pass
+
