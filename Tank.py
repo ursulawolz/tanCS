@@ -1,6 +1,8 @@
 
 from DynamicWorldObject import *
 from direct.task import Task
+from panda3d.core import TransformState
+from panda3d.bullet import BulletVehicle
 
 ####### WE NEED TO START DEFINING IN HERE WHAT THE VARIABLES DO. #######
 ####### Currently it is impossible to tell what heading, etc are #######
@@ -24,17 +26,19 @@ class Tank(DynamicWorldObject):
         self._maxVel = 20
         self._maxThrusterAccel = 4
         turretRelPos = (0, 0, 0) #Relative to tank
+       
+        self._shape = BulletBoxShape(Vec3(0.7, 1.5, 0.5)) #chassis
+        self._transformState = TransformState.makePos(Point3(0, 0, .5)) #offset 
         
-        # Create the tank's shape
-        self._shape = BulletBoxShape(Vec3(self._tankSideLength, self._tankSideLength, self._tankSideLength)) 
         DynamicWorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, self._shape, heading, pitch, roll, 0, 0, 0, mass = 800.0) #Initial velocity must be 0
-		
+        self.__createVehicle(world)
+
         self._nodePath.node().setFriction(friction)		
-		
+
         # Set up turret nodepath
         # (Nodepaths are how objects are managed in Panda3d)
         self._weapon = weapon
-	
+
         ## FILLER:
         ## Set up the weapon initial conditions !!!
         ## END FILLER
@@ -42,7 +46,58 @@ class Tank(DynamicWorldObject):
         # Make collide mask (What collides with what)
         self._nodePath.setCollideMask(0xFFFF0000)
 
-	
+
+        # Set up the 
+    def __createVehicle(self,bulletWorld):
+        '''
+            Creates a vehicle, sets up wheels and does all the things
+        '''
+        
+        self._nodePath.setPos(0, 0, 1)
+        self._nodePath.node().setMass(800.0)
+         
+        # Chassis geometry
+        #loader.loadModel('path/to/model').reparentTo(chassisNP)
+         
+        # Vehicle
+        self.vehicle = BulletVehicle(bulletWorld, self._nodePath.node())
+        self.vehicle.setCoordinateSystem(2)
+        bulletWorld.attachVehicle(self.vehicle)
+        self._nodePath.setPos(0,0,1)
+    
+        wheelNP = loader.loadModel('box')
+        wheelNP.setScale(.01,.01,.01) 
+
+        wheelPos = [Point3(0.8, 1.1, 0.3),Point3(-0.8, 1.1, 0.3),
+                    Point3(0.8, -1.1, .3),Point3(-0.8, -1.1, .3)]
+
+        for i in range(4):
+            wheel = self.vehicle.createWheel()
+            wheel.setWheelAxleCs(Vec3(-2*(i%2)+1, 0, 0))
+            wheel.setChassisConnectionPointCs(wheelPos[i])
+            wheel.setFrontWheel(i/2)
+            self.__createWheel(wheel)
+  
+
+    def __createWheel(self,wheel):
+        '''
+            sets up properties for wheel.
+        '''
+        wheel.setWheelDirectionCs(Vec3(0, 0, -1))
+        wheel.setWheelRadius(0.25)
+        wheel.setMaxSuspensionTravelCm(40.0)
+        wheel.setSuspensionStiffness(40.0)
+        wheel.setWheelsDampingRelaxation(2.3)
+        wheel.setWheelsDampingCompression(4.4)
+        wheel.setFrictionSlip(100.0)
+        wheel.setRollInfluence(0.1)
+
+    def getWheels(self):
+        '''
+            returns a list of wheelPos
+        '''
+        return self.vehicle.getWheels()
+
     def setWeaponHp(self, heading, pitch):
         '''
         float heading

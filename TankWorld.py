@@ -26,7 +26,7 @@ class TankWorld(ShowBase):
 				
 		self.__setupLighting()
 		
-		base.cam.setPos(15,15,15);
+		base.cam.setPos(30,30,30);
 		base.cam.lookAt(0,0,0);
 		
 		self.__setupUserInput() #set up user input
@@ -35,10 +35,7 @@ class TankWorld(ShowBase):
 		taskMgr.add(self.__update,"update") #This creates a task named update and runs every frame
 		
 		self.drawDebugNode()
-		
-		#self.testTankWorld()
-		#test function/
-		#self.makeTeapot()				
+					
 	def __setupLighting(self):
 		'''
 		Sets up lighting
@@ -119,9 +116,3 @@ class TankWorld(ShowBase):
 		self.base = loader.loadModel('box')
 		self.base.reparentTo(render)
 		self.base.setScale(100,100,.2)
-	def testTankWorld(self):
-		self.tank = Tank(self.__bulletWorld,self.render,'test Tank')
-		#weapon = 
-
-
-

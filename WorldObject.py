@@ -1,4 +1,4 @@
-from panda3d.core import Vec3, Point3, BitMask32
+from panda3d.core import Vec3, Point3, BitMask32, TransformState
 from pandac.PandaModules import PandaNode
 from direct.showbase.ShowBase import ShowBase
 from panda3d.bullet import BulletRigidBodyNode, BulletBoxShape, BulletWorld, BulletCapsuleShape, BulletDebugNode
@@ -26,9 +26,10 @@ class WorldObject:
 
         #Bullet's Node holds other physics-based state variables
         self._nodePath.node().setLinearVelocity(Vec3(xVel, yVel, zVel))
-        self._nodePath.node().addShape(shape)
-        self._world.attachRigidBody(self._nodePath.node())
+        self._transformState = getattr(self, '_transformState',TransformState.makePos(Point3(0, 0, 0)))
 
+        self._nodePath.node().addShape(shape,self._transformState)
+        self._world.attachRigidBody(self._nodePath.node())
 
     def getVel(self):
         return self._nodePath.node().getLinearVelocity()
@@ -40,7 +41,7 @@ class WorldObject:
         return self._nodePath.setHpr()
 
     def getShape(self):
-        return self.shape ##I'm not sure this is the correct implimentation.
+        return self.__shape ##I'm not sure this is the correct implimentation.
 
     def getMass(self):
         return self._nodePath.node().getMass()
