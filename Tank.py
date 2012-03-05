@@ -137,8 +137,8 @@ class Tank(DynamicWorldObject):
         
         tankNode = self._nodePath.node()
         angle = self.nodePath.getH() #Apply force in current direction
-        magnitude = amt * (self._maxThrusterAccel + tankNode.getFriction()) * 
-            self._nodePath.node(),getMass()
+        magnitude = amt * (self._maxThrusterAccel) + (tankNode.getFriction() * 
+            self._nodePath.node().getMass())
         force = Vec3(magnitude * math.cos(angle), 
             magnitude * math.sin(angle), 0)
         self.nodePath.node().applyForce(force)
@@ -150,6 +150,28 @@ class Tank(DynamicWorldObject):
 
     def move(self, dist):   
         pass
+'''	Two possible ways to do this'''
+
+''' 	First way: Create a target location. Each iteration, calculate the distance between current position and target location. Break accordingly.'''
+#	def move(self,dist):
+#		Calculate target location (x,y,z)
+#		moveLocation(self,location)
+#	
+#	def moveLocation(self,location):
+#		if Distance between Current Location and Target Location equals (Current Velocity)^2/(2*Max_Deceleration):
+#			self.applyBreaks(Max_Deceleration)
+#		else
+#			self.applyThrusters
+#		moveLocation(self,location)
+'''	Second Way: Update required distance to travel after each iteration. Break accordingly.'''
+#	def move(self,dist):
+#		if Distance between Current Location and Target Location equals (Current Velocity)^2/(2*Max_Deceleration):
+#			self.applyBreaks(Max_Deceleration)
+#		else
+#			self.applyThrusters
+#		Calculate distance travelled within this iteration.
+#		newDistance=dist-distanceTravelled
+#		move(self, newDistance)
 
     def backward(self,dist):
         if (dist <=0):
