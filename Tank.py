@@ -149,31 +149,32 @@ class Tank(DynamicWorldObject):
         pass 
 
     def move(self, dist):   
+        
+        '''	Two possible ways to do this'''
+
+        ''' 	First way: Create a target location. Each iteration, calculate the distance between current position and target location. Break accordingly.'''
+        #	def move(self,dist):
+        #		Calculate target location (x,y,z)
+        #		moveLocation(self,location)
+        #	
+        #	def moveLocation(self,location):
+        #		if Distance between Current Location and Target Location equals (Current Velocity)^2/(2*Max_Deceleration):
+        #			self.applyBreaks(Max_Deceleration)
+        #		else
+        #			self.applyThrusters
+        #		moveLocation(self,location)
+        '''	Second Way: Update required distance to travel after each iteration. Break accordingly.'''
+        #	def move(self,dist):
+        #		if Distance between Current Location and Target Location equals (Current Velocity)^2/(2*Max_Deceleration):
+        #			self.applyBreaks(Max_Deceleration)
+        #		else
+        #			self.applyThrusters
+        #		Calculate distance travelled within this iteration.
+        #		newDistance=dist-distanceTravelled
+        #		move(self, newDistance)
         pass
-'''	Two possible ways to do this'''
 
-''' 	First way: Create a target location. Each iteration, calculate the distance between current position and target location. Break accordingly.'''
-#	def move(self,dist):
-#		Calculate target location (x,y,z)
-#		moveLocation(self,location)
-#	
-#	def moveLocation(self,location):
-#		if Distance between Current Location and Target Location equals (Current Velocity)^2/(2*Max_Deceleration):
-#			self.applyBreaks(Max_Deceleration)
-#		else
-#			self.applyThrusters
-#		moveLocation(self,location)
-'''	Second Way: Update required distance to travel after each iteration. Break accordingly.'''
-#	def move(self,dist):
-#		if Distance between Current Location and Target Location equals (Current Velocity)^2/(2*Max_Deceleration):
-#			self.applyBreaks(Max_Deceleration)
-#		else
-#			self.applyThrusters
-#		Calculate distance travelled within this iteration.
-#		newDistance=dist-distanceTravelled
-#		move(self, newDistance)
-
-    def backward(self,dist):
+    def backward(self, dist):
         if (dist <=0):
             raise ValueError("Distance must be positive")
         else:
