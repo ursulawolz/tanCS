@@ -11,14 +11,17 @@ class Tank(DynamicWorldObject):
 
     '''Child of WorldObject, with all of the things that makes a Tank a tank.
 
-    Includes a Turret and whatever Bullets it fires and are still alive. (Bullets not written yet.)
-
+    Includes a Turret 
     '''
-    def __init__(self, world, attach, weapon = None, name = '', xCoord = 0, yCoord = 0, zCoord = 0, heading = 0, pitch = 0, roll = 0, turretPitch = 0): 
+
+    def __init__(self, world, attach, weapon = None, name = '', xCoord = 0, 
+            yCoord = 0, zCoord = 0, heading = 0, pitch = 0, roll = 0, 
+            turretPitch = 0): 
 
         #Constant Relevant Instatiation Parameters
         self._tankSideLength = 7
         friction = .3
+        tankMass = 800.0
 
         # Rewrite constructor to include these?
         self._maxVel = 20
@@ -26,8 +29,11 @@ class Tank(DynamicWorldObject):
         turretRelPos = (0, 0, 0) #Relative to tank
         
         # Create the tank's shape
-        self._shape = BulletBoxShape(Vec3(self._tankSideLength, self._tankSideLength, self._tankSideLength)) 
-        DynamicWorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, self._shape, heading, pitch, roll, 0, 0, 0, mass = 800.0) #Initial velocity must be 0
+        self._shape = BulletBoxShape(Vec3(self._tankSideLength, 
+            self._tankSideLength, self._tankSideLength)) 
+        DynamicWorldObject.__init__(self, world, attach, name, xCoord, yCoord,
+            zCoord, self._shape, heading, pitch, roll, 0, 0, 0, 
+            mass = tankMass)   #Initial velocity must be 0
 		
         self._nodePath.node().setFriction(friction)		
 		
@@ -49,17 +55,22 @@ class Tank(DynamicWorldObject):
         float pitch
         '''
 		
-        #Note: currently instantaneous - we need to figure out how to move continuously (or not, Turrets don't collide...)
+        #Note: currently instantaneous - we need to figure out how to move 
+        #continuously (or not, Turrets don't collide...)
         self._weapon.setHp(heading,pitch)
 
     def distanceScan(self):
         '''
-        This scan projects rays from the objects in the field toward the tank in question. This scan does not perform as well as scan when the 
-        objects are bunched together. When small objects are spread out reasonably (more than 5 at a viewing range of 50), this scan performs better.
+        This scan projects rays from the objects in the field toward the tank 
+        in question. This scan does not perform as well as scan when the 
+        objects are bunched together. When small objects are spread out 
+        reasonably (more than 5 at a viewing range of 50), this scan performs 
+        better.
 
         Using this scan, large objects can hide behind small objects
 
-        This scan has the feature that it will pick up a lone object guaranteed at any distance.
+        This scan has the feature that it will pick up a lone object 
+        guaranteed at any distance.
         '''
 
         potentialNPs = self._tankWorld.render.getChildren()
@@ -68,10 +79,14 @@ class Tank(DynamicWorldObject):
         for np in potentialNPs:
             if type(np.node()) == BulletRigidBodyNode and np != self:
                 pFrom = np.getPos() 
-                pTo = self.getPos() + self.getPos() - pFrom #Creates a Vec3, turned to a point in the call
-                result = self._tankWorld.getPhysics().rayTestClosest(pFrom, Point3(pTo[0], pTo[1], pTo[2]))
+                pTo = self.getPos() + self.getPos() - pFrom 
+                #pTo is a Vec3, turned to a point for rayTest
+                
+                result = self._tankWorld.getPhysics().rayTestClosest(
+                        pFrom, Point3(pTo[0], pTo[1], pTo[2]))
                 if result.hasHit() and result.getNode() == self._nodePath.node():
-                    found.append((np.node().getPrevTransform().getPos(), np.node().getName()))      
+                    found.append((np.node().getPrevTransform().getPos(),
+                        np.node().getName()))      
         return found
 
 
@@ -79,8 +94,11 @@ class Tank(DynamicWorldObject):
     
     def scan(self, numPoints = 360, relAngleRange = (-180, 180), height = 1):
         '''
-        This function scans the map to find the other objects on it. The scan works iteratively, based on the angle range (given relative to the tank's current heading)
-        and the number of points given. This is a more realistic scan, but does not work as well with smaller objects and larger distances
+        This function scans the map to find the other objects on it. The scan 
+        works iteratively, based on the angle range (given relative to the 
+        tank's current heading) and the number of points given. This is a more
+        realistic scan, but does not work as well with smaller objects and 
+        larger distances
         '''
         distanceOfMap = 100000
         found = []
@@ -89,15 +107,22 @@ class Tank(DynamicWorldObject):
         pos = self._nodePath.getPos()   
         prevNodes = dict()
         heading = self._nodePath.getH()
-        for i in range(int(relAngleRange[0] * scanResolution), int(relAngleRange[1] * scanResolution) + 1):
+        
+        for i in range(int(relAngleRange[0] * scanResolution), 
+                int(relAngleRange[1] * scanResolution) + 1):
+            
             angle = i * math.pi / (180 * scanResolution) + heading
-            pFrom = Point3(math.sin(angle) * self._tankSideLength + pos[0], math.cos(angle) *  self._tankSideLength + pos[1], height)
-            pTo = Point3(math.sin(angle) * distanceOfMap + pos[0], math.cos(angle) * distanceOfMap + pos[1], height)
+            pFrom = Point3(math.sin(angle) * self._tankSideLength + pos[0], 
+                    math.cos(angle) *  self._tankSideLength + pos[1], height)
+            pTo = Point3(math.sin(angle) * distanceOfMap + pos[0], 
+                    math.cos(angle) * distanceOfMap + pos[1], height)
             result = self._tankWorld.getPhysics().rayTestClosest(pFrom, pTo)
+            
             if result.hasHit():
                 newNode = result.getNode()
                 if newNode not in prevNodes:
-                    found.append((newNode.getPrevTransform().getPos(), newNode.getName()))
+                    found.append((newNode.getPrevTransform().getPos(), 
+                        newNode.getName()))
                     prevNodes[newNode] = 0
                     numFound = numFound + 1     
         return found
@@ -106,13 +131,17 @@ class Tank(DynamicWorldObject):
 
     def applyThrusters(self, amt=1):    #set acceleration
         '''change acceleration to a percent of the maximum acceleration'''
+        
         if amt > 1 or amt < 0:
             raise ValueError("amt must be between 0 and 1")
-        else:
-            angle = self.nodePath.getH() #Apply force in current direction
-            magnitude = amt * (self._maxThrusterAccel + self.nodePath.node().getFriction() ) * self._nodePath.node(),getMass()
-            force = Vec3(magnitude * math.cos(angle), magnitude * math.sin(angle), 0)
-            self.nodePath.node().applyForce(force)
+        
+        tankNode = self._nodePath.node()
+        angle = self.nodePath.getH() #Apply force in current direction
+        magnitude = amt * (self._maxThrusterAccel + tankNode.getFriction()) * 
+            self._nodePath.node(),getMass()
+        force = Vec3(magnitude * math.cos(angle), 
+            magnitude * math.sin(angle), 0)
+        self.nodePath.node().applyForce(force)
 
         
 
