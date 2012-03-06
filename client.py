@@ -11,6 +11,6 @@ ss.connect((sys.argv[1], 31415))
 question = 'Are you a little teapot?'
 print('<', question)
 ss.send(bytes(question, 'utf-8'))
-answer = str(ss.recv(4096),'utf-8')
+answer = str(ss.recv(1024), 'utf-8')
 print('>', answer)
 ss.close()
