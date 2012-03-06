@@ -241,13 +241,7 @@ class Tank(DynamicWorldObject):
         else:
             self.move(distance)
 
-    def applyRotThrusters(self,amt=1):
-        pass
-
-    def setRotVel(self, goal):
-        pass
-
-    def gotoAngle(self,deg):
+    def setSteering(self, angle):
         pass
 
     def fire(self):
