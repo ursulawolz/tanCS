@@ -77,9 +77,9 @@ class TankWorld(ShowBase):
 		self.__bulletWorld.doPhysics(dt)
 		base.cam.setPos(base.cam,changeX,changeY,0);	
 		hpr = base.cam.getHpr();
-		if base.mouseWatcherNode.hasMouse():	
-			hpr.x = -100*base.mouseWatcherNode.getMouseX()
-			hpr.y = 100*base.mouseWatcherNode.getMouseY();
+		#if base.mouseWatcherNode.hasMouse():	
+		#	hpr.x = -100*base.mouseWatcherNode.getMouseX()
+		#	hpr.y = 100*base.mouseWatcherNode.getMouseY();
 
 		base.cam.setHpr(hpr);	
 

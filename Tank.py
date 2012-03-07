@@ -26,8 +26,9 @@ class Tank(DynamicWorldObject):
         tankMass = 800.0
 
         # Rewrite constructor to include these?
-        self._maxVel = 20
-        self._maxThrusterAccel = 4
+        self._maxVel = 4
+        self._maxThrusterAccel = 5000
+        self._breakForce = 1000
         turretRelPos = (0, 0, 0) #Relative to tank
        
         self._shape = BulletBoxShape(Vec3(0.7, 1.5, 0.5)) #chassis
@@ -38,7 +39,7 @@ class Tank(DynamicWorldObject):
             mass = tankMass)   #Initial velocity must be 0
         self.__createVehicle(world)
 
-
+        self._taskTimer = 0;
         self._nodePath.node().setFriction(friction)		
 
         # Set up turret nodepath
@@ -48,10 +49,16 @@ class Tank(DynamicWorldObject):
         ## FILLER:
         ## Set up the weapon initial conditions !!!
         ## END FILLER
+        self.taskList = [[self.moveTime,1], [self.moveTime,1], [self.rotateTime,1], [self.moveTime,1], [self.rotateTime,1], [self.rotateTime,2],[self.moveTime,2], [self.rotateTime,2],[self.moveTime,2], [self.rotateTime,2]]
+        self.onTask = 0
+
+        #send of the first task
+        self.taskList[0][0](self.taskList[0][1])
 
         # Make collide mask (What collides with what)
         self._nodePath.setCollideMask(0xFFFF0000)
-
+        
+        self.movementPoint = Point3(10,10,0)
 
         # Set up the 
     def __createVehicle(self,bulletWorld):
@@ -81,9 +88,11 @@ class Tank(DynamicWorldObject):
             wheel = self.vehicle.createWheel()
             wheel.setWheelAxleCs(Vec3(-2*(i%2)+1, 0, 0))
             wheel.setChassisConnectionPointCs(wheelPos[i])
-            wheel.setFrontWheel(i/2)
+            #wheel.setFrontWheel(i/2)
+            wheel.setFrontWheel(False)
             self.__createWheel(wheel)
-  
+            self.vehicle.setSteeringValue(0,i)
+       
 
     def __createWheel(self,wheel):
         '''
@@ -184,20 +193,53 @@ class Tank(DynamicWorldObject):
 
     ### METHODS TO DEFINE:
 
-    def applyThrusters(self, amt=1):    #set acceleration
+    def applyThrusters(self, right, left):    #set acceleration
         '''change acceleration to a percent of the maximum acceleration'''
         
-        if amt > 1 or amt < 0:
-            raise ValueError("amt must be between 0 and 1")
+        #if right > 1 or amt < 0:
+        #   raise ValueError("amt must be between 0 and 1")
         
-        tankNode = self._nodePath.node()
-        angle = self.nodePath.getH() #Apply force in current direction
-        magnitude = amt * (self._maxThrusterAccel) + (tankNode.getFriction() * 
-            self._nodePath.node().getMass())
-        force = Vec3(magnitude * math.cos(angle), 
-            magnitude * math.sin(angle), 0)
-        self.nodePath.node().applyForce(force)
+        # tankNode = self._nodePath.node()
+        # angle = self.nodePath.getH() #Apply force in current direction
+        # magnitude = amt * (self._maxThrusterAccel) + (tankNode.getFriction() * 
+        #     self._nodePath.node().getMass())
+        # force = Vec3(magnitude * math.cos(angle), 
+        #     magnitude * math.sin(angle), 0)
+        # self.nodePath.node().applyForce(force)
+        self.applyBrakes(0)
+        vel = self.vehicle.getChassis().getLinearVelocity()
 
+        for i in range(4):
+            self.vehicle.applyEngineForce(0,i)
+            self.vehicle.setBrake(0,i)
+
+        if vel.length() < self._maxVel:
+            self.vehicle.applyEngineForce(-left*self._maxThrusterAccel,0)
+            self.vehicle.applyEngineForce(right*self._maxThrusterAccel,1)
+            self.vehicle.applyEngineForce(-left*self._maxThrusterAccel,2)
+            self.vehicle.applyEngineForce(right*self._maxThrusterAccel,3)
+            #for i in range(0,1):
+            #    self.vehicle.applyEngineForce((left*(i)%2+right*(i+1)%2)*self._maxThrusterAccel,i)
+
+            #for i in range(2):
+            #   self.vehicle.applyEngineForce((left*(i)%2+right*(i+1)%2)*self._maxThrusterAccel,i+2)
+                #self.vehicle.applyEngineForce((2*i%2-1)*engineForce,i)
+                ## for 1 and 3useleft 
+                ## for 0 and 2 use right
+
+                
+
+        else:
+            for i in range(4):
+                #self.vehicle.applyEngineForce((2*i%2-1)*engineForce,i)
+                self.vehicle.applyEngineForce(0,i)
+            
+    def applyBrakes(self, amt=1):
+        
+        for i in range(4):
+            #self.vehicle.applyEngineForce((2*i%2-1)*engineForce,i)
+            self.vehicle.applyEngineForce(0,i)
+            self.vehicle.setBrake(amt*self._breakForce,i)
         
 
     def setVel(self, goal	):
@@ -228,9 +270,54 @@ class Tank(DynamicWorldObject):
         #		newDistance=dist-distanceTravelled
         #		move(self, newDistance)
         pass
+    def moveTime(self, moveTime):
+        self._taskTimer = moveTime
+        taskMgr.add(self.updateMove,'updateMove',uponDeath=self.nextTask)
+    def rotateTime(self, rotateTime):
+        self._taskTimer = rotateTime
+        taskMgr.add(self.updateRotate,'updateRotate',uponDeath=self.nextTask)
+    def nextTask(self,task):
+        self.onTask += 1
+        if self.onTask >= len(self.taskList):
+            return
+        
+        print taskMgr.getTasks()
+        self.taskList[self.onTask][0](self.taskList[self.onTask][1])
+
+    def updateMove(self, task):
+        print "doing movement"
+        dt = globalClock.getDt()
+        self._taskTimer -= dt
+
+        if self._taskTimer < 0:
+            self.applyBrakes(1)
+        else:
+            self.applyThrusters(1,1)
+
+        if self._taskTimer < -1: #one second to stop
+            return task.done
+
+        return task.cont
+
+    def updateRotate(self, task):
+        dt = globalClock.getDt()
+        self._taskTimer -= dt
+
+        if self._taskTimer < 0:
+            self.applyBrakes(1)
+        else:
+            self.applyThrusters(1,-1)
+
+        if self._taskTimer < -1: #one second to stop
+            return task.done
+        return task.cont
+
+    def update(self, task):
+        pass
+        
 
     def backward(self, dist):
-        if (dist <=0):
+        if dist <=0:
             raise ValueError("Distance must be positive")
         else:
             self.move(-1*distance)

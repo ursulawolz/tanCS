@@ -9,10 +9,11 @@ from panda3d.bullet import BulletRigidBodyNode
 print("asdf")
 t = TankWorld.TankWorld()
 t.getPhysics().setGravity(Vec3(0,0,-9.81))
- 
+
 shape = BulletPlaneShape(Vec3(0, 0, 1), 1)
- 
+
 node = BulletRigidBodyNode('Ground')
+node.setFriction(1);
 node.addShape(shape)
 
 np = render.attachNewNode(node)
