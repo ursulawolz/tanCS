@@ -92,20 +92,20 @@ class Tank(DynamicWorldObject):
             wheel.setFrontWheel(False)
             self.__createWheel(wheel)
             self.vehicle.setSteeringValue(0,i)
-       
+            wheel.setRollInfluence((-2*(i%2)+1)*0.2)
 
     def __createWheel(self,wheel):
         '''
             sets up properties for wheel.
         '''
         wheel.setWheelDirectionCs(Vec3(0, 0, -1))
-        wheel.setWheelRadius(0.25)
+        wheel.setWheelRadius(0.35)
         wheel.setMaxSuspensionTravelCm(40.0)
         wheel.setSuspensionStiffness(40.0)
         wheel.setWheelsDampingRelaxation(2.3)
         wheel.setWheelsDampingCompression(4.4)
         wheel.setFrictionSlip(100.0)
-        wheel.setRollInfluence(0.1)
+        
 
     def getWheels(self):
         '''
@@ -206,11 +206,12 @@ class Tank(DynamicWorldObject):
         # force = Vec3(magnitude * math.cos(angle), 
         #     magnitude * math.sin(angle), 0)
         # self.nodePath.node().applyForce(force)
+        self.vehicle.reset_suspension()
         self.applyBrakes(0)
         vel = self.vehicle.getChassis().getLinearVelocity()
 
         for i in range(4):
-            self.vehicle.applyEngineForce(0,i)
+            self.vehicle.applyEngineForce(0,i)  
             self.vehicle.setBrake(0,i)
 
         if vel.length() < self._maxVel:
