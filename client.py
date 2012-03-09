@@ -1,10 +1,13 @@
 import socket
 import sys
 import ssl
+import time
 
 if len(sys.argv) != 2:
     sys.exit()
+
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.settimeout(6)
 ss = ssl.wrap_socket(s)
 ss.connect((sys.argv[1], 31415))
 
