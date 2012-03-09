@@ -23,7 +23,7 @@ def runFile(filename):
 	'''
 	illegalStrings = ['__', 'TankWorld', 'tankWorld', 'WorldObject', 'Tank']
 	appendToBeginning = '''tankWorld = TankWorld()\n
-tank = Tank(tankWorld.getPhysics(), tankWorld.render)\n
+tank = Tank(tankWorld, tankWorld.render)\n
 tank.setTankWorld(tankWorld)\n'''
 
 
