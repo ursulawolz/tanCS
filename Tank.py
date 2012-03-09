@@ -9,6 +9,7 @@ from panda3d.bullet import BulletVehicle
 
 from DynamicWorldObject import DynamicWorldObject
 
+
 class Tank(DynamicWorldObject):
 
     '''Child of WorldObject, with all of the things that makes a Tank a tank.
@@ -283,8 +284,16 @@ class Tank(DynamicWorldObject):
         self.taskList[self.onTask][0](self.taskList[self.onTask][1])
 
     def updateMove(self, task):
+        '''
+        Task Called to do movement. This is called once perframe
+        '''
+
         print "doing movement"
-        dt = globalClock.getDt()
+        #small hack to prevent the first frame from doing all the tasks.
+        dt = globalClock.getDt()        
+        if dt > .1:
+            return task.cont
+        print dt, self._taskTimer
         self._taskTimer -= dt
 
         if self._taskTimer < 0:
@@ -298,8 +307,15 @@ class Tank(DynamicWorldObject):
         return task.cont
 
     def updateRotate(self, task):
+        '''
+        Tasks called to do rotation. This is called once per frame
+        '''
         dt = globalClock.getDt()
+        #small hack to prevent the first frame from doing all the tasks.
+        if dt > .1:
+            return task.cont
         self._taskTimer -= dt
+
 
         if self._taskTimer < 0:
             self.applyBrakes(1)

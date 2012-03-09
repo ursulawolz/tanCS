@@ -7,7 +7,7 @@ def setCollision(worldObject, tankWorld):
 	handleCollision must deal with ending the task. The task name is:
 		worldObject.getNodePath().node().getName() + 'collide'
 	'''
-
+	print tankWorld
 	bulletWorld = tankWorld.getPhysics()
 	bulletNode = worldObject.getNodePath().node()
 

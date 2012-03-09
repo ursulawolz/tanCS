@@ -33,7 +33,7 @@ class TankWorld(ShowBase):
 		base.disableMouse() #disable the mouse
 
 		taskMgr.add(self.__update,"update") #This creates a task named update and runs every frame
-		
+		self._deltaTimeAccumulator = 0;
 		self.drawDebugNode()
 					
 	def __setupLighting(self):
@@ -71,10 +71,21 @@ class TankWorld(ShowBase):
 		Task task: Time since last frame	
 		'''
 		dt = globalClock.getDt();
+		if dt > .1:
+			return Task.cont
 		moveAmount = 50*dt;
 		changeY =  (inputState.isSet('foward')-inputState.isSet('backward'))*moveAmount
 		changeX = (inputState.isSet('right')-inputState.isSet('left'))*moveAmount;
-		self.__bulletWorld.doPhysics(dt)
+
+		stepSize = 1.0 / 60.0
+
+		#set up a fixed time constant step for more accurate physics.
+		#We need to test more with the vehicle class to see if it plays nice. 
+		self._deltaTimeAccumulator += globalClock.getDt()
+		while self._deltaTimeAccumulator> stepSize :
+			self.__bulletWorld.doPhysics(stepSize)
+			self._deltaTimeAccumulator -= stepSize;
+		
 		base.cam.setPos(base.cam,changeX,changeY,0);	
 		hpr = base.cam.getHpr();
 		#if base.mouseWatcherNode.hasMouse():	
