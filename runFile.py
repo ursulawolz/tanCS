@@ -28,7 +28,12 @@ tank = Tank(tankWorld, tankWorld.render)
 
 def userFun():
     '''
-    
+    appendToEnd = '''
+x = userFun()
+tank.setGenerator(x)
+tank.runTasks()
+
+    '''
 
 	yieldClause = '    yield()\n    '
 	newLineClause = '    '
