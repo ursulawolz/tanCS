@@ -13,7 +13,7 @@ class WorldObject:
     .nodePath > Panda NodePath for rendering. Includes some state variables.
     """
 
-    def __init__(self, tankWorld, attach, name = '', xCoord = 0, yCoord = 0, zCoord = 0, shape = BulletBoxShape(Vec3(.1, .1, .1)), heading = 0, pitch = 0, roll = 0, xVel = 0, yVel = 0, zVel = 0, mass = 0.1):
+    def __init__(self, tankWorld, attach, name = '', position = Point3(0,0,0), shape = BulletBoxShape(Vec3(.1, .1, .1)), orientation = Vec3(0,0,0), velocity = Vec3(0,0,0), mass = 0.1):
 	#@param world: A BulletWorld for this to be simulated in
 	#@param attach: a NodePath to attach this WorldObject to. By default send some ShowBase.render		
 
@@ -22,11 +22,11 @@ class WorldObject:
         self._nodePath.node().setMass(mass)					#Only static objects should have 0 mass
 	
 #The NodePath holds rendering state variables	
-        self._nodePath.setPos(xCoord, yCoord, zCoord) 
-        self._nodePath.setHpr(heading, pitch, roll)		
+        self._nodePath.setPos(position[0], position[1], position[2]) 
+        self._nodePath.setHpr(orientation[0], orientation[1], orientation[2])		
 
         #Bullet's Node holds other physics-based state variables
-        self._nodePath.node().setLinearVelocity(Vec3(xVel, yVel, zVel))
+        self._nodePath.node().setLinearVelocity(velocity)
         self._transformState = getattr(self, '_transformState',TransformState.makePos(Point3(0, 0, 0)))
 
         self._nodePath.node().addShape(shape,self._transformState)

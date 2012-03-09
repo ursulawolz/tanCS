@@ -16,8 +16,7 @@ class Tank(DynamicWorldObject):
     Includes a Weapon
     '''
 
-    def __init__(self, world, attach, weapon = None, name = '', xCoord = 0, 
-            yCoord = 0, zCoord = 0, heading = 0, pitch = 0, roll = 0, 
+    def __init__(self, world, attach, weapon = None, name = '', position = Vec3(0,0,0), orientation = Vec3(0,0,0), 
             turretPitch = 0): 
 
         #Constant Relevant Instatiation Parameters
@@ -34,9 +33,7 @@ class Tank(DynamicWorldObject):
         self._shape = BulletBoxShape(Vec3(0.7, 1.5, 0.5)) #chassis
         self._transformState = TransformState.makePos(Point3(0, 0, .5)) #offset 
         
-        DynamicWorldObject.__init__(self, world, attach, name, xCoord, yCoord,
-            zCoord, self._shape, heading, pitch, roll, 0, 0, 0, 
-            mass = tankMass)   #Initial velocity must be 0
+        DynamicWorldObject.__init__(self, world, attach, name, position, self._shape, orientation, Vec(0,0,0), mass = tankMass)   #Initial velocity must be 0
         self.__createVehicle(world)
 
         self._taskTimer = 0;
