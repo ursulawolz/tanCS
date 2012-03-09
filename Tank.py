@@ -13,7 +13,7 @@ class Tank(DynamicWorldObject):
 
     '''Child of WorldObject, with all of the things that makes a Tank a tank.
 
-    Includes a Turret 
+    Includes a Weapon
     '''
 
     def __init__(self, world, attach, weapon = None, name = '', xCoord = 0, 

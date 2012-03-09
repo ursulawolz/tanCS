@@ -1,12 +1,26 @@
 from DynamicWorldObject import *
+from panda3d.bullet import BulletSphereShape
 
 	
 class Projectile(DynamicWorldObject):
 	"""Child of DynamicWorldObject, fired by a Weapon, has a certain damage that it gives on impact
 	"""
 
-	def __init__(self, world, attach,  name = '', xCoord = 0, yCoord = 0, zCoord = 0, shape = BulletBoxShape(Vec3(.1, .1, .1)), heading = 0, pitch = 0, roll = 0, xVel = 0, yVel = 0, zVel = 0, mass = 0.1, damageGiven = 0):
+	def __init__(self, weapon,  name = '', shape = BulletSphereShape(.2), vel, mass = 0.1, damageGiven = 0):
 		
-		WorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, shape, heading, pitch, roll, xVel, yVel, zVel, mass)
+		tank = weapon.getTank()
+
+		direction = weapon.getDirection()
+		world = tank.getTankWorld()
+		attach = tank().getTankWorld().render
+
+		pos = tank._nodePath.getPos() #Adjusted somehow for the Weapon pos?
+
+		WorldObject.__init__(self, world, attach, name, pos[0], pos[1], pos[2], shape, direction[0], direction[1], direction[2], vel[0], vel[1], vel[2], mass)
 		self._weapon = weapon
 		self._damage = damageGiven
+
+
+
+	def getDamage(self):
+		return self._damage

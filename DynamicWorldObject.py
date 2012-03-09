@@ -10,3 +10,4 @@ class DynamicWorldObject(WorldObject):
 		if (mass <=0):
 			raise ValueError("Mass of DynamicWorldObject must be greater than 0.")
 		WorldObject.__init__(self, world, attach, name, xCoord, yCoord, zCoord, shape, heading, pitch, roll, xVel, yVel, zVel, mass)
+		TaskList.setCollision(self. self._tankWorld)
