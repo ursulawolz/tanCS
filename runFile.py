@@ -22,10 +22,16 @@ def runFile(filename):
 
 	'''
 	illegalStrings = ['__', 'TankWorld', 'tankWorld', 'WorldObject', 'Tank']
-	appendToBeginning = '''tankWorld = TankWorld()\n
-tank = Tank(tankWorld, tankWorld.render)\n
-tank.setTankWorld(tankWorld)\n'''
+	appendToBeginning = '''
+tankWorld = TankWorld()
+tank = Tank(tankWorld, tankWorld.render)
 
+def userFun():
+    '''
+    
+
+	yieldClause = '    yield()\n    '
+	newLineClause = '    '
 
 	script = open(filename, 'rb')
 	lines = script.readlines()
@@ -39,7 +45,14 @@ tank.setTankWorld(tankWorld)\n'''
 	#If no errors:
 	code = appendToBeginning
 	for line in lines:
-		code = code + line
+		if line[len(line) - 1] != '\n':
+			line += '\n'
+		x = line.strip()
+		if x == '':
+			code = code + line + newLineClause
+		else:
+			code = code + line + yieldClause
+
 
 	f = open('run' + filename, 'w')
 	f.close()

@@ -1,6 +1,14 @@
-tankWorld = TankWorld()
 
+tankWorld = TankWorld()
 tank = Tank(tankWorld, tankWorld.render)
 
-tank.setTankWorld(tankWorld)
-print tank.scan()
+def userFun():
+    print tank.scan()
+    yield()
+    
+    tank.dickAround()
+    yield()
+    
+    tank.killAllTheThings()
+    yield()
+    
