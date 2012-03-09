@@ -1,5 +1,3 @@
-print tank.scan()
-
-tank.dickAround()
-
-tank.killAllTheThings()
+while 1==1:
+	tank.moveTime(2)
+	tank.rotateTime(2)

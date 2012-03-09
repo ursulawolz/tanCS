@@ -26,7 +26,7 @@ def getInitialWhitespace(string):
 	return ' ' * res
 
 
-def runFile(filename):
+def runFile(filename, tankWorld):
 	'''readFile opens and runs a user file, making sure that none of the 
 	things in said file are illegal in TankWorld, in illegalStrings
 
@@ -34,13 +34,13 @@ def runFile(filename):
 	'''
 	illegalStrings = ['__', 'TankWorld', 'tankWorld', 'WorldObject', 'Tank']
 	appendToBeginning = '''
-tankWorld = TankWorld()
+
 tank = Tank(tankWorld,	 tankWorld.render)
 
-def userFun():
+def userFun(tank):
 '''
 	appendToEnd = '''
-x = userFun()
+x = userFun(tank)
 tank.setGenerator(x)
 tank.runTasks()'''
 
@@ -74,7 +74,7 @@ tank.runTasks()'''
 
 		print len(prevTabs)
 
-
+	code = code + appendToEnd
 
 	f = open('run' + filename, 'w')
 	f.close()

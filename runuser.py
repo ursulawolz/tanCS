@@ -1,17 +1,14 @@
 
-tankWorld = TankWorld()
+
 tank = Tank(tankWorld,	 tankWorld.render)
 
-def userFun():
-    print tank.scan()
-    yield()
-    
-    tank.dickAround()
-    yield()
-    
-    if (1 == 0):
-        tank.killAllTheThings()
+def userFun(tank):
+    while 1==1:
+    	tank.moveTime(2)
         yield()
-        while(x):
-            tank.yellAtGreg(loudly)
-            yield()
+    	tank.rotateTime(2)
+        yield()
+
+x = userFun(tank)
+tank.setGenerator(x)
+tank.runTasks()

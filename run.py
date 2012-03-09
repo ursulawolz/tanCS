@@ -7,13 +7,14 @@ import TaskList
 
 from panda3d.bullet import BulletPlaneShape
 from panda3d.bullet import BulletRigidBodyNode
-
+from runFile import runFile
 print("asdf")
 t = TankWorld()
 t.getPhysics().setGravity(Vec3(0,0,-9.81))
 
 
-#static = MeshWorldObject(t,render, 'rock1.egg', position=Vec3(0,10,0))
+static = MeshWorldObject(t,render, 'rock1.egg', position=Vec3(0,10,0))
+static = MeshWorldObject(t,render, 'tree.egg', position=Vec3(4,4,4))
 
 shape = BulletPlaneShape(Vec3(0, 0, 1), 1)
 
@@ -28,10 +29,10 @@ t.getPhysics().attachRigidBody(node)
 
 print t.getPhysics().getNumRigidBodies(), "before"
 #dynamic = DynamicWorldObject(t.getPhysics(),render)
-ta = Tank(t,render)
 
+runFile('user.py',t)
 print t.getPhysics().getNumRigidBodies(), "after"
 
-TaskList.setCollision(ta, t)
+#TaskList.setCollision(ta, t)
 
 run()

@@ -47,11 +47,11 @@ class Tank(DynamicWorldObject):
         ## FILLER:
         ## Set up the weapon initial conditions !!!
         ## END FILLER
-        self.taskList = [[self.moveTime,1], [self.moveTime,1], [self.rotateTime,1], [self.moveTime,1], [self.rotateTime,1], [self.rotateTime,2],[self.moveTime,2], [self.rotateTime,2],[self.moveTime,2], [self.rotateTime,2]]
+        #self.taskList = [[self.moveTime,1], [self.moveTime,1], [self.rotateTime,1], [self.moveTime,1], [self.rotateTime,1], [self.rotateTime,2],[self.moveTime,2], [self.rotateTime,2],[self.moveTime,2], [self.rotateTime,2]]
         self.onTask = 0
 
         #send of the first task
-        self.taskList[0][0](self.taskList[0][1])
+        #self.taskList[0][0](self.taskList[0][1])
 
         # Make collide mask (What collides with what)
         self._nodePath.setCollideMask(0xFFFF0000)
@@ -277,11 +277,21 @@ class Tank(DynamicWorldObject):
         taskMgr.add(self.updateRotate,'updateRotate',uponDeath=self.nextTask)
     def nextTask(self,task):
         self.onTask += 1
-        if self.onTask >= len(self.taskList):
-            return
-        
-        print taskMgr.getTasks()
-        self.taskList[self.onTask][0](self.taskList[self.onTask][1])
+        #if self.onTask >= len(self.taskList):
+        #   return
+        pre = len(taskMgr.getTasks());
+        try:
+            self.taskList.next()
+            if(len(taskMgr.getTasks()) == pre):
+                self.nextTask(task)
+        except StopIteration:
+            pass
+        #self.taskList[self.onTask][0](self.taskList[self.onTask][1])
+    def runTasks(self):
+        self.onTask = 0
+        self.nextTask(None)
+    def setGenerator(self, gen):
+        self.taskList = gen
 
     def updateMove(self, task):
         '''
