@@ -1,6 +1,6 @@
 from TankWorld import TankWorld
 from Tank import *
-import pickle
+import string
 
 class PermissionError(Exception):
 	'''Not sure how to name this. It it the error that gets raised when a user
@@ -14,6 +14,17 @@ class PermissionError(Exception):
 	def __str__(self):
 		return "\n" + self.line + "User defined scripts are not allowed to include \"" + self.value + "\""
 
+def getInitialWhitespace(string):
+	res = 0
+	for letter in string:
+		if letter == ' ':
+			res += 1
+		elif letter == '\t':
+			res += 4
+		else:
+			break
+	return ' ' * res
+
 
 def runFile(filename):
 	'''readFile opens and runs a user file, making sure that none of the 
@@ -24,19 +35,17 @@ def runFile(filename):
 	illegalStrings = ['__', 'TankWorld', 'tankWorld', 'WorldObject', 'Tank']
 	appendToBeginning = '''
 tankWorld = TankWorld()
-tank = Tank(tankWorld, tankWorld.render)
+tank = Tank(tankWorld,	 tankWorld.render)
 
 def userFun():
-    '''
-    appendToEnd = '''
+'''
+	appendToEnd = '''
 x = userFun()
 tank.setGenerator(x)
-tank.runTasks()
+tank.runTasks()'''
 
-    '''
-
-	yieldClause = '    yield()\n    '
-	newLineClause = '    '
+	yieldClause = 'yield()\n'
+	tabClause = '    '
 
 	script = open(filename, 'rb')
 	lines = script.readlines()
@@ -49,14 +58,22 @@ tank.runTasks()
 
 	#If no errors:
 	code = appendToBeginning
+	prevTabs = ''
+
 	for line in lines:
 		if line[len(line) - 1] != '\n':
 			line += '\n'
 		x = line.strip()
-		if x == '':
-			code = code + line + newLineClause
+
+		prevTabs = getInitialWhitespace(line)
+		
+		if x == '' or ':' in line:
+			code = code + tabClause + line
 		else:
-			code = code + line + yieldClause
+			code = code + tabClause + line + tabClause + prevTabs + yieldClause
+
+		print len(prevTabs)
+
 
 
 	f = open('run' + filename, 'w')

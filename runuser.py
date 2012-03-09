@@ -1,6 +1,6 @@
 
 tankWorld = TankWorld()
-tank = Tank(tankWorld, tankWorld.render)
+tank = Tank(tankWorld,	 tankWorld.render)
 
 def userFun():
     print tank.scan()
@@ -9,6 +9,9 @@ def userFun():
     tank.dickAround()
     yield()
     
-    tank.killAllTheThings()
-    yield()
-    
+    if (1 == 0):
+        tank.killAllTheThings()
+        yield()
+        while(x):
+            tank.yellAtGreg(loudly)
+            yield()
