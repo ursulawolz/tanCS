@@ -30,7 +30,7 @@ class WorldObject:
         self._transformState = getattr(self, '_transformState',TransformState.makePos(Point3(0, 0, 0)))
 
         self._nodePath.node().addShape(shape,self._transformState)
-        self._world.attachRigidBody(self._nodePath.node())
+        self._tankWorld.attachRigidBody(self._nodePath.node())
 
     def getVel(self):
         return self._nodePath.node().getLinearVelocity()

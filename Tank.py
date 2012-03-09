@@ -33,7 +33,7 @@ class Tank(DynamicWorldObject):
         self._shape = BulletBoxShape(Vec3(0.7, 1.5, 0.5)) #chassis
         self._transformState = TransformState.makePos(Point3(0, 0, .5)) #offset 
         
-        DynamicWorldObject.__init__(self, world, attach, name, position, self._shape, orientation, Vec(0,0,0), mass = tankMass)   #Initial velocity must be 0
+        DynamicWorldObject.__init__(self, world, attach, name, position, self._shape, orientation, Vec3(0,0,0), mass = tankMass)   #Initial velocity must be 0
         self.__createVehicle(world)
 
         self._taskTimer = 0;
