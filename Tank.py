@@ -17,7 +17,7 @@ class Tank(DynamicWorldObject):
     Includes a Weapon
     '''
 
-    def __init__(self, world, attach, weapon = None, name = '', position = Vec3(0,0,0), orientation = Vec3(0,0,0), 
+    def __init__(self, world, attach, name = '', position = Vec3(0,0,0), orientation = Vec3(0,0,0), 
             turretPitch = 0): 
 
         #Constant Relevant Instatiation Parameters
@@ -42,8 +42,7 @@ class Tank(DynamicWorldObject):
 
         # Set up turret nodepath
         # (Nodepaths are how objects are managed in Panda3d)
-        self._weapon = weapon
-
+ 
         ## FILLER:
         ## Set up the weapon initial conditions !!!
         ## END FILLER
@@ -298,12 +297,12 @@ class Tank(DynamicWorldObject):
         Task Called to do movement. This is called once perframe
         '''
 
-        print "doing movement"
+        #print "doing movement"
         #small hack to prevent the first frame from doing all the tasks.
         dt = globalClock.getDt()        
         if dt > .1:
             return task.cont
-        print dt, self._taskTimer
+        #print dt, self._taskTimer
         self._taskTimer -= dt
 
         if self._taskTimer < 0:
@@ -352,9 +351,12 @@ class Tank(DynamicWorldObject):
         else:
             self.move(distance)
 
+    def setWeapon(self, weopwn):
+        self._weapon = weopwn
+
     def setSteering(self, angle):
         pass
 
-    def fire(self):
-        pass
+    def fire(self, amt):
+        self._weapon.fire(amt)        
 
