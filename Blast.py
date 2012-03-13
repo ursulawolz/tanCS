@@ -16,6 +16,15 @@ class Blast(Projectile):
 		shape = BulletSphereShape(.2)
 		name = weapon.getTank()._nodePath.node().getName() + ' blast'
 
-		vel = direction.normalize() * speed #Vec3
+		pos = weapon.getTank().getPos()
+		pos = Point3(pos[0], pos[1], pos[2] + 5)
 
-		Projectile(weapon, name, shape, vel, mass, damage)
+		#print direction
+
+		direction.normalize()
+		vel = direction * speed #LVecBase3f
+		vel = Vec3(vel[0], vel[1], vel[2])
+
+		#print direction, vel
+
+		Projectile(weapon, pos, name, shape, vel, mass, damage)
