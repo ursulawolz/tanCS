@@ -53,8 +53,3 @@ class WorldObject:
     def getNodePath(self):
         return self._nodePath
 
-    def handleCollision(self, contact):
-        '''Must remove task, as specified in TaskList.setCollision'''
-        print contact.getNode0()
-        print contact.getNode1()
-        self._tankWorld.taskMgr.remove(self._nodePath.node().getName() + 'collide')

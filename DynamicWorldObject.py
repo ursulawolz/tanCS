@@ -12,3 +12,10 @@ class DynamicWorldObject(WorldObject):
 			raise ValueError("Mass of DynamicWorldObject must be greater than 0.")
 		WorldObject.__init__(self, world, attach, name, position, shape, orientation, velocity, mass)
 		TaskList.setCollision(self, self._tankWorld)
+
+
+	def handleCollision(self, contact, task):
+		'''Must remove task, as specified in TaskList.setCollision'''
+		#print contact.getNode0()
+		#self._tankWorld.taskMgr.remove(self._nodePath.node().getName() + 'collide')
+

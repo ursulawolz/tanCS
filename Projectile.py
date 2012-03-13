@@ -15,7 +15,7 @@ class Projectile(DynamicWorldObject):
 		attach = tank.getTankWorld().render
 
 
-		WorldObject.__init__(self, world, attach, name, pos, shape, direction, vel, mass)
+		DynamicWorldObject.__init__(self, world, attach, name, pos, shape, direction, vel, mass)
 		self._weapon = weapon
 		self._damage = damageGiven
 
@@ -23,3 +23,5 @@ class Projectile(DynamicWorldObject):
 
 	def getDamage(self):
 		return self._damage
+
+	

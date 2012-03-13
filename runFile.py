@@ -1,4 +1,5 @@
 from TankWorld import TankWorld
+from Blaster import Blaster
 from Tank import *
 import string
 
@@ -36,6 +37,7 @@ def runFile(filename, tankWorld):
 	appendToBeginning = '''
 
 tank = Tank(tankWorld,	 tankWorld.render)
+tank.setWeapon(Blaster(tank))
 
 def userFun(tank):
 '''

@@ -7,16 +7,16 @@ def setCollision(worldObject, tankWorld):
 	handleCollision must deal with ending the task. The task name is:
 		worldObject.getNodePath().node().getName() + 'collide'
 	'''
-	print tankWorld
 	bulletWorld = tankWorld.getPhysics()
 	bulletNode = worldObject.getNodePath().node()
+	taskName = bulletNode.getName() + 'collide'
 
 	#Nested functions?
 	def collide(task):
 		result = bulletWorld.contactTest(bulletNode)
-		for i in range(result.getNumContacts()):	
-			print 1
-			worldObject.handleCollision(result.getContact(i))
+		for i in range(result.getNumContacts()):
+			worldObject.handleCollision(result.getContact(i), taskName)
 		return task.cont
 
-	tankWorld.taskMgr.add(collide, bulletNode.getName() + 'collide')
+	tankWorld.taskMgr.add(collide, taskName)
+	

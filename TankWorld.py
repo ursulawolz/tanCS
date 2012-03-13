@@ -102,6 +102,8 @@ class TankWorld(ShowBase):
 	def attachRigidBody(self, node):
 		self.__bulletWorld.attachRigidBody(node)
 
+	def removeRigidBody(self, node):
+		self.__bulletWorld.removeRigidBody(node)
 
 	
 	def drawDebugNode(self):
