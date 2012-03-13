@@ -39,5 +39,6 @@ class MeshWorldObject(StaticWorldObject):
 		#self._transformState = TransformState.makeQuat(q) 
 
 		shape = BulletTriangleMeshShape(mesh, dynamic=False)
+		print mesh
 		StaticWorldObject.__init__(self, world, attach, name, position, shape, orientation) ##Mass must be zero.
 		geo.reparentTo(self._nodePath)

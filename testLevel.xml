@@ -1,0 +1,19 @@
+<level name="Test Level">
+	
+	<tank pos="0,0,4" >
+		<weapon type="Blaster" />
+	</tank>
+
+	<staticObject mesh="tree.egg" pos="1,2,0">
+		<shape type="mesh" />
+	</staticObject>
+
+	<staticObject mesh="tree.egg" pos="4,2,0">
+		<shape type="mesh" />
+	</staticObject>
+
+	<staticObject mesh="tree.egg" pos="-2,3,0">
+		<shape type="mesh" />
+	</staticObject>
+
+</level>
