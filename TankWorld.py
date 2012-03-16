@@ -28,13 +28,13 @@ class TankWorld(ShowBase):
 		
 		base.cam.setPos(30,30,30);
 		base.cam.lookAt(0,0,0);
-		
+		self.drawDebugNode()
 		self.__setupUserInput() #set up user input
 		base.disableMouse() #disable the mouse
 
 		taskMgr.add(self.__update,"update") #This creates a task named update and runs every frame
 		self._deltaTimeAccumulator = 0;
-		self.drawDebugNode()
+
 					
 	def __setupLighting(self):
 		'''
@@ -65,7 +65,8 @@ class TankWorld(ShowBase):
 		self.bw = inputState.watch('backward','s','s-up')
 		self.left = inputState.watch('left','a','a-up')
 		self.right = inputState.watch('right','d','d-up')
-			
+
+
 	def __update(self, task):
 		'''
 		Task task: Time since last frame	
@@ -112,10 +113,12 @@ class TankWorld(ShowBase):
 		debugNode.showConstraints(True)
 		debugNode.showBoundingBoxes(False)
 		debugNode.showNormals(False)
-		debugNP = render.attachNewNode(debugNode)
-		debugNP.show()
+		self.debugNP = render.attachNewNode(debugNode)
+
 		print "debug node activated" 
-		
+		self.accept('9', self.debugNP.show)
+		self.accept('8', self.debugNP.hide)
+
 		self.__bulletWorld.setDebugNode(debugNode)
 
 	def makeTeapot(self):
