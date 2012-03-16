@@ -28,8 +28,12 @@ class Blast(Projectile):
 
 		#print direction, vel
 
+		np  = loader.loadModel('smiley')
+
 		Projectile.__init__(self, weapon, pos, name, shape, vel, mass, damage)
 		self._collisionCounter = 0
+
+		np.reparentTo(self._nodePath)
 
 	def handleCollision(self, collide, taskName):
 		self._collisionCounter += 1
