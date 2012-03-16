@@ -1,5 +1,6 @@
 from Projectile import *
 import TaskList
+from panda3d.core import Quat
 
 class Blast(Projectile):
 
@@ -9,11 +10,11 @@ class Blast(Projectile):
 		
 
 		#Parameters to be set
-		speed = 10 * power
+		speed = 10.0 * power
 		damage = 1 #Blast should be weakest, base damage
 		mass = .1 
 
-		direction = weapon.getTank()._nodePath.getHpr()		
+		direction = weapon.getTank()._nodePath.getQuat().getForward();		
 		shape = BulletSphereShape(.2)
 		name = weapon.getTank()._nodePath.node().getName() + ' blast'
 
@@ -22,9 +23,10 @@ class Blast(Projectile):
 
 		#print direction
 
-		direction.normalize()
-		vel = direction * speed #LVecBase3f
+
+		vel = direction * speed * -1 #LVecBase3f
 		vel = Vec3(vel[0], vel[1], vel[2])
+
 
 		#print direction, vel
 
