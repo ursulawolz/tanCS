@@ -1,22 +1,30 @@
-import socket
 import sys
-import ssl
 import threading
 import time
+import socket
+import ssl
+try:
+    from lxml import etree
+except ImportError:
+    try:
+        import xml.etree.cElementTree as etree
+    except ImportError:
+        import xml.etree.ElementTree as etree
 
 def f(c):
-    question = str(c.recv(1024), 'utf-8')
-    print('>', question)
-    if question == 'Are you a little teapot?':
-        answer = 'Yup, short and stout.'
+    question = etree.fromstring(str(c.recv(1024), 'utf-8'))
+    print('rx:' + str(etree.tostring(question), 'utf-8'))
+    answer = etree.Element('answer')
+    if question.text == 'Are you a little teapot?':
+        answer.text = 'Yup, short and stout.'
     else:
-        answer = 'No, you must have me mistaken for someone else.'
+        answer.text = 'No, you must have me mistaken for someone else.'
     time.sleep(5)
-    c.send(bytes(answer, 'utf-8'))
-    print('<', answer)
+    c.send(etree.tostring(answer, encoding='utf-8'))
+    print('tx:' + str(etree.tostring(answer), 'utf-8'))
     c.close()
 
-print('Hello.')
+print('info:Hello.')
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((socket.gethostname(), 31415))
 s.listen(5)
@@ -28,4 +36,4 @@ for i in range(4):
     t.start()
 s.shutdown(socket.SHUT_RDWR)
 s.close()
-print('Goodbye.')
+print('info:Goodbye.')
