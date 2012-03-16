@@ -119,7 +119,7 @@ class Tank(DynamicWorldObject):
         float heading
         float pitch
         '''
-		
+
         #Note: currently instantaneous - we need to figure out how to move 
         #continuously (or not, Turrets don't collide...)
         self._weapon.setHp(heading,pitch)
@@ -274,25 +274,38 @@ class Tank(DynamicWorldObject):
         pass
     def moveTime(self, moveTime):
         self._taskTimer = moveTime
-        taskMgr.add(self.updateMove,'updateMove',uponDeath=self.nextTask)
+        taskMgr.add(self.updateMove,'userTask',uponDeath=self.nextTask)
+    
     def rotateTime(self, rotateTime):
         self._taskTimer = rotateTime
-        taskMgr.add(self.updateRotate,'updateRotate',uponDeath=self.nextTask)
+        taskMgr.add(self.updateRotate,'userTask',uponDeath=self.nextTask)
+    
     def nextTask(self,task):
         self.onTask += 1
         #if self.onTask >= len(self.taskList):
         #   return
-        pre = len(taskMgr.getTasks());
+        def getNumUserTask():
+            taskAmount = 0
+            for t in taskMgr.getTasks():
+
+                if t.getName() == 'userTask':
+                    taskAmount +=1
+            return taskAmount
+
+        pre = getNumUserTask()
         try:
             self.taskList.next()
-            if(len(taskMgr.getTasks()) == pre):
+            if(getNumUserTask() == pre):
                 self.nextTask(task)
+
         except StopIteration:
             pass
         #self.taskList[self.onTask][0](self.taskList[self.onTask][1])
+    
     def runTasks(self):
         self.onTask = 0
         self.nextTask(None)
+    
     def setGenerator(self, gen):
         self.taskList = gen
 
@@ -303,7 +316,7 @@ class Tank(DynamicWorldObject):
 
         #print "doing movement"
         #small hack to prevent the first frame from doing all the tasks.
-        dt = globalClock.getDt()        
+        dt = globalClock.getDt()    
         if dt > .1:
             return task.cont
         #print dt, self._taskTimer
@@ -350,7 +363,7 @@ class Tank(DynamicWorldObject):
             self.move(-1*distance)
     
     def forward(self, distance):
-	if (dist <=0):
+        if (dist <=0):
             raise ValueError("Distance must be positive")
         else:
             self.move(distance)
@@ -362,5 +375,5 @@ class Tank(DynamicWorldObject):
         pass
 
     def fire(self, amt):
-        self._weapon.fire(amt)        
+        return self._weapon.fire(amt)        
 
