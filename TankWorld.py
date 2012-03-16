@@ -34,7 +34,7 @@ class TankWorld(ShowBase):
 
 		taskMgr.add(self.__update,"update") #This creates a task named update and runs every frame
 		self._deltaTimeAccumulator = 0;
-
+		
 					
 	def __setupLighting(self):
 		'''
@@ -60,6 +60,11 @@ class TankWorld(ShowBase):
 		Sets up user input
 		'''
 		#print "setupinput"
+		self.doMouseStuff = False
+		def toggleMouse():
+			self.doMouseStuff = not self.doMouseStuff 
+		
+		self.accept('m', toggleMouse)
 		self.accept('escape-up',sys.exit)
 		self.mf = inputState.watch('foward','w','w-up')#note self.mf has to be released	
 		self.bw = inputState.watch('backward','s','s-up')
@@ -89,9 +94,9 @@ class TankWorld(ShowBase):
 		
 		base.cam.setPos(base.cam,changeX,changeY,0);	
 		hpr = base.cam.getHpr();
-		#if base.mouseWatcherNode.hasMouse():	
-		#	hpr.x = -100*base.mouseWatcherNode.getMouseX()
-		#	hpr.y = 100*base.mouseWatcherNode.getMouseY();
+		if base.mouseWatcherNode.hasMouse() and self.doMouseStuff:	
+			hpr.x = -100*base.mouseWatcherNode.getMouseX()
+			hpr.y = 100*base.mouseWatcherNode.getMouseY();
 
 		base.cam.setHpr(hpr);	
 

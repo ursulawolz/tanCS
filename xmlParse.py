@@ -87,11 +87,8 @@ def createLevel(file):
 		#This is going to be each section
 		doFunctions[level.tag.lower()](level, tankWorld)
 	
+	return tankWorld
 	
 
 
-#create a test level
-createLevel('testLevel.xml')
-
-run()
 
