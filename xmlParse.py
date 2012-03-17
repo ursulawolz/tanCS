@@ -1,5 +1,10 @@
-from xml.etree.ElementTree import XMLParser
-from xml.etree import ElementTree
+try:
+	from lxml import ElementTree
+except ImportError:
+	try:
+		import xml.etree.cElementTree as ElementTree
+	except ImportError:
+		import xml.etree.ElementTree as ElementTree
 
 
 from panda3d.core import *
