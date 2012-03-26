@@ -16,17 +16,17 @@ print("asdf")
 #orion says hello
 t = xmlParse.createLevel('testLevel.xml')
 
-shape = BulletPlaneShape(Vec3(0, 0, 1), 1)
+#shape = BulletPlaneShape(Vec3(0, 0, 1), 1)
 
-node = BulletRigidBodyNode('Ground')
-node.setFriction(1)
-node.addShape(shape)
+#node = BulletRigidBodyNode('Ground')
+#node.setFriction(1)
+#node.addShape(shape)
 
-np = render.attachNewNode(node)
-np.setPos(0,0,-4)
-t.getPhysics().attachRigidBody(node)
+#np = render.attachNewNode(node)
+#np.setPos(0,0,-4)
+#t.getPhysics().attachRigidBody(node)
 
-print "asdfasdfasdf"
+#print "asdfasdfasdf"
 #np.setPos(0, 0, 0)
 
 

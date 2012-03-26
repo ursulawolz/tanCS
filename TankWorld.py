@@ -34,7 +34,7 @@ class TankWorld(ShowBase):
 
 		taskMgr.add(self.__update,"update") #This creates a task named update and runs every frame
 		self._deltaTimeAccumulator = 0;
-		
+		self.tanks = []
 					
 	def __setupLighting(self):
 		'''
@@ -101,7 +101,14 @@ class TankWorld(ShowBase):
 		base.cam.setHpr(hpr);	
 
 		return Task.cont
-	
+	def getUserTank(self):
+		'''
+			Gets the user tank. Currently not implemented for multiple tanks.
+		'''
+		return self.tanks[0]
+	def registerTank(self, tank):
+		self.tanks.append(tank)
+
 	def getPhysics(self):
 		return self.__bulletWorld
 

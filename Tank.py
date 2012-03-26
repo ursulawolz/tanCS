@@ -39,7 +39,7 @@ class Tank(DynamicWorldObject):
 
         self._taskTimer = 0;
         self._nodePath.node().setFriction(friction)		
-
+        self._nodePath.setPos(position)
         # Set up turret nodepath
         # (Nodepaths are how objects are managed in Panda3d)
  
@@ -56,6 +56,9 @@ class Tank(DynamicWorldObject):
         self._nodePath.setCollideMask(0xFFFF0000)
         
         self.movementPoint = Point3(10,10,0)
+
+        #register tank
+        world.registerTank(self)
 
         # Set up the 
     def __createVehicle(self,bulletWorld):
@@ -82,14 +85,15 @@ class Tank(DynamicWorldObject):
         wheelNP = loader.loadModel('box')
         wheelNP.setScale(.01,.01,.01) 
 
-        wheelPos = [Point3(0.8, 1.1, 0.3),Point3(-0.8, 1.1, 0.3),
-                    Point3(0.8, -1.1, .3),Point3(-0.8, -1.1, .3)]
+        wheelPos = [Point3(0.8, 1.1, 0.1),Point3(-0.8, 1.1, 0.1),
+                    Point3(0.8, -1.1, .1),Point3(-0.8, -1.1, .1)]
 
         for i in range(4):
             wheel = self.vehicle.createWheel()
             wheel.setWheelAxleCs(Vec3(-2*(i%2)+1, 0, 0))
             wheel.setChassisConnectionPointCs(wheelPos[i])
             #wheel.setFrontWheel(i/2)
+            wheel.setWheelRadius(.5)
             wheel.setFrontWheel(False)
             self.__createWheel(wheel)
             self.vehicle.setSteeringValue(0,i)

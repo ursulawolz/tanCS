@@ -10,6 +10,7 @@ except ImportError:
 from panda3d.core import *
 from TankWorld import TankWorld
 from MeshWorldObject import MeshWorldObject
+from FloorStaticObject import FloorStaticObject
 from Tank import Tank
 from DynamicWorldObject import DynamicWorldObject
 import TaskList
@@ -52,6 +53,9 @@ def readStaticObject(element, tankWorld):
 	for shape in  element:
 		if shape.attrib.get('type','mesh').lower() == 'mesh':
 			static = MeshWorldObject(tankWorld,render, filename, position=pos, orientation=rot)
+			break
+		if shape.attrib.get('type','mesh').lower() == 'floor':
+			static = FloorStaticObject(tankWorld,render, filename, position=pos, orientation=rot)
 			break
 		#Do other types of shapes here
 
