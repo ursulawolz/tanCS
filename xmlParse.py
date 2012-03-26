@@ -1,5 +1,5 @@
 try:
-	from lxml import ElementTree
+	import lxml.etree as ElementTree
 except ImportError:
 	try:
 		import xml.etree.cElementTree as ElementTree
