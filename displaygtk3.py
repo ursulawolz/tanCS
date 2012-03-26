@@ -52,8 +52,8 @@ class TempWindow(Gtk.Window):
 		self.listbutton=Gtk.ToggleButton("List")
 		self.linebutton=Gtk.ToggleButton("Line")
 		
-		self.listbutton.connect("toggled", self.on_List_toggled, "List")
-		self.linebutton.connect("toggled", self.on_Line_toggled, "Line")
+		self.listbutton.connect("toggled", self.on_List_toggled, "List", self.linebutton)
+		self.linebutton.connect("toggled", self.on_Line_toggled, "Line", self.listbutton)
 		hbox.pack_end(self.listbutton,False, False,0)
 		hbox.pack_end(self.linebutton,False, False,0)
 
@@ -142,12 +142,16 @@ class TempWindow(Gtk.Window):
 	def create_revision_map():
 		return notsure	
 #What happens when you click on the list comments only button
-	def on_List_toggled(self,button,which):
-		print(which)
+	def on_List_toggled(self,button,which,other):
+		if button.get_active()==True:
+			other.set_active(False)
+			print(which)
 
 #What happens when you click on the file comments only button
-	def on_Line_toggled(self,button,which):
-		print(which)
+	def on_Line_toggled(self,button,which,other):
+		if button.get_active()==True:
+			other.set_active(False)
+			print(which)
 
 #How the user creates line comments. Should involve clicking on the line or something like that. So this will get called by a button I think.Should add a line comment to the code.
 	def submit_line_comment():
