@@ -13,7 +13,7 @@ class MyWindow(Gtk.Window):
 		'''
 		#import glade file and initiate window
 		self.builder=Gtk.Builder()
-		self.builder.add_from_file("../gladetest.glade")
+		self.builder.add_from_file("gladetest.glade")
 		self.builder.connect_signals({ "on_window_destroy" : Gtk.main_quit })
 		self.window = self.builder.get_object("window")
 		self.window.show()
@@ -135,6 +135,6 @@ class MyWindow(Gtk.Window):
 
 #initiate window
 win = MyWindow()
-win.connect("delete-event",Gtk.main_quit)
+#win.connect("delete-event",Gtk.main_quit)
 win.show_all()
 Gtk.main()
