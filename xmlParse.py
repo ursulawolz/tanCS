@@ -80,12 +80,13 @@ def readTankObject(element, tankWorld):
 		tank.setWeapon(weaponClasses[weapon](tank))
 
 
-def createLevel(file):
+def createLevel(file, tankWorld = None):
 	'''
 		Creates the level. THis is the main function that goes through and calls other functions to parse the xml file.
 	'''
-	tankWorld = TankWorld()
-	tankWorld.getPhysics().setGravity(Vec3(0,0,-9.81))
+	if tankWorld == None:
+		tankWorld = TankWorld()
+		tankWorld.getPhysics().setGravity(Vec3(0,0,-9.81))
 
 	doFunctions = {'staticobject': readStaticObject, 'tank':readTankObject}
 	f = open(file)
