@@ -8,7 +8,7 @@ class Blaster(Weapon):
 	def __init__(self, tank):
 		Weapon.__init__(self, tank)
 
-		self.maxVel = 100
+		self.maxVel = 100  #Condition ??
 
 	def fire(self, amt = 1):
 		'''

@@ -22,7 +22,7 @@ class Weapon(object):
 		float pitch
 		'''
 		self._direction = Vec3(heading, pitch, 0)
-
+		
 
 	def getDirection(self):
 		'''
