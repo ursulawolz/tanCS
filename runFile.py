@@ -36,8 +36,7 @@ def runFile(filename, tankWorld):
 	illegalStrings = ['__', 'TankWorld', 'tankWorld', 'WorldObject', 'Tank']
 	appendToBeginning = '''
 
-tank = Tank(tankWorld,	 tankWorld.render)
-tank.setWeapon(Blaster(tank))
+tank = tankWorld.getUserTank()
 
 def userFun(tank):
 '''

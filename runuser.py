@@ -1,7 +1,6 @@
 
 
-tank = Tank(tankWorld,	 tankWorld.render)
-tank.setWeapon(Blaster(tank))
+tank = tankWorld.getUserTank()
 
 def userFun(tank):
     while 1==1:
@@ -10,8 +9,6 @@ def userFun(tank):
     	tank.rotateTime(2)
         yield()
     	tank.fire(1)
-        yield()
-    	print 'userLoop'
         yield()
 
 x = userFun(tank)
