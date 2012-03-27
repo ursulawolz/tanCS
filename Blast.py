@@ -6,11 +6,11 @@ class Blast(Projectile):
 
 	'''Class Blast - Dynamic World Object fired by Blaster'''
 
-	def __init__(self, weapon, power):
+	def __init__(self, weapon, speed):
 		
 
 		#Parameters to be set
-		speed = 10.0 * power
+		speed = power
 		damage = 1 #Blast should be weakest, base damage
 		mass = .1 
 

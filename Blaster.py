@@ -8,9 +8,11 @@ class Blaster(Weapon):
 	def __init__(self, tank):
 		Weapon.__init__(self, tank)
 
+		self.maxVel = 100
+
 	def fire(self, amt = 1):
 		'''
 		Fires a blaster bullet
 		'''
-		x = Blast(self, amt)
+		x = Blast(self, amt * maxVel)
 		return x

@@ -34,15 +34,33 @@ class Weapon(object):
 	def getTank(self):
 		return self.tank
 
-	###Methods to add
-	def setPitchVel(self, amt = 1):
-		pass
-
 	def setPitch(self,goal):
-		pass
-
-	def setHeadingVel(self,amt=1):
-		pass
+		self.setHp(self.direction[0], goal)
 
 	def setHeading(self,goal):
-		pass
+		self.setHp(goal, self.direction[1])
+
+	def aimAt(self, pointAim):
+		pos = self.tank.getPos()
+
+		point = Point3(pointAim[0] - pos[0], pointAim[1] - pos[1], pointAim[2] - pos[2])
+
+		angle1 = math.atan2(point[0], point[2])
+
+		x = math.sqrt(point[0]**2 + point[1]**2)
+		y = point[3]
+		v = self._maxVel
+		gravity = self.tank._bulletWorld.getGravity() #Vector
+		g = gravity[2]	
+
+		discriminant = v**4 - g * (g * x**2 + 2 * y * v**2)
+
+		if discriminant < 0:
+			return False
+
+		angle2 = math.atan((v**2 - sqrt(discriminant))/(g * x))
+
+		self.setHp(angle1, angle2)
+
+		return True
+
