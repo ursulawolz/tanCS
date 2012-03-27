@@ -9,12 +9,5 @@ class Comment(object):
 		self.rev = rev
 		self.filename = filename
 		self.line = line
-
-	def getText(self):
-		return self.text
-
-	def getTime(self):
-		return self.time
-
-	def getName(self):
-		return self.acct.getName()
+		if self.line==-1:
+			self.isBroad=True
