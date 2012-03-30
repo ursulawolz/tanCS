@@ -31,6 +31,51 @@ class Account:
         self.group_list.remove( group )
 
 
+class Project:
+    def __init__(self, projID, parentID, groupID):
+        self.projID = projID
+        self.parentID = parentID
+        self.groupID = groupID
+
+        self.children = set()
+        self.borrows = set()
+
+        ## Revisions is a dict, for which each key is a datetime,
+        ## and the values are the revisions.
+        self.revisions = {}
+
+        self.locked = 0
+        self.tags = set()
+
+    def add_child(self, child):
+        self.children.add( child )
+
+    def remove_child(self, child):
+        self.children.remove( child )
+
+    def add_borrow(self, lender):
+        self.borrows.add( lender )
+
+    def remove_borrow(self, lender):
+        self.borrows.remove( lender )
+
+    def add_revision(self, revision_text, revision_datetime):
+        nextIndex = len(revisions) + 1
+        self.revisions[nextIndex] = [revision_text, revision_datetime]
+
+    def lock_proj(self):
+        self.locked = 1
+    
+    def unlock_proj(self):
+        self.locked = 0
+
+    def add_tag(self, new_tag):
+        self.tags.add( new_tag )
+
+    def remove_tag(self, tag):
+        self.tags.remove( tag )
+
+
 class Group:
     ## Object which defines a user-group.
 
