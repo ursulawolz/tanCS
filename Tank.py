@@ -33,7 +33,7 @@ class Tank(DynamicWorldObject):
        
         self._shape = BulletBoxShape(Vec3(0.7, 1.5, 0.5)) #chassis
         self._transformState = TransformState.makePos(Point3(0, 0, .5)) #offset 
-        
+        print name
         DynamicWorldObject.__init__(self, world, attach, name, position, self._shape, orientation, Vec3(0,0,0), mass = tankMass)   #Initial velocity must be 0
         self.__createVehicle(self._tankWorld.getPhysics())
 
@@ -59,6 +59,7 @@ class Tank(DynamicWorldObject):
 
         #register tank
         world.registerTank(self)
+
 
         # Set up the 
     def __createVehicle(self,bulletWorld):
@@ -278,19 +279,22 @@ class Tank(DynamicWorldObject):
         pass
     def moveTime(self, moveTime):
         self._taskTimer = moveTime
-        taskMgr.add(self.updateMove,'userTask',uponDeath=self.nextTask)
+        self._tankWorld.taskMgr.add(self.updateMove,'userTask',uponDeath=self.nextTask)
     
     def rotateTime(self, rotateTime):
         self._taskTimer = rotateTime
-        taskMgr.add(self.updateRotate,'userTask',uponDeath=self.nextTask)
+        self._tankWorld.taskMgr.add(self.updateRotate,'userTask',uponDeath=self.nextTask)
     
     def nextTask(self,task):
         self.onTask += 1
+        if(self._tankWorld.isDead):
+            return
         #if self.onTask >= len(self.taskList):
         #   return
         def getNumUserTask():
+            
             taskAmount = 0
-            for t in taskMgr.getTasks():
+            for t in self._tankWorld.taskMgr.getTasks():
 
                 if t.getName() == 'userTask':
                     taskAmount +=1
@@ -317,43 +321,48 @@ class Tank(DynamicWorldObject):
         '''
         Task Called to do movement. This is called once perframe
         '''
+        try:
+            #print "doing movement"
+            #small hack to prevent the first frame from doing all the tasks.
+            dt = globalClock.getDt()    
+            if dt > .1:
+                return task.cont
+            #print dt, self._taskTimer
+            self._taskTimer -= dt
 
-        #print "doing movement"
-        #small hack to prevent the first frame from doing all the tasks.
-        dt = globalClock.getDt()    
-        if dt > .1:
-            return task.cont
-        #print dt, self._taskTimer
-        self._taskTimer -= dt
+            if self._taskTimer < 0:
+                self.applyBrakes(1)
+            else:
+                self.applyThrusters(1,1)
 
-        if self._taskTimer < 0:
-            self.applyBrakes(1)
-        else:
-            self.applyThrusters(1,1)
-
-        if self._taskTimer < -1: #one second to stop
-            return task.done
+            if self._taskTimer < -1: #one second to stop
+                return task.done
+        except:
+            print "ERROR in tank.updateMove"
 
         return task.cont
 
     def updateRotate(self, task):
+
+        ''' called to do rotation. This is called once per frame
         '''
-        Tasks called to do rotation. This is called once per frame
-        '''
-        dt = globalClock.getDt()
-        #small hack to prevent the first frame from doing all the tasks.
-        if dt > .1:
-            return task.cont
-        self._taskTimer -= dt
+        try:
+            dt = globalClock.getDt()
+            #small hack to prevent the first frame from doing all the tasks.
+            if dt > .1:
+                return task.cont
+            self._taskTimer -= dt
 
 
-        if self._taskTimer < 0:
-            self.applyBrakes(1)
-        else:
-            self.applyThrusters(1,-1)
+            if self._taskTimer < 0:
+                self.applyBrakes(1)
+            else:
+                self.applyThrusters(1,-1)
 
-        if self._taskTimer < -1: #one second to stop
-            return task.done
+            if self._taskTimer < -1: #one second to stop
+                return task.done
+        except:
+            print "ERROR in tank.updateRotate"
         return task.cont
 
     def update(self, task):

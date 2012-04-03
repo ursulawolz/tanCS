@@ -13,9 +13,12 @@ def setCollision(worldObject, tankWorld):
 
 	#Nested functions?
 	def collide(task):
-		result = bulletWorld.contactTest(bulletNode)
-		for i in range(result.getNumContacts()):
-			worldObject.handleCollision(result.getContact(i), taskName)
+		try:
+			result = bulletWorld.contactTest(bulletNode)
+			for i in range(result.getNumContacts()):
+				worldObject.handleCollision(result.getContact(i), taskName)
+		except:
+			print "error in taskList.collide"
 		return task.cont
 
 	tankWorld.taskMgr.add(collide, taskName)

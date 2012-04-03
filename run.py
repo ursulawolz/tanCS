@@ -1,12 +1,7 @@
 from panda3d.core import *
 from TankWorld import TankWorld
 from MeshWorldObject import MeshWorldObject
-from Tank import Tank
-from DynamicWorldObject import DynamicWorldObject
-import TaskList
 
-from panda3d.bullet import BulletPlaneShape
-from panda3d.bullet import BulletRigidBodyNode
 from runFile import runFile
 
 import xmlParse
@@ -34,4 +29,6 @@ runFile('user.py',t)
 
 #TaskList.setCollision(ta, t)
 
-run()
+t.run()
+print "done?"
+sys.exit()

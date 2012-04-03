@@ -1,6 +1,6 @@
-<level name="Test Level">
+<level version="0.1" name="Test Level">
 	
-	<tank pos="0,3,3" >
+	<tank pos="3,0,10" name="tankUser">
 		<weapon type="Blaster" />
 	</tank>
 
@@ -8,11 +8,11 @@
 		<shape type="floor"/>
 	</staticObject>
 
-	<staticObject mesh="tree.egg" pos="3,4,0">
+	<staticObject mesh="tree.egg" pos="5,4,0">
 		<shape type="mesh" />
 	</staticObject>
-
-	<staticObject mesh="tree.egg" pos="3,8,0">
+<!--
+	<staticObject mesh="rock1.egg" pos="4,10,0">
 		<shape type="mesh" />
 	</staticObject>
 
@@ -31,6 +31,10 @@
 	<staticObject mesh="tree.egg" pos="3,3,0">
 		<shape type="mesh" />
 	</staticObject>
-	
+	-->
+
+	<trigger type="position" pos="3,0,3" radius="6" target="tankUser"/>
+
+
 
 </level>

@@ -22,15 +22,18 @@ class testLevel():
 		taskMgr.add(self.fileHasUpdate,"fileUpdate") 
 
 	def fileHasUpdate(self,task):
-		if self.oldtime != os.stat(self.filename).st_mtime:
+		try:
+			if self.oldtime != os.stat(self.filename).st_mtime:
 
-			for child in self.t.render.getChildren():
-				name = child.getName()
-				if name != 'camera' and name != 'Spot' and name != 'Debug' and name != 'Ambient':
-					child.detachNode()
-				pass
-			xmlParse.createLevel(self.filename, self.t)
-			self.oldtime = os.stat(self.filename).st_mtime
+				for child in self.t.render.getChildren():
+					name = child.getName()
+					if name != 'camera' and name != 'Spot' and name != 'Debug' and name != 'Ambient':
+						child.detachNode()
+					pass
+				xmlParse.createLevel(self.filename, self.t)
+				self.oldtime = os.stat(self.filename).st_mtime
+		except:
+			print "error in testLevel.upate"
 		return task.cont
 
 

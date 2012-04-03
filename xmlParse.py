@@ -20,7 +20,7 @@ from panda3d.bullet import BulletRigidBodyNode
 from runFile import runFile
 
 from Blaster import Blaster
-
+from PositionTrigger import PositionTrigger
 
 def parseVec3(string):
 	'''
@@ -36,27 +36,52 @@ def readWorldObject(element, tankWorld):
 	'''
 	pos = Vec3(0,0,0)
 	rot = Vec3(0,0,0)
+	name = element.attrib.get('name','No name given')
 	print element.attrib
 	for at in element.attrib:
 		
 		if at == 'pos':
 			pos = parseVec3(element.attrib[at])
 
-	return pos,rot
+	return pos,rot, name
+def readTrigger(element, tankWorld):
+	triggerType = element.attrib.get('type', 'default').lower()
+
+	pos,rot,name = readWorldObject(element, tankWorld)
+	targetName = element.attrib.get('target')
+	radius = int(element.attrib.get('radius',5))
+
+	if triggerType == 'position':
+		potentialNPs = tankWorld.render.getChildren()
+
+	target = None
+	for np in potentialNPs:
+		print np.node().getClassType()
+		#if np.node().getClassType() == BulletRigidBodyNode.getClassType():
+
+		if np.getName() == targetName:
+			target = np
+			break
+
+	PositionTrigger(tankWorld,target, radius=radius)
+
+
+
 def readStaticObject(element, tankWorld):
 	'''
 		Reads a static object. and creates it.
 	'''
-	(pos, rot) = readWorldObject(element, tankWorld)
+	(pos, rot, name) = readWorldObject(element, tankWorld)
 	filename = element.attrib.get('mesh','rock1.egg')
 
 	for shape in  element:
 		if shape.attrib.get('type','mesh').lower() == 'mesh':
-			static = MeshWorldObject(tankWorld,render, filename, position=pos, orientation=rot)
+			static = MeshWorldObject(tankWorld,render, filename, position=pos, orientation=rot, name=name)
 			break
 		if shape.attrib.get('type','mesh').lower() == 'floor':
-			static = FloorStaticObject(tankWorld,render, filename, position=pos, orientation=rot)
+			static = FloorStaticObject(tankWorld,render, filename, position=pos, orientation=rot, name=name)
 			break
+
 		#Do other types of shapes here
 
 def readTankObject(element, tankWorld):
@@ -64,10 +89,9 @@ def readTankObject(element, tankWorld):
 	Reads a tank object from xml
 	'''
 	print element
-	(pos, rot) = readWorldObject(element, tankWorld)
+	(pos, rot, name) = readWorldObject(element, tankWorld)
 	#tank = Tank(tankWorld,	 tankWorld.render, )
-
-	tank = Tank(tankWorld,render,'TankName',position=pos, orientation=rot)
+	tank = Tank(tankWorld,render,position=pos, orientation=rot, name=name)
 	weapon = ''
 	weaponClasses = {'blaster':Blaster}
 
@@ -88,7 +112,7 @@ def createLevel(file, tankWorld = None):
 		tankWorld = TankWorld()
 		tankWorld.getPhysics().setGravity(Vec3(0,0,-9.81))
 
-	doFunctions = {'staticobject': readStaticObject, 'tank':readTankObject}
+	doFunctions = {'staticobject': readStaticObject, 'tank':readTankObject, 'trigger':readTrigger}
 	f = open(file)
 
 	element =ElementTree.XML(f.read())

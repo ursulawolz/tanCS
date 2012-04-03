@@ -20,7 +20,8 @@ class WorldObject:
         self._nodePath = attach.attachNewNode(BulletRigidBodyNode(name)) 	#Bullet node for rendering and physics - this is what this class manipulates
         self._tankWorld = tankWorld
         self._nodePath.node().setMass(mass)					#Only static objects should have 0 mass
-	
+
+
 #The NodePath holds rendering state variables	
         self._nodePath.setPos(position[0], position[1], position[2]) 
         self._nodePath.setHpr(orientation[0], orientation[1], orientation[2])		
@@ -34,7 +35,9 @@ class WorldObject:
 
     def getVel(self):
         return self._nodePath.node().getLinearVelocity()
-
+    def getName(self):
+        return self._nodePath.getName()
+        
     def getPos(self):
         return self._nodePath.getPos()
 
