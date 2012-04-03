@@ -27,7 +27,7 @@ def parseVec3(string):
 		Converts '1,2,3' to a vec3
 	'''
 	st = string.split(',')
-	return Vec3(int(st[0]),int(st[1]),int(st[2]))
+	return Vec3(float(st[0]),float(st[1]),float(st[2]))
 
 
 def readWorldObject(element, tankWorld):

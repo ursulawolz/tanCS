@@ -1,6 +1,7 @@
 <level version="0.1" name="Test Level">
 	
-	<tank pos="3,0,10" name="tankUser">
+	<tank pos="-3,3,1.6"name="tankUser">
+
 		<weapon type="Blaster" />
 	</tank>
 
