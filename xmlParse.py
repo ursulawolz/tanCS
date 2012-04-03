@@ -1,10 +1,10 @@
-try:
-	import lxml.etree as ElementTree
-except ImportError:
-	try:
-		import xml.etree.cElementTree as ElementTree
-	except ImportError:
-		import xml.etree.ElementTree as ElementTree
+#try:
+#	import lxml.etree as ElementTree
+#except ImportError:
+#	try:
+#		import xml.etree.cElementTree as ElementTree
+#	except ImportError:
+import xml.etree.ElementTree as ElementTree #need to fix this. Not working but I want to test other stuff.
 
 
 from panda3d.core import *
@@ -63,7 +63,7 @@ def readTrigger(element, tankWorld):
 			target = np
 			break
 
-	PositionTrigger(tankWorld,target, radius=radius)
+	PositionTrigger(tankWorld,target, position=pos, radius=radius)
 
 
 
