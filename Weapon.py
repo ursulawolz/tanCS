@@ -54,7 +54,7 @@ class Weapon(object):
 	def setHeading(self,goal):
 		self.setHp(goal, self.direction[1])
 
-	def aimAt(self, pointAim):
+	def aimAt(self, pointAim, aimLow):
 		pos = self.tank.getPos()
 
 		point = Point3(pointAim[0] - pos[0], pointAim[1] - pos[1], pointAim[2] - pos[2])
@@ -73,7 +73,10 @@ class Weapon(object):
 		if discriminant < 0:
 			return False
 
-		angle2 = math.atan((v**2 - math.sqrt(discriminant))/(g * x))
+		if aimLow:
+			angle2 = math.atan((v**2 - math.sqrt(discriminant))/(g * x))
+		else:
+			angle2 = math.atan((v**2 + math.sqrt(discriminant))/(g * x))
 
 		self.setHp(angle1, angle2)
 

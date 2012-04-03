@@ -377,8 +377,8 @@ class Tank(DynamicWorldObject):
     def update(self, task):
         pass
         
-    def aimAt(self, point):
-        self._weapon.aimAt(point)
+    def aimAt(self, point, aimLow = True):
+        self._weapon.aimAt(point, aimLow)
 
 
     def backward(self, dist):
