@@ -26,6 +26,7 @@ def f(c):
 
 print('info:Hello.')
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.bind((socket.gethostname(), 31415))
 s.listen(5)
 for i in range(4):
