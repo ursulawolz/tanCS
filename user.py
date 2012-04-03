@@ -1,4 +1,5 @@
 while 1==1:
-	tank.moveTime(2)
-	tank.rotateTime(2)
-	tank.fire(1)
+	print tank.getPos()
+	tank.moveTime(1)
+	tank.fire()
+	tank.rotateTime(1)

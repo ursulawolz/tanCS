@@ -10,7 +10,7 @@ class Blast(Projectile):
 		
 
 		#Parameters to be set
-		speed = power
+		
 		damage = 1 #Blast should be weakest, base damage
 		mass = .1 
 
@@ -18,8 +18,8 @@ class Blast(Projectile):
 		shape = BulletSphereShape(.2)
 		name = weapon.getTank()._nodePath.node().getName() + ' blast'
 
-		pos = weapon.getTank().getPos()
-		pos = Point3(pos[0], pos[1], pos[2] + 5)
+		pos = weapon.getAbsPos()
+		pos = Point3(pos[0], pos[1], pos[2])
 
 		#print direction
 

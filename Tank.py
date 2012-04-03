@@ -283,6 +283,24 @@ class Tank(DynamicWorldObject):
     def rotateTime(self, rotateTime):
         self._taskTimer = rotateTime
         taskMgr.add(self.updateRotate,'userTask',uponDeath=self.nextTask)
+
+    def waitTime(self, waitTime):
+        self._taskTimer = waitTime
+        taskMgr.add(self.updateWait,'userTask',uponDeath=self.nextTask)
+
+    def updateWait(self, task):
+        '''
+        Tasks called to wait
+        '''
+        dt = globalClock.getDt()
+        #small hack to prevent the first frame from doing all the tasks.
+        if dt > .1:
+            return task.cont
+        self._taskTimer -= dt
+
+        if self._taskTimer < 0: 
+            return task.done
+        return task.cont
     
     def nextTask(self,task):
         self.onTask += 1
@@ -359,6 +377,9 @@ class Tank(DynamicWorldObject):
     def update(self, task):
         pass
         
+    def aimAt(self, point):
+        self._weapon.aimAt(point)
+
 
     def backward(self, dist):
         if dist <=0:
@@ -378,6 +399,6 @@ class Tank(DynamicWorldObject):
     def setSteering(self, angle):
         pass
 
-    def fire(self, amt):
+    def fire(self, amt = 1):
         return self._weapon.fire(amt)        
 
