@@ -9,7 +9,7 @@
 		<shape type="floor"/>
 	</staticObject>
 
-	<staticObject mesh="tree.egg" pos="5,4,0">
+	<staticObject mesh="tree.egg" pos="5,4,0" name="Tree1">
 		<shape type="mesh" />
 	</staticObject>
 

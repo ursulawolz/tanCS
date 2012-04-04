@@ -19,9 +19,9 @@ class PositionTrigger(Trigger):
 	def checkConditions(self, task):
 		try:
 			pos2 = self.tracking_object.getPos()
-			print self.position
+			#print self.position
 			#print "Checking?"
-			print (self.position-pos2).length()
+			#print (self.position-pos2).length()
 			if (self.position-pos2).length() < self.radius:
 				self.win()
 				pass

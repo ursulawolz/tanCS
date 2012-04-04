@@ -160,19 +160,16 @@ class Tank(DynamicWorldObject):
         return found
 
 
+    def __bulletRays(self, numPoints, relAngleRange, height):
+        '''Helper function for scans and pings. Runs through the 
+        relAngleRange (two ints, in degrees) at the given numPoints and height.
+        Runs a Bullet rayTestClosest to find the nearest hit.
 
-    
-    def scan(self, numPoints = 360, relAngleRange = (-180, 180), height = 1):
+        Returns a list of BulletClosestHitRayResult objects
         '''
-        This function scans the map to find the other objects on it. The scan 
-        works iteratively, based on the angle range (given relative to the 
-        tank's current heading) and the number of points given. This is a more
-        realistic scan, but does not work as well with smaller objects and 
-        larger distances
-        '''
+
         distanceOfMap = 100000
-        found = []
-        numFound = 0
+        results = []
         scanResolution = numPoints / 360.0
         pos = self._nodePath.getPos()   
         prevNodes = dict()
@@ -187,7 +184,25 @@ class Tank(DynamicWorldObject):
             pTo = Point3(math.sin(angle) * distanceOfMap + pos[0], 
                     math.cos(angle) * distanceOfMap + pos[1], height)
             result = self._tankWorld.getPhysics().rayTestClosest(pFrom, pTo)
-            
+
+            results.append((result, (angle - heading)*180 / math.pi))
+        return results
+
+    
+    def scan(self, numPoints = 360, relAngleRange = (-180, 180), height = 1):
+        '''
+        This function scans the map to find the other objects on it. The scan 
+        works iteratively, based on the angle range (given relative to the 
+        tank's current heading) and the number of points given. This is a more
+        realistic scan, but does not work as well with smaller objects and 
+        larger distances
+        '''
+        found = []
+        numFound = 0
+        results = self.__bulletRays(numPoints, relAngleRange, height)
+
+        for item in results:
+            result = item[0]
             if result.hasHit():
                 newNode = result.getNode()
                 if newNode not in prevNodes:
@@ -197,7 +212,42 @@ class Tank(DynamicWorldObject):
                     numFound = numFound + 1     
         return found
 
-    ### METHODS TO DEFINE:
+    def pingPointsAbs(self, numPoints = 360, relAngleRange = (-180, 180), height = 1):
+        '''Returns a list of absolute coordinate points on each of the 
+
+        '''
+        
+        found = []     
+        results = self.__bulletRays(numPoints, relAngleRange, height)
+
+        for item in results:
+            result = item[0]
+            if result.hasHit():
+                newNode = result.getNode()
+                found.append((result.getHitPos(), item[1], newNode.getName()))
+
+        return found
+
+    def pingPoints(self, numPoints = 360, relAngleRange = (-180, 180), height = 1):
+        found = self.pingPointsAbs(numPoints, relAngleRange, height)
+        pos = self.getPos()
+
+        for i in range(len(found)):
+            hitPos = found[i][0]
+            relPos = Point3(hitPos[0] - pos[0], hitPos[1] - pos[1], hitPos[2] - pos[2])
+            found[i] = (relPos, found[i][1], found[i][2])
+        return found
+
+    def pingDistance(self, numPoints = 360, relAngleRange = (-180, 180), height = 1):
+        found = self.pingPoints(numPoints, relAngleRange, height)
+
+        for i in range(len(found)):
+            relPos = found[i][0]
+            distance = math.sqrt(relPos[0]**2 + relPos[1]**2)
+            found[i] = (distance, found[i][1], found[i][2])
+
+        return found
+
 
     def applyThrusters(self, right, left):    #set acceleration
         '''change acceleration to a percent of the maximum acceleration'''
