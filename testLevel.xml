@@ -9,11 +9,7 @@
 		<shape type="floor"/>
 	</staticObject>
 
-	<staticObject mesh="tree.egg" pos="5,4,0" name="Tree1">
-		<shape type="mesh" />
-	</staticObject>
-
-
+	<CubeObject size="3,2,1" pos="4,2,1" name="wall1" />
 <!--
 	<staticObject mesh="rock1.egg" pos="4,10,0">
 		<shape type="mesh" />

@@ -21,6 +21,7 @@ from runFile import runFile
 
 from Blaster import Blaster
 from PositionTrigger import PositionTrigger
+from CubeObject import CubeObject
 
 def parseVec3(string):
 	'''
@@ -34,14 +35,11 @@ def readWorldObject(element, tankWorld):
 	'''
 		Helper to get position and rotation of world objects. 
 	'''
-	pos = Vec3(0,0,0)
-	rot = Vec3(0,0,0)
+
 	name = element.attrib.get('name','No name given')
-	print element.attrib
-	for at in element.attrib:
-		
-		if at == 'pos':
-			pos = parseVec3(element.attrib[at])
+	pos = parseVec3(element.attrib.get('position', "0,0,0"))
+	rot = parseVec3(element.attrib.get('orientation',"0,0,0"))
+
 
 	return pos,rot, name
 def readTrigger(element, tankWorld):
@@ -102,7 +100,11 @@ def readTankObject(element, tankWorld):
 			weapon = w.attrib.get('type','blaster').lower()
 	if weapon != '':
 		tank.setWeapon(weaponClasses[weapon](tank))
-
+def readCubeObject(element, tankWorld):
+	(pos, rot, name) = readWorldObject(element, tankWorld)
+	ss = element.attrib.get('scale',"0,0,0")
+	scale = parseVec3(ss)
+	cube = CubeObject(tankWorld, render, position=pos, orientation=rot, name=name, scale = scale)
 
 def createLevel(file, tankWorld = None):
 	'''
@@ -112,7 +114,7 @@ def createLevel(file, tankWorld = None):
 		tankWorld = TankWorld()
 		tankWorld.getPhysics().setGravity(Vec3(0,0,-9.81))
 
-	doFunctions = {'staticobject': readStaticObject, 'tank':readTankObject, 'trigger':readTrigger}
+	doFunctions = {'staticobject': readStaticObject, 'tank':readTankObject, 'trigger':readTrigger, 'cubeobject':readCubeObject}
 	f = open(file)
 
 	element =ElementTree.XML(f.read())
