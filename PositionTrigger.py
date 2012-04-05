@@ -2,13 +2,16 @@ from Trigger import Trigger
 from panda3d.core import *
 import sys
 
-class PositionTrigger(Trigger):
+from CubeObject import CubeObject
+
+class PositionTrigger(Trigger, CubeObject):
 	def __init__(self, tankWorld, tracking_object, radius, position=Vec3(0,0,0) ):
 		'''
 			TrackingObject is the world object that we are tracking
 			Position trigger has a representation needs to be added.
-			
+
 		'''
+
 
 		self.position = position
 		self.radius = radius
@@ -16,7 +19,9 @@ class PositionTrigger(Trigger):
 		print self.tracking_object
 		print "Trigger created"
 
-		super(PositionTrigger,self).__init__(tankWorld)
+
+		Trigger.__init__(self,tankWorld)
+		CubeObject.__init__(self, tankWorld, tankWorld.render, name = '', position = position, orientation = Vec3(0,0,0), scale = VBase3(2,2,2), texture='trigger.png' )
 
 	def checkConditions(self, task):
 		try:
