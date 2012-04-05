@@ -7,7 +7,15 @@ def userFun(tank):
     
     	tank.move(10)
         yield()
-<<<<<<< HEAD
+    	tank.rotateTime(1.3)
+        yield()
+    
+    	print tank.getPos()
+        yield()
+    	tank.fire()
+        yield()
+    	tank.rotateTime(1)
+        yield()
     	tank.move(2)
         yield()
     	results = tank.pingPoints()
@@ -16,11 +24,8 @@ def userFun(tank):
     	    print item
             yield()
     	print ""
-=======
-    	tank.rotateTime(1.3)
->>>>>>> 687adcabb7252aaad790d26e87c17d6952374d19
         yield()
-    	
+    
 
 x = userFun(tank)
 tank.setGenerator(x)
