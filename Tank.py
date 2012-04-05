@@ -60,7 +60,6 @@ class Tank(DynamicWorldObject):
             Creates a vehicle, sets up wheels and does all the things
         '''
         
-        self._nodePath.setPos(0, 0, 1)
         self._nodePath.node().setMass(800.0)
          
         # Chassis geometry
@@ -74,7 +73,7 @@ class Tank(DynamicWorldObject):
         self.vehicle = BulletVehicle(bulletWorld, self._nodePath.node())
         self.vehicle.setCoordinateSystem(2)
         bulletWorld.attachVehicle(self.vehicle)
-        self._nodePath.setPos(0,0,1)
+        
     
         wheelNP = loader.loadModel('box')
         wheelNP.setScale(.01,.01,.01) 
@@ -307,6 +306,9 @@ class Tank(DynamicWorldObject):
 
         self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
 
+    def rotate(self, angle):
+        pass
+
     def moveTime(self, moveTime):
         self._taskTimer = moveTime
         self._tankWorld.taskMgr.add(self.updateMove,'userTask',uponDeath=self.nextTask)
@@ -360,13 +362,16 @@ class Tank(DynamicWorldObject):
         if distance < slowDist:
             self.applyBrakes(brakePercent * 1.1)
         elif distance > slowDist:
-            self.applyThrusters()
+            if self._moveLoc[2] > 0:
+                self.applyThrusters()
+            else:
+                self.applyThrusters(-1, -1)
         else:
             self.applyBrakes(brakePercent)
         
         if distance < .01: 
             self._stop = True
-        if abs(distFromStart) > self._moveLoc[2]:
+        if abs(distFromStart) > abs(self._moveLoc[2]):
             self._stop = True
         
         return task.cont
