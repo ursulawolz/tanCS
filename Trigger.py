@@ -6,7 +6,7 @@ class Trigger(object):
 		#tankWorld.add(self.checkConditions,"asddff") #This creates a task named update and runs every frame
 		self.tankWorld = tankWorld
 		tankWorld.add(self.checkConditions,0)
-		print "Method added"
+		print "Trigger.__init__ : Method added"
 		pass
 
 	def checkConditions(self, task):
@@ -16,7 +16,7 @@ class Trigger(object):
 
 		
 	def win(self):
-		print self.tankWorld
+		print "Trigger.win: ", self.tankWorld
 		#pdb.set_trace()
 		self.tankWorld.victory()
 

@@ -29,7 +29,7 @@ class TankWorld(ShowBase):
 		self.__setupLighting()
 		base.cam.setPos(30,30,30);
 		base.cam.lookAt(0,0,0);
-		self.drawDebugNode()
+		#self.drawDebugNode()
 		self.__setupUserInput() #set up user input
 		base.disableMouse() #disable the mouse
 
@@ -40,10 +40,12 @@ class TankWorld(ShowBase):
 
 		self.tanks = []
 		self.isDead = False
+
 	def __del__(self):
 		#self.shutdown()
 		#del self
 		pass
+	
 	def __setupLighting(self):
 		'''
 		Sets up lighting
