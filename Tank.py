@@ -249,7 +249,7 @@ class Tank(DynamicWorldObject):
         return found
 
 
-    def applyThrusters(self, right, left):    #set acceleration
+    def applyThrusters(self, right = 1, left = 1):    #set acceleration
         '''change acceleration to a percent of the maximum acceleration'''
         
         #if right > 1 or amt < 0:
@@ -326,7 +326,27 @@ class Tank(DynamicWorldObject):
         #		Calculate distance travelled within this iteration.
         #		newDistance=dist-distanceTravelled
         #		move(self, newDistance)
-        pass
+        heading = self._nodePath.getH()
+
+        pos = self.getPos()
+        
+        #print 'In Tank.move'
+        ##print pos
+        #print heading
+
+
+
+        self._stop = False
+        self._toLoc = Point3(pos[0] + math.sin(heading) * dist, pos[1] - math.cos(heading) * dist, pos[2]) 
+        #print (self._toLoc)
+        tankLoc = self._toLoc + Point3(0,0,1)
+
+        #x = Tank(self._tankWorld, self._nodePath.getParent(), 'test', tankLoc)
+        
+        #self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
+
+
+
     def moveTime(self, moveTime):
         self._taskTimer = moveTime
         self._tankWorld.taskMgr.add(self.updateMove,'userTask',uponDeath=self.nextTask)
@@ -352,6 +372,36 @@ class Tank(DynamicWorldObject):
 
         if self._taskTimer < 0: 
             return task.done
+        return task.cont
+
+    def updateMoveLoc(self, task):
+        pos = self.getPos()
+        distance = math.sqrt((pos[0] - self._toLoc[0])**2 + (pos[1] - self._toLoc[1])**2)
+        v = self._nodePath.node().getLinearVelocity().length()
+        a = self._breakForce * .9
+
+        if self._stop:
+            print'Stop'
+            if v < 1:
+                return task.done
+            self.applyBrakes()
+            return task.cont
+
+        
+        if distance < (v**2 / (2*a)):
+            self.applyBrakes()
+            print 'Slow'
+        elif distance > (v**2/(2*a)):
+            self.applyThrusters()
+            print 'Go'
+        else:
+            self.applyBrakes(.9)
+            print 'Perfect'
+
+        if distance < 1:
+            self._stop = True
+
+
         return task.cont
 
     
