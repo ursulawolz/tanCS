@@ -77,7 +77,7 @@ def readStaticObject(element, tankWorld):
 			static = MeshWorldObject(tankWorld,render, filename, position=pos, orientation=rot, name=name)
 			break
 		if shape.attrib.get('type','mesh').lower() == 'floor':
-			static = FloorStaticObject(tankWorld,render, filename, position=pos, orientation=rot, name=name)
+			static = FloorStaticObject(tankWorld,render, position=pos, orientation=rot, name=name)
 			break
 
 		#Do other types of shapes here
@@ -100,7 +100,8 @@ def readTankObject(element, tankWorld):
 			weapon = w.attrib.get('type','blaster').lower()
 	if weapon != '':
 		tank.setWeapon(weaponClasses[weapon](tank))
-'''def readCubeObject(element, tankWorld):
+'''
+def readCubeObject(element, tankWorld):
 	(pos, rot, name) = readWorldObject(element, tankWorld)
 	ss = element.attrib.get('scale',"0,0,0")
 	scale = parseVec3(ss)

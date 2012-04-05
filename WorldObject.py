@@ -6,7 +6,7 @@ import TaskList
 import math
 
 
-class WorldObject:
+class WorldObject(object):
     """Parent Class for all physical objects present in TankWorld. 
     Variables:
     .node > BulletRigidBodyNode for physics simulation
