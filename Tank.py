@@ -33,7 +33,7 @@ class Tank(DynamicWorldObject):
        
         self._shape = BulletBoxShape(Vec3(0.7, 1.5, 0.5)) #chassis
         self._transformState = TransformState.makePos(Point3(0, 0, .5)) #offset 
-        print name
+        print "Tank.__init__: " + name
         DynamicWorldObject.__init__(self, world, attach, name, position, self._shape, orientation, Vec3(0,0,0), mass = tankMass)   #Initial velocity must be 0
         self.__createVehicle(self._tankWorld.getPhysics())
 
@@ -43,14 +43,7 @@ class Tank(DynamicWorldObject):
         # Set up turret nodepath
         # (Nodepaths are how objects are managed in Panda3d)
  
-        ## FILLER:
-        ## Set up the weapon initial conditions !!!
-        ## END FILLER
-        #self.taskList = [[self.moveTime,1], [self.moveTime,1], [self.rotateTime,1], [self.moveTime,1], [self.rotateTime,1], [self.rotateTime,2],[self.moveTime,2], [self.rotateTime,2],[self.moveTime,2], [self.rotateTime,2]]
         self.onTask = 0
-
-        #send of the first task
-        #self.taskList[0][0](self.taskList[0][1])
 
         # Make collide mask (What collides with what)
         self._nodePath.setCollideMask(0xFFFF0000)
@@ -67,7 +60,6 @@ class Tank(DynamicWorldObject):
             Creates a vehicle, sets up wheels and does all the things
         '''
         
-        self._nodePath.setPos(0, 0, 1)
         self._nodePath.node().setMass(800.0)
          
         # Chassis geometry
@@ -81,7 +73,7 @@ class Tank(DynamicWorldObject):
         self.vehicle = BulletVehicle(bulletWorld, self._nodePath.node())
         self.vehicle.setCoordinateSystem(2)
         bulletWorld.attachVehicle(self.vehicle)
-        self._nodePath.setPos(0,0,1)
+        
     
         wheelNP = loader.loadModel('box')
         wheelNP.setScale(.01,.01,.01) 
@@ -303,49 +295,19 @@ class Tank(DynamicWorldObject):
         pass 
 
     def move(self, dist):   
-        
-        '''	Two possible ways to do this'''
-
-        ''' 	First way: Create a target location. Each iteration, calculate the distance between current position and target location. Break accordingly.'''
-        #	def move(self,dist):
-        #		Calculate target location (x,y,z)
-        #		moveLocation(self,location)
-        #	
-        #	def moveLocation(self,location):
-        #		if Distance between Current Location and Target Location equals (Current Velocity)^2/(2*Max_Deceleration):
-        #			self.applyBreaks(Max_Deceleration)
-        #		else
-        #			self.applyThrusters
-        #		moveLocation(self,location)
-        '''	Second Way: Update required distance to travel after each iteration. Break accordingly.'''
-        #	def move(self,dist):
-        #		if Distance between Current Location and Target Location equals (Current Velocity)^2/(2*Max_Deceleration):
-        #			self.applyBreaks(Max_Deceleration)
-        #		else
-        #			self.applyThrusters
-        #		Calculate distance travelled within this iteration.
-        #		newDistance=dist-distanceTravelled
-        #		move(self, newDistance)
-        heading = self._nodePath.getH()
-
+        '''Moves using a distance. Adds an updateMoveLoc task to the taskMgr.
+        '''        
+        heading = self._nodePath.getH() * math.pi/180
         pos = self.getPos()
-        
-        #print 'In Tank.move'
-        ##print pos
-        #print heading
-
-
-
         self._stop = False
-        self._toLoc = Point3(pos[0] + math.sin(heading) * dist, pos[1] - math.cos(heading) * dist, pos[2]) 
-        #print (self._toLoc)
-        tankLoc = self._toLoc + Point3(0,0,1)
-
-        #x = Tank(self._tankWorld, self._nodePath.getParent(), 'test', tankLoc)
         
-        #self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
+        #Of the form (goalLoc, startLoc, distance)
+        self._moveLoc = (Point3(pos[0] + math.sin(heading) * dist, pos[1] - math.cos(heading) * dist, pos[2]), pos, dist)
 
+        self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
 
+    def rotate(self, angle):
+        pass
 
     def moveTime(self, moveTime):
         self._taskTimer = moveTime
@@ -365,9 +327,6 @@ class Tank(DynamicWorldObject):
         Tasks called to wait
         '''
         dt = globalClock.getDt()
-        #small hack to prevent the first frame from doing all the tasks.
-        if dt > .1:
-            return task.cont
         self._taskTimer -= dt
 
         if self._taskTimer < 0: 
@@ -375,33 +334,46 @@ class Tank(DynamicWorldObject):
         return task.cont
 
     def updateMoveLoc(self, task):
+        '''Bases how much to slow down on a = v^2/2x. 
+        x is slowDist, chosen to play nice. 
+
+        Generally accurate to 5cm, rarely 20cm or worse
+
+        Stops at an arbitrary low velocity because it will never exit
+        at a lower minimum
+        '''
+
         pos = self.getPos()
-        distance = math.sqrt((pos[0] - self._toLoc[0])**2 + (pos[1] - self._toLoc[1])**2)
+        toLoc = self._moveLoc[0]
+        distance = math.sqrt((pos[0] - toLoc[0])**2 + (pos[1] - toLoc[1])**2)
         v = self._nodePath.node().getLinearVelocity().length()
-        a = self._breakForce * .9
+        slowDist = 1
+        brakePercent = v**2 / (2 * slowDist * self._breakForce)
+        
+        deltaPos = (self.getPos() - self._moveLoc[1])
+        distFromStart = deltaPos.length()
 
         if self._stop:
-            print'Stop'
-            if v < 1:
+            if v < .4:
                 return task.done
             self.applyBrakes()
             return task.cont
-
         
-        if distance < (v**2 / (2*a)):
-            self.applyBrakes()
-            print 'Slow'
-        elif distance > (v**2/(2*a)):
-            self.applyThrusters()
-            print 'Go'
+        if distance < slowDist:
+            self.applyBrakes(brakePercent * 1.1)
+        elif distance > slowDist:
+            if self._moveLoc[2] > 0:
+                self.applyThrusters()
+            else:
+                self.applyThrusters(-1, -1)
         else:
-            self.applyBrakes(.9)
-            print 'Perfect'
-
-        if distance < 1:
+            self.applyBrakes(brakePercent)
+        
+        if distance < .01: 
             self._stop = True
-
-
+        if abs(distFromStart) > abs(self._moveLoc[2]):
+            self._stop = True
+        
         return task.cont
 
     
@@ -442,12 +414,10 @@ class Tank(DynamicWorldObject):
         Task Called to do movement. This is called once perframe
         '''
         try:
-            #print "doing movement"
             #small hack to prevent the first frame from doing all the tasks.
             dt = globalClock.getDt()    
             if dt > .1:
                 return task.cont
-            #print dt, self._taskTimer
             self._taskTimer -= dt
 
             if self._taskTimer < 0:

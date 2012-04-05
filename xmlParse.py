@@ -54,7 +54,7 @@ def readTrigger(element, tankWorld):
 
 	target = None
 	for np in potentialNPs:
-		print np.node().getClassType()
+		print "xmlParse: ",  np.node().getClassType()
 		#if np.node().getClassType() == BulletRigidBodyNode.getClassType():
 
 		if np.getName() == targetName:
@@ -86,7 +86,7 @@ def readTankObject(element, tankWorld):
 	'''
 	Reads a tank object from xml
 	'''
-	print element
+	print "xmlParse: ", element
 	(pos, rot, name) = readWorldObject(element, tankWorld)
 	#tank = Tank(tankWorld,	 tankWorld.render, )
 	tank = Tank(tankWorld,render,position=pos, orientation=rot, name=name)
@@ -100,13 +100,13 @@ def readTankObject(element, tankWorld):
 			weapon = w.attrib.get('type','blaster').lower()
 	if weapon != '':
 		tank.setWeapon(weaponClasses[weapon](tank))
-		
+'''
 def readCubeObject(element, tankWorld):
 	(pos, rot, name) = readWorldObject(element, tankWorld)
 	ss = element.attrib.get('scale',"0,0,0")
 	scale = parseVec3(ss)
 	cube = CubeObject(tankWorld, render, position=pos, orientation=rot, name=name, scale = scale)
-
+'''
 def createLevel(file, tankWorld = None):
 	'''
 		Creates the level. THis is the main function that goes through and calls other functions to parse the xml file.
@@ -115,7 +115,7 @@ def createLevel(file, tankWorld = None):
 		tankWorld = TankWorld()
 		tankWorld.getPhysics().setGravity(Vec3(0,0,-9.81))
 
-	doFunctions = {'staticobject': readStaticObject, 'tank':readTankObject, 'trigger':readTrigger, 'cubeobject':readCubeObject}
+	doFunctions = {'staticobject': readStaticObject, 'tank':readTankObject, 'trigger':readTrigger}
 	f = open(file)
 
 	element =ElementTree.XML(f.read())

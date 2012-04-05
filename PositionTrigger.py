@@ -17,7 +17,7 @@ class PositionTrigger(Trigger, CubeObject):
 		self.radius = radius
 		self.tracking_object = tracking_object
 		print self.tracking_object
-		print "Trigger created"
+		print "PositionTrigger.__init__: Trigger created"
 
 
 		Trigger.__init__(self,tankWorld)
