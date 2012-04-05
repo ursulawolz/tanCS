@@ -12,19 +12,7 @@ def userFun(tank):
     
     	print tank.getPos()
         yield()
-    	tank.fire()
-        yield()
-    	tank.rotateTime(1)
-        yield()
-    	tank.move(2)
-        yield()
-    	results = tank.pingPoints()
-        yield()
-    	for item in results:
-    	    print item
-            yield()
-    	print ""
-        yield()
+    
     
 
 x = userFun(tank)

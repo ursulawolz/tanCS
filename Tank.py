@@ -31,8 +31,8 @@ class Tank(DynamicWorldObject):
         self._breakForce = 1000
         turretRelPos = (0, 0, 0) #Relative to tank
        
-        self._shape = BulletBoxShape(Vec3(0.7, 1.5, 0.5)) #chassis
-        self._transformState = TransformState.makePos(Point3(0, 0, .5)) #offset 
+        self._shape = BulletBoxShape(Vec3(1,1.5,.5)) #chassis
+        self._transformState = TransformState.makePos(Point3(0, 0, 0)) #offset 
         print "Tank.__init__: " + name
         DynamicWorldObject.__init__(self, world, attach, name, position, self._shape, orientation, Vec3(0,0,0), mass = tankMass)   #Initial velocity must be 0
         self.__createVehicle(self._tankWorld.getPhysics())
@@ -66,8 +66,8 @@ class Tank(DynamicWorldObject):
         np  = loader.loadModel('box')
 
         np.reparentTo(self._nodePath)
-        np.setScale(Vec3(0.7, 1.5, 0.5)*2)
-        np.setPos(-Vec3(0.7, 1.5, 0.5)+Vec3(0, 0, .5))
+        np.setScale(Vec3(1,1.5,.5)*2)
+        np.setPos(-Vec3(1,1.5,.5)+Vec3(0, 0, 0))
        
         # Vehicle
         self.vehicle = BulletVehicle(bulletWorld, self._nodePath.node())
@@ -78,16 +78,13 @@ class Tank(DynamicWorldObject):
         wheelNP = loader.loadModel('box')
         wheelNP.setScale(.01,.01,.01) 
 
-        wheelPos = [Point3(0.8, 1.1, 0.1),Point3(-0.8, 1.1, 0.1),
-                    Point3(0.8, -1.1, .1),Point3(-0.8, -1.1, .1)]
+        wheelPos = [Point3(0.8, 1.1, 0),Point3(-0.8, 1.1, 0),
+                    Point3(0.8, -1.1, 0),Point3(-0.8, -1.1, 0)]
 
         for i in range(4):
             wheel = self.vehicle.createWheel()
             wheel.setWheelAxleCs(Vec3(-2*(i%2)+1, 0, 0))
-            wheel.setChassisConnectionPointCs(wheelPos[i])
-            #wheel.setFrontWheel(i/2)
-            wheel.setWheelRadius(.5)
-            wheel.setFrontWheel(False)
+            wheel.setChassisConnectionPointCs(wheelPos[i])            
             self.__createWheel(wheel)
             self.vehicle.setSteeringValue(0,i)
             wheel.setRollInfluence((-2*(i%2)+1)*0.2)
@@ -97,6 +94,7 @@ class Tank(DynamicWorldObject):
             sets up properties for wheel.
         '''
         wheel.setWheelDirectionCs(Vec3(0, 0, -1))
+        wheel.setFrontWheel(False)
         wheel.setWheelRadius(0.35)
         wheel.setMaxSuspensionTravelCm(40.0)
         wheel.setSuspensionStiffness(40.0)
