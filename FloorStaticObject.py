@@ -1,6 +1,6 @@
 from StaticWorldObject import *
 from Imports import *
-from panda3d.core import Quat, Mat4, CardMaker, Material, VBase4
+from panda3d.core import Quat, Mat4, CardMaker, Material, VBase4, CardMaker, Texture
 from panda3d.bullet import BulletPlaneShape
 
 
@@ -9,15 +9,23 @@ class FloorStaticObject(StaticWorldObject):
 		Object for testing. Creates a plane with a plain texture.
 	"""
 	
-	def __init__(self, world, attach, mesh, name = '', position = Vec3(0,0,0), orientation = Vec3(0,0,0)):
-
+	def __init__(self, world, attach, name = '', position = Vec3(0,0,0), orientation = Vec3(0,0,0)):
 		cm=CardMaker('')
-		cm.setFrame(-20,20,-20,20)
+		cm.setFrame(0,1,0,1)
 		floor = render.attachNewNode(PandaNode("floor"))
+		tex = loader.loadTexture('ground.png')
+		tex.setMagfilter(Texture.FTNearest)
+		tex.setMinfilter(Texture.FTNearest)
+		size = 24
+		for y in range(size):
+			for x in range(size):
+				nn = floor.attachNewNode(cm.generate())
+				nn.setP(-90)
+				nn.setPos((x-size/2), (y-size/2), 0)
+		floor.setTexture(tex)
+		floor.flattenStrong()
 
-		nn = floor.attachNewNode(cm.generate())
-		nn.setPos(0,0,0)
-		nn.setP(-90)
+
 
 		myMaterial = Material()
 		myMaterial.setShininess(0) #Make this material shiny

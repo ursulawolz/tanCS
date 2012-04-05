@@ -1,7 +1,7 @@
 <level version="0.1" name="Test Level">
 
 
-	<tank pos="-3,3,1.6" name="tankUser">
+	<tank position="-3,3,1.6" name="tankUser">
 		<weapon type="Blaster" />
 	</tank>
 
@@ -9,8 +9,11 @@
 		<shape type="floor"/>
 	</staticObject>
 
-	<CubeObject size="3,2,1" pos="4,2,1" name="wall1" />
+	<CubeObject scale="3,1,2" position="0,0,0" name="wall1" />
+	<CubeObject scale="3,1,2" position="0,4,0" name="wall1" />
+	<CubeObject scale="2,2,4" position="-4,-6,0" name="wall1" />
 <!--
+
 	<staticObject mesh="rock1.egg" pos="4,10,0">
 		<shape type="mesh" />
 	</staticObject>

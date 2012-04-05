@@ -11,7 +11,7 @@ def userFun(tank):
         yield()
     	tank.rotateTime(1)
         yield()
-    	tank.move(10)
+    	tank.moveTime(2)
         yield()
     	results = tank.pingPoints()
         yield()

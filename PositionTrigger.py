@@ -6,6 +6,8 @@ class PositionTrigger(Trigger):
 	def __init__(self, tankWorld, tracking_object, radius, position=Vec3(0,0,0) ):
 		'''
 			TrackingObject is the world object that we are tracking
+			Position trigger has a representation needs to be added.
+			
 		'''
 
 		self.position = position
