@@ -149,7 +149,7 @@ class TankWorld(ShowBase):
 		debugNode.showNormals(False)
 		self.debugNP = render.attachNewNode(debugNode)
 
-		print "debug node activated" 
+		print "TankWorld.drawDebugNode: debug node activated" 
 		self.accept('9', self.debugNP.show)
 		self.accept('8', self.debugNP.hide)
 

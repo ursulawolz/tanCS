@@ -1,7 +1,7 @@
 <level version="0.1" name="Test Level">
 
 
-	<tank pos="-3,3,1.6" name="tankUser">
+	<tank position="-3,3,1.6" name="tankUser" orientation="0, 0, 0">
 		<weapon type="Blaster" />
 	</tank>
 
@@ -9,30 +9,30 @@
 		<shape type="floor"/>
 	</staticObject>
 
-	<CubeObject size="3,2,1" pos="4,2,1" name="wall1" />
+	
 <!--
-	<staticObject mesh="rock1.egg" pos="4,10,0">
+	<staticObject mesh="rock1.egg" position="4,10,0">
 		<shape type="mesh" />
 	</staticObject>
 
-	<staticObject mesh="tree.egg" pos="2,3,100">
+	<staticObject mesh="tree.egg" position="2,3,100">
 		<shape type="mesh" />
 	</staticObject>
 
-	<staticObject mesh="rock1.egg" pos="4,5,0">
+	<staticObject mesh="rock1.egg" position="4,5,0">
 		<shape type="mesh" />
 	</staticObject>
 
-	<staticObject mesh="rock1.egg" pos="20,3,0">
+	<staticObject mesh="rock1.egg" position="20,3,0">
 		<shape type="mesh" />
 	</staticObject>
 
-	<staticObject mesh="tree.egg" pos="3,3,0">
+	<staticObject mesh="tree.egg" position="3,3,0">
 		<shape type="mesh" />
 	</staticObject>
 	
 
-	<trigger type="position" pos="1,3,1.6" radius="4" target="tankUser"/>
+	<trigger type="position" position="1,3,1.6" radius="4" target="tankUser"/>
 -->
 
 </level>

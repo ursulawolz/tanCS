@@ -68,12 +68,10 @@ tank.runTasks()'''
 
 		prevTabs = getInitialWhitespace(line)
 		
-		if x == '' or ':' in line:
+		if x == '' or ':' in line or '#' is x[0]:
 			code = code + tabClause + line
 		else:
 			code = code + tabClause + line + tabClause + prevTabs + yieldClause
-
-		print len(prevTabs)
 
 	code = code + appendToEnd
 
