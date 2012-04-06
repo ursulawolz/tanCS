@@ -1,4 +1,7 @@
 from panda3d.core import *
+
+from panda3d.bullet import BulletRigidBodyNode, BulletWorld
+
 from TankWorld import TankWorld
 from MeshWorldObject import MeshWorldObject
 from Tank import Tank
@@ -22,23 +25,29 @@ class testLevel():
 		taskMgr.add(self.fileHasUpdate,"fileUpdate") 
 
 	def fileHasUpdate(self,task):
-		try:
-			if self.oldtime != os.stat(self.filename).st_mtime:
+		#try:
+		if self.oldtime != os.stat(self.filename).st_mtime:
 
-				for child in self.t.render.getChildren():
-					name = child.getName()
-					if name != 'camera' and name != 'Spot' and name != 'Debug' and name != 'Ambient':
-						child.detachNode()
-					pass
-				xmlParse.createLevel(self.filename, self.t)
-				self.oldtime = os.stat(self.filename).st_mtime
-		except:
-			print "error in testLevel.upate"
+			for child in self.t.render.getChildren():
+				name = child.getName()
+				print child
+				if child.node().getClassType() == BulletRigidBodyNode.getClassType():
+
+					self.t.getPhysics().removeRigidBody(child.node())
+					print "rigid body removed"
+
+				if name != 'camera' and name != 'Spot' and name != 'Debug' and name != 'Ambient':
+					child.detachNode()
+				pass
+			xmlParse.createLevel(self.filename, self.t)
+			self.oldtime = os.stat(self.filename).st_mtime
+		#except:
+		#	print "error in testLevel.upate"
 		return task.cont
 
 
 
-t = testLevel('testLevel.xml')
+t = testLevel(sys.argv[1])
 run()
 
 

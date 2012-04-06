@@ -16,12 +16,12 @@ class FloorStaticObject(StaticWorldObject):
 		tex = loader.loadTexture('ground.png')
 		tex.setMagfilter(Texture.FTNearest)
 		tex.setMinfilter(Texture.FTNearest)
-		size = 24
+		size = 44
 		for y in range(size):
 			for x in range(size):
 				nn = floor.attachNewNode(cm.generate())
 				nn.setP(-90)
-				nn.setPos((x-size/2), (y-size/2), 0)
+				nn.setPos((x), (y), 0)
 		floor.setTexture(tex)
 		floor.flattenStrong()
 

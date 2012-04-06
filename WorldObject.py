@@ -29,7 +29,7 @@ class WorldObject(object):
         #Bullet's Node holds other physics-based state variables
         self._nodePath.node().setLinearVelocity(velocity)
         self._transformState = getattr(self, '_transformState',TransformState.makePos(Point3(0, 0, 0)))
-
+        
         self._nodePath.node().addShape(shape,self._transformState)
         self._tankWorld.attachRigidBody(self._nodePath.node())
 

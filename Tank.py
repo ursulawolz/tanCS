@@ -78,8 +78,8 @@ class Tank(DynamicWorldObject):
         wheelNP = loader.loadModel('box')
         wheelNP.setScale(.01,.01,.01) 
 
-        wheelPos = [Point3(0.8, 1.1, 0),Point3(-0.8, 1.1, 0),
-                    Point3(0.8, -1.1, 0),Point3(-0.8, -1.1, 0)]
+        wheelPos = [Point3(1, 1, 0),Point3(-1, 1, 0),
+                    Point3(1, -1, 0),Point3(-1, -1, 0)]
 
         for i in range(4):
             wheel = self.vehicle.createWheel()
@@ -95,7 +95,7 @@ class Tank(DynamicWorldObject):
         '''
         wheel.setWheelDirectionCs(Vec3(0, 0, -1))
         wheel.setFrontWheel(False)
-        wheel.setWheelRadius(0.35)
+        wheel.setWheelRadius(0.15)
         wheel.setMaxSuspensionTravelCm(40.0)
         wheel.setSuspensionStiffness(40.0)
         wheel.setWheelsDampingRelaxation(2.3)
@@ -335,7 +335,21 @@ class Tank(DynamicWorldObject):
         '''Bases how much to slow down on a = v^2/2x. 
         x is slowDist, chosen to play nice. 
 
-        Generally accurate to 5cm, rarely 20cm or worse
+        Generally accurate to 5cm, rarely 20cm or worse    +You
+    Search
+    Images
+    Maps
+    PlayNEW
+    YouTube
+    News
+    Gmail
+    Documents
+    Calendar
+    More
+
+    
+        
+
 
         Stops at an arbitrary low velocity because it will never exit
         at a lower minimum

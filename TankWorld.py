@@ -27,8 +27,8 @@ class TankWorld(ShowBase):
 		self.__bulletWorld = physics	
 				
 		self.__setupLighting()
-		base.cam.setPos(30,30,30);
-		base.cam.lookAt(0,0,0);
+		base.cam.setPos(-10,-10,30);
+		base.cam.lookAt(10,10,0);
 		self.drawDebugNode()
 		self.__setupUserInput() #set up user input
 		base.disableMouse() #disable the mouse
