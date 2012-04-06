@@ -360,7 +360,7 @@ class Tank(DynamicWorldObject):
         slowTheta = 2.5 * rFor
         brakePercent = w**2 / (2 * slowTheta * self._maxThrusterAccel)
         theta = self.fixAngle(toHeading - heading)
-        thetaFromStart = self.fixAngle(heading - self._moveLoc[1])
+        thetaFromStart = heading - self._moveLoc[1]
 
         if self._stop:
             if abs(w) < .1:
@@ -383,7 +383,8 @@ class Tank(DynamicWorldObject):
         if theta < .1: 
             self._stop = True
         if abs(thetaFromStart + .1) > abs(self._moveLoc[2]):
-            self._stop = True
+            if thetaFromStart/self._moveLoc[2] > 0:
+                self._stop = True
         
         return task.cont
 
@@ -401,16 +402,17 @@ class Tank(DynamicWorldObject):
         toLoc = self._moveLoc[0]
         distance = math.sqrt((pos[0] - toLoc[0])**2 + (pos[1] - toLoc[1])**2)
         v = self._nodePath.node().getLinearVelocity().length()
-        slowDist = 1
-        brakePercent = v**2 / (2 * slowDist * self._breakForce)
-        
+        slowAccel = 2
+        slowDist = v**2 / (2 * slowAccel * self._breakForce)
+        brakePercent = slowAccel * 800 / self._breakForce
+
         deltaPos = (self.getPos() - self._moveLoc[1])
         distFromStart = deltaPos.length()
 
         if self._stop:
             if v < .4:
-                self._nodePath.node().setLinearVelocity(Vec3(0,0,0))
-                self._nodePath.setPos(self._moveLoc[0])
+                #self._nodePath.node().setLinearVelocity(Vec3(0,0,0))
+                #self._nodePath.setPos(self._moveLoc[0])
                 return task.done
             self.applyBrakes()
             return task.cont
