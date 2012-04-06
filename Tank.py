@@ -27,6 +27,7 @@ class Tank(DynamicWorldObject):
 
         # Rewrite constructor to include these?
         self._maxVel = 4
+        self._maxRotVel = 1
         self._maxThrusterAccel = 5000
         self._breakForce = 1000
         turretRelPos = (0, 0, 0) #Relative to tank
@@ -118,6 +119,13 @@ class Tank(DynamicWorldObject):
         #Note: currently instantaneous - we need to figure out how to move 
         #continuously (or not, Turrets don't collide...)
         self._weapon.setHp(heading,pitch)
+
+    def moveWeapon(self, heading = 0, pitch = 0):
+        rot = self.getHpr()
+        print "Tank.moveWeapon: ", rot
+        print rot[0] + heading, rot[1] + pitch
+
+        self.setWeaponHp(rot[0] + heading, rot[1] + pitch)
 
     def distanceScan(self):
         '''
@@ -295,17 +303,26 @@ class Tank(DynamicWorldObject):
     def move(self, dist):   
         '''Moves using a distance. Adds an updateMoveLoc task to the taskMgr.
         '''        
+
         heading = self._nodePath.getH() * math.pi/180
         pos = self.getPos()
         self._stop = False
         
         #Of the form (goalLoc, startLoc, distance)
         self._moveLoc = (Point3(pos[0] + math.sin(heading) * dist, pos[1] - math.cos(heading) * dist, pos[2]), pos, dist)
-
+        
         self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
 
     def rotate(self, angle):
-        pass
+        angle = self.fixAngle(angle)
+        heading = self.fixAngle(self._nodePath.getH())
+        newH = self.fixAngle(heading + angle)
+
+        self._moveLoc = (newH, heading, angle)
+        self._stop = False
+
+        self._tankWorld.taskMgr.add(self.updateRotateLoc, 'userTask', uponDeath=self.nextTask)
+
 
     def moveTime(self, moveTime):
         self._taskTimer = moveTime
@@ -318,7 +335,7 @@ class Tank(DynamicWorldObject):
 
     def waitTime(self, waitTime):
         self._taskTimer = waitTime
-        taskMgr.add(self.updateWait,'userTask',uponDeath=self.nextTask)
+        self._tankWorld.taskMgr.add(self.updateWait,'userTask',uponDeath=self.nextTask)
 
     def updateWait(self, task):
         '''
@@ -331,25 +348,50 @@ class Tank(DynamicWorldObject):
             return task.done
         return task.cont
 
+
+    def updateRotateLoc(self, task):
+        heading = self.fixAngle(self._nodePath.getH())
+        toHeading = self._moveLoc[0]
+        w = self._nodePath.node().getAngularVelocity()[2]
+
+        #Right wheel direction for rotating in the direction of goal
+        rFor = self._moveLoc[2]/abs(self._moveLoc[2]) 
+
+        slowTheta = 2.5 * rFor
+        brakePercent = w**2 / (2 * slowTheta * self._maxThrusterAccel)
+        theta = self.fixAngle(toHeading - heading)
+        thetaFromStart = self.fixAngle(heading - self._moveLoc[1])
+
+        if self._stop:
+            if abs(w) < .1:
+                self._nodePath.node().setAngularVelocity(Vec3(0,0,0))
+                self._nodePath.setH(self._moveLoc[0])
+                return task.done
+            self.applyBrakes()
+            return task.cont
+        
+        if theta < slowTheta - .25:
+            self.applyThrusters(-rFor * brakePercent, rFor * brakePercent)
+        elif theta > slowTheta - .25:
+            if w < self._maxRotVel:
+                self.applyThrusters(rFor, -1 * rFor)
+            else:
+                self.applyThrusters(0,0)
+        else:
+            self.applyBrakes(brakePercent)
+        
+        if theta < .1: 
+            self._stop = True
+        if abs(thetaFromStart + .1) > abs(self._moveLoc[2]):
+            self._stop = True
+        
+        return task.cont
+
     def updateMoveLoc(self, task):
         '''Bases how much to slow down on a = v^2/2x. 
         x is slowDist, chosen to play nice. 
 
-        Generally accurate to 5cm, rarely 20cm or worse    +You
-    Search
-    Images
-    Maps
-    PlayNEW
-    YouTube
-    News
-    Gmail
-    Documents
-    Calendar
-    More
-
-    
-        
-
+        Generally accurate to 5cm, rarely 20cm or worse 
 
         Stops at an arbitrary low velocity because it will never exit
         at a lower minimum
@@ -367,6 +409,8 @@ class Tank(DynamicWorldObject):
 
         if self._stop:
             if v < .4:
+                self._nodePath.node().setLinearVelocity(Vec3(0,0,0))
+                self._nodePath.setPos(self._moveLoc[0])
                 return task.done
             self.applyBrakes()
             return task.cont
@@ -494,4 +538,3 @@ class Tank(DynamicWorldObject):
 
     def fire(self, amt = 1):
         return self._weapon.fire(amt)        
-

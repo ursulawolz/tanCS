@@ -45,7 +45,7 @@ class WorldObject(object):
         return self._tankWorld
 
     def getHpr(self):
-        return self._nodePath.setHpr()
+        return self._nodePath.getHpr()
 
     def getShape(self):
         return self.__shape ##I'm not sure this is the correct implimentation.
@@ -56,3 +56,9 @@ class WorldObject(object):
     def getNodePath(self):
         return self._nodePath
 
+    def fixAngle(self, angle):
+        if angle < 0:
+            angle += 360
+        elif angle > 360:
+            angle -= 360
+        return angle
