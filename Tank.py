@@ -313,6 +313,10 @@ class Tank(DynamicWorldObject):
         
         self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
 
+    def turnTo(self, newH):
+        self.rotate(newH - self._nodePath.getH())
+
+
     def rotate(self, angle):
         '''Rotate function. All angles given between 0 and 360
         Angle changes are between -180 and 180
