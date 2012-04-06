@@ -9,6 +9,6 @@ makeCubeObject(size=(1,5,3), position=(0,1,0), name="wall1")
 makeCubeObject(size=(1,26,3), position=(26,0,0), name="wall1")
 makeCubeObject(size=(1,20,3), position=(20,6,0), name="wall1")
 makeCubeObject(size=(7,1,3), position=(20,26,0), name="wall1")
-
+makeBlaster(tank)
 makePositionTrigger(target = tank, position=(22.5,23,0))
 

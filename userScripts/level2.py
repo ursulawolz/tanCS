@@ -1,6 +1,5 @@
-
-tank.move(20)
-tank.rotateTime(1.3)
+tank.move(19)
+tank.rotate(90)
 tank.move(20)
 
 
