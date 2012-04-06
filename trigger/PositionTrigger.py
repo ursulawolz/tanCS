@@ -10,7 +10,7 @@ from CubeObject import CubeObject
 
 
 class PositionTrigger(Trigger, CubeObject):
-	def __init__(self, tankWorld, tracking_object, radius, position=Vec3(0,0,0) ):
+	def __init__(self, tankWorld, tracking_object, radius=1, position=Vec3(0,0,0) ):
 		'''
 			TrackingObject is the world object that we are tracking
 			Position trigger has a representation needs to be added.

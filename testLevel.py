@@ -15,18 +15,22 @@ import sys, os
 from direct.interval.IntervalGlobal import *
 from direct.showbase.InputStateGlobal import inputState
 from direct.task import Task
-
+import levels.MakeLevel
 
 class testLevel():
 	def __init__(self,filename):
 		self.filename = filename
-		self.t = xmlParse.createLevel(self.filename)
-		self.oldtime = os.stat(self.filename).st_mtime
+		self.actualFileName = 'levels/'+self.filename+'.py'
+		#self.t = xmlParse.createLevel(self.filename)
+		self.t = levels.MakeLevel.makeLevel(self.filename)
+		self.oldtime = os.stat(self.actualFileName).st_mtime
 		taskMgr.add(self.fileHasUpdate,"fileUpdate") 
+
 
 	def fileHasUpdate(self,task):
 		#try:
-		if self.oldtime != os.stat(self.filename).st_mtime:
+
+		if self.oldtime != os.stat(self.actualFileName).st_mtime:
 
 			for child in self.t.render.getChildren():
 				name = child.getName()
@@ -39,8 +43,9 @@ class testLevel():
 				if name != 'camera' and name != 'Spot' and name != 'Debug' and name != 'Ambient':
 					child.detachNode()
 				pass
-			xmlParse.createLevel(self.filename, self.t)
-			self.oldtime = os.stat(self.filename).st_mtime
+			#xmlParse.createLevel(self.filename, self.t)
+			levels.MakeLevel.makeLevel(self.filename, self.t)
+			self.oldtime = os.stat(self.actualFileName).st_mtime
 		#except:
 		#	print "error in testLevel.upate"
 		return task.cont
