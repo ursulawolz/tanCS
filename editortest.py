@@ -3,7 +3,7 @@ from gi.repository import Gtk, Gdk, GtkSource
 
 
 class Editor(Gtk.Window):
-	def __init__(self):
+	def __init__(self,UI_INFO,on_menu_node_changed):
 		#import glade file and initiate window
 		self.builder=Gtk.Builder()
 		self.builder.add_from_file("gladetest.glade")
@@ -28,30 +28,9 @@ class Editor(Gtk.Window):
 
 		#add sourceview to window and initialize properties
 		Gtk.ScrolledWindow.add(self.scroll,self.sview)
-		self.sbuff.set_text('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et enim vitae augue dictum vehicula. Duis sit amet velit ipsum. Donec nibh leo, blandit et porttitor quis, aliquet sed est. Nam mollis pellentesque orci id pharetra. Curabitur eros arcu, mollis in ultricies nec, convallis a risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut pharetra leo quis risus volutpat porta. Praesent bibendum mi nec erat scelerisque vitae pellentesque massa eleifend. Aliquam aliquet venenatis odio id hendrerit. Nulla accumsan tincidunt mauris, nec mollis justo feugiat sit amet. Nullam quis sagittis neque. Integer dui augue, molestie vel semper at, iaculis sed metus. Mauris tempor nibh quis sem pellentesque vulputate. Nullam varius magna rhoncus lectus tempor at viverra tellus pretium.')
+		self.sbuff.set_text('Lorem ipsum dolor sit amet, \nconsectetur adipiscing elit. Sed et \nenim vitae augue dictum vehicula. Duis \nsit amet velit ipsum. Donec n\nibh leo, blandit et porttitor quis, aliquet sed est. Nam mollis pellentesque orci id pharetra. Curabitur eros arcu, mollis in ultricies nec, convallis a risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut pharetra leo quis risus volutpat porta. Praesent bibendum mi nec erat scelerisque vitae pellentesque massa eleifend. Aliquam aliquet venenatis odio id hendrerit. Nulla accumsan tincidunt mauris, nec mollis justo feugiat sit amet. Nullam quis sagittis neque. Integer dui augue, molestie vel semper at, iaculis sed metus. Mauris tempor nibh quis sem pellentesque vulputate. Nullam varius magna rhoncus lectus tempor at viverra tellus pretium.')
 		self.sview.show()
 		self.sview.connect("key-press-event",self.on_key_press)
-
-		#playing around with colors
-		'''
-		self.sview.modify_base(Gtk.StateType.NORMAL,Gdk.Color(0x00,0x00,0xff))
-		
-		#make a gdk.color for red
-		#self.map1 = gtk.gdk.Colormap(gtk.gdk.visual_get_system(),True)
-		self.color=Gdk.Color(9,50,30);
-		self.color.red = 0x00C0;
-		self.color.green = 0x00DE;
-		self.color.blue = 0x00ED;
-		#self.color = self.map1.alloc_color("red")
-
-		#copy the current style and replace the background
-		self.style = self.sview.get_style().copy()
-		self.style.bg[0] = self.color
-
-		#set the button's style to the one you created
-		self.sview.set_style(self.style)'''
-
-
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
@@ -60,7 +39,12 @@ class Editor(Gtk.Window):
 		#Tab is 65289
 		#Backspace is 65288
 		#Enter is 65293
+		#c is 99
+		#v is 118
+		#x is 120
+		#Ctrl is 65507
 		val=data.keyval #get the pressed key
+		print val
 		cursor=self.sbuff.get_iter_at_mark(self.sbuff.get_insert()) #get iter at cursor position
 		back=self.sbuff.get_iter_at_offset(cursor.get_offset()-1) #get iter at cursor position-1
 		if val==65289: #tab key ####TODO: what if user selects text
@@ -83,16 +67,23 @@ class Editor(Gtk.Window):
 				spaces='    '*(indent+1) #auto-indent block
 			else:
 				spaces='    '*indent #match indent
-
 			self.sbuff.insert(cursor,'\n'+spaces) #insert appropriate number of "tabs"
-
 			return True #repress normal enter key
+		elif val==99:
+			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
+				self.copy_text()
+		elif val==120:
+			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
+				self.cut_text()
+		elif val==118:
+			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
+				self.paste_text()
 
 	def check_colon(self,cursor):
 		#check if previous line ended in a colon
 		offset=cursor.get_offset()
 		back=self.sbuff.get_iter_at_offset(offset-1)
-		if self.sbuff.get_slice(back,cursor,True)==':': #TODO: what if whitespace?
+		if self.sbuff.get_slice(back,cursor,True)==':': #TODO: what if whitespace? or comment?
 			return True
 		else:
 			return False
@@ -136,34 +127,123 @@ class Editor(Gtk.Window):
 	def on_button_clicked(self,widget):
 		print "Hello World" #test func
 
+	def copy_text(self,widget):
+		print 'copying'
+
+	def cut_text(self,widget):
+		print 'cutting'
+
+	def paste_text(self,widget):
+		print 'pasting'
+
 	def indent_block(self,widget):
 		print 'indenting block'
-		pass
+		select=self.sbuff.get_selection_bounds()
+		if not select==():
+			lines=self.get_lines_from_block(select)
+		else:
+			lines=[self.get_line_start(self.sbuff.get_iter_at_mark(self.sbuff.get_insert()))]
+		count=0
+		for line in lines:
+			line+=count
+			self.sbuff.insert(self.sbuff.get_iter_at_offset(line),'    ')
+			count+=4
 
 	def unindent_block(self,widget):
 		print 'unindenting block'
-		pass
+		select=self.sbuff.get_selection_bounds()
+		if not select==():
+			lines=self.get_lines_from_block(select)
+		else:
+			lines=[self.get_line_start(self.sbuff.get_iter_at_mark(self.sbuff.get_insert()))]
+		count=0
+		for line in lines:
+			line+=count
+			itera=self.sbuff.get_iter_at_offset(line)
+			iterb=self.sbuff.get_iter_at_offset(line+4)
+			txt=self.sbuff.get_slice(itera,iterb,True)
+			if txt=='    ':
+				self.sbuff.delete(itera,iterb)
+				count-=4
+
+	def get_lines_from_block(self,select):
+		#takes in a tuple with the selection bounds
+		#outputs a list containing the offset for the start of each line
+		#if select is empty, returns a list containing -1
+		if not select==():
+			frontoffset=self.get_line_start(select[0])
+			backoffset=self.get_line_start(select[1])
+			front=self.sbuff.get_iter_at_offset(frontoffset)
+			back=self.sbuff.get_iter_at_offset(backoffset)
+			tempoffset=backoffset-1
+			lines=[backoffset]
+			while tempoffset>frontoffset:
+				backa=self.sbuff.get_iter_at_offset(tempoffset-1)
+				backb=self.sbuff.get_iter_at_offset(tempoffset)
+				txt=self.sbuff.get_slice(backa,backb,True)
+				if txt=='\n':
+					lines.append(tempoffset)
+				tempoffset-=1
+			lines.append(frontoffset)
+			lines.reverse()
+			return lines
+		else:
+			return [-1]
 
 	def comment_block(self,widget):
-		#TODO: make work with selection
-		if not self.sbuff.get_selection_bounds()==():
-			pass
+		#TODO: comment this code block!
+		select=self.sbuff.get_selection_bounds()
+		if not select==():
+			lines=self.get_lines_from_block(select)
+			count=0
+			print lines
+			uncomment=True
+			#PRE: lines must be ordered lowest to highest
+			for line in lines:
+				line+=count
+				offset=line
+				txt=' '
+				while txt==' ':
+					itera=self.sbuff.get_iter_at_offset(offset)
+					iterb=self.sbuff.get_iter_at_offset(offset+1)
+					txt=self.sbuff.get_slice(itera,iterb,True)
+					offset+=1
+				if uncomment:
+					uncomment = (txt=='#')
+				print uncomment
+
+			for line in lines:
+				line+=count
+				txt=' '
+				offset=line
+				while txt==' ':
+					itera=self.sbuff.get_iter_at_offset(offset)
+					iterb=self.sbuff.get_iter_at_offset(offset+1)
+					txt=self.sbuff.get_slice(itera,iterb,True)
+					offset+=1
+				if uncomment:
+					print 'delete'
+					self.sbuff.delete(itera,iterb)
+					count-=1
+				else:
+					print 'comment'
+					self.sbuff.insert(itera,'#')
+					count+=1
 		else:
-			pass
-		cursor=self.sbuff.get_iter_at_mark(self.sbuff.get_insert()) #get iter at cursor position
-		txt=' '
-		offset=self.get_line_start(cursor)
-		while txt==' ':
-			itera=self.sbuff.get_iter_at_offset(offset)
-			iterb=self.sbuff.get_iter_at_offset(offset+1)
-			txt=self.sbuff.get_slice(itera,iterb,True)
-			offset+=1
-		commentspot=self.sbuff.get_iter_at_offset(offset-1)
-		commentspot1=self.sbuff.get_iter_at_offset(offset)
-		if txt=='#':
-			self.sbuff.delete(commentspot,commentspot1)
-		else:
-			self.sbuff.insert(commentspot,'#')
+			cursor=self.sbuff.get_iter_at_mark(self.sbuff.get_insert()) #get iter at cursor position
+			offset=self.get_line_start(cursor)
+			txt=' '
+			while txt==' ':
+				itera=self.sbuff.get_iter_at_offset(offset)
+				iterb=self.sbuff.get_iter_at_offset(offset+1)
+				txt=self.sbuff.get_slice(itera,iterb,True)
+				offset+=1
+			if txt=='#':
+				print 'delete'
+				self.sbuff.delete(itera,iterb)
+			else:
+				print 'comment'
+				self.sbuff.insert(itera,'#')
 
 	def create_toolbar(self):
 		toolbar=Gtk.Toolbar()
@@ -179,15 +259,15 @@ class Editor(Gtk.Window):
 
 		button_copy=Gtk.ToolButton.new_from_stock(Gtk.STOCK_COPY)
 		toolbar.insert(button_copy, 2)
-		#button_copy.connect("clicked", self.copy)
+		button_copy.connect("clicked", self.copy_text)
 
 		button_cut=Gtk.ToolButton.new_from_stock(Gtk.STOCK_CUT)
 		toolbar.insert(button_cut, 3)
-		#button_cut.connect("clicked", self.cut)
+		button_cut.connect("clicked", self.cut_text)
 
 		button_paste=Gtk.ToolButton.new_from_stock(Gtk.STOCK_PASTE)
 		toolbar.insert(button_paste, 4)
-		#button_paste.connect("clicked", self.paste)
+		button_paste.connect("clicked", self.paste_text)
 
 		comment_icon=Gtk.Image.new_from_file('comment-icon.png')
 		button_comment=Gtk.ToolButton()
