@@ -3,7 +3,7 @@ from runFile import runFile
 import sys
 import xmlParse
 import levels.MakeLevel
-level = 'levels/testLevel.xml'
+level = 'testLevel'
 userfile = 'userScripts/user.py'
 if len(sys.argv) == 3:
 	level = sys.argv[1]
@@ -17,6 +17,5 @@ if len(sys.argv)==2:
 t = levels.MakeLevel.makeLevel(level)
 runFile(userfile,t)
 t.run()
-print "done?"
 
 sys.exit()

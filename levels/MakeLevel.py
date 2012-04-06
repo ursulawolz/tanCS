@@ -9,7 +9,7 @@ from trigger.PositionTrigger import PositionTrigger
 from FloorStaticObject import FloorStaticObject
 from Tank import Tank
 from weapon.Blaster import Blaster
-t = None #globnal cube object
+t = None #global cube object
 def vec(val):
 	return VBase3(val[0],val[1],val[2])
 
@@ -24,6 +24,7 @@ def makePositionTrigger(target = None, position=(0,0,0)):
 
 def makeTank(position=(0,0,0), orientation=(0,0,0), name='tank'):
 	return Tank(t,t.render, position=vec(position), orientation=vec(orientation), name=name)
+
 def makeBlaster(tank):
 	b = Blaster(tank)
 	tank.setWeapon(b)

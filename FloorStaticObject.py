@@ -9,14 +9,13 @@ class FloorStaticObject(StaticWorldObject):
 		Object for testing. Creates a plane with a plain texture.
 	"""
 	
-	def __init__(self, world, attach, name = '', position = Vec3(0,0,0), orientation = Vec3(0,0,0)):
+	def __init__(self, world, attach, name = '', position = Vec3(0,0,0), orientation = Vec3(0,0,0), size = 32):
 		cm=CardMaker('')
 		cm.setFrame(0,1,0,1)
 		floor = render.attachNewNode(PandaNode("floor"))
 		tex = loader.loadTexture('media/'+'ground.png')
 		tex.setMagfilter(Texture.FTNearest)
 		tex.setMinfilter(Texture.FTNearest)
-		size = 44
 		for y in range(size):
 			for x in range(size):
 				nn = floor.attachNewNode(cm.generate())
