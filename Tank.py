@@ -314,7 +314,13 @@ class Tank(DynamicWorldObject):
         self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
 
     def rotate(self, angle):
-        angle = self.fixAngle(angle)
+        '''Rotate function. All angles given between 0 and 360
+        Angle changes are between -180 and 180
+        '''
+
+        angle = angle % 360
+        if angle > 180:
+            angle -= 360
         heading = self.fixAngle(self._nodePath.getH())
         newH = self.fixAngle(heading + angle)
 
@@ -360,6 +366,8 @@ class Tank(DynamicWorldObject):
         slowTheta = 2.5 * rFor
         brakePercent = w**2 / (2 * slowTheta * self._maxThrusterAccel)
         theta = self.fixAngle(toHeading - heading)
+        if theta > 180:
+            theta -= 360
         thetaFromStart = heading - self._moveLoc[1]
 
         if self._stop:
@@ -370,9 +378,9 @@ class Tank(DynamicWorldObject):
             self.applyBrakes()
             return task.cont
         
-        if theta < slowTheta - .25:
+        if abs(theta) < slowTheta - .25:
             self.applyThrusters(-rFor * brakePercent, rFor * brakePercent)
-        elif theta > slowTheta - .25:
+        elif abs(theta) > slowTheta - .25:
             if w < self._maxRotVel:
                 self.applyThrusters(rFor, -1 * rFor)
             else:
@@ -380,11 +388,10 @@ class Tank(DynamicWorldObject):
         else:
             self.applyBrakes(brakePercent)
         
-        if theta < .1: 
+        if abs(theta) < .1: 
             self._stop = True
         if abs(thetaFromStart + .1) > abs(self._moveLoc[2]):
-            if thetaFromStart/self._moveLoc[2] > 0:
-                self._stop = True
+            self._stop = True
         
         return task.cont
 
