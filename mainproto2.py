@@ -2,6 +2,7 @@
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 import viewerproto2 as viewer
+import editortest as editor
 ###-------------------------------Menu UI----------------------------------###
 UI_INFO="""
 <ui>
@@ -29,9 +30,9 @@ def on_menu_mode_changed(widget, current,parent_window):
 		window.connect("delete-event",Gtk.main_quit)
 		window.show_all()
 	if new_window_name==("Editor"):
-		window=viewer.TempWindow(UI_INFO,on_menu_mode_changed)
-		window.connect("delete-event",Gtk.main_quit)
-		window.show_all()
+		window2=editor.Editor(UI_INFO,on_menu_mode_changed)
+		window2.connect("delete-event",Gtk.main_quit)
+		window2.show_all()
 	parent_window.destroy()
 	
 	#print current.get_name() + " was selected."
