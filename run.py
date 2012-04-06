@@ -3,9 +3,9 @@ from runFile import runFile
 
 import xmlParse
 
-t = xmlParse.createLevel('testLevel.xml')
+t = xmlParse.createLevel('levels/testLevel.xml')
 
-runFile('user.py',t)
+runFile('userScripts/user.py',t)
 
 t.run()
 print "done?"

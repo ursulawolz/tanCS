@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")
+
 from Projectile import *
 import TaskList
 from panda3d.core import Quat

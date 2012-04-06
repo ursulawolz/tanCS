@@ -1,5 +1,5 @@
 from TankWorld import TankWorld
-from Blaster import Blaster
+from weapon.Blaster import Blaster
 from Tank import *
 import string
 
@@ -74,16 +74,19 @@ tank.runTasks()'''
 			code = code + tabClause + line + tabClause + prevTabs + yieldClause
 
 	code = code + appendToEnd
-
-	f = open('run' + filename, 'w')
+	
+	filenamestr = filename.split('/')
+	
+	filename = filenamestr[0]+'/run' +filenamestr[1]
+	f = open(filename, 'w')
 	f.close()
 
-	edited = open('run' + filename, 'r+b')
+	edited = open(filename, 'r+b')
 	edited.seek(0)
 	edited.write(code)
 	edited.close()
 
-	execfile('run' + filename)
+	execfile(filename)
 
 
 

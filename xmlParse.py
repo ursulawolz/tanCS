@@ -19,8 +19,8 @@ from panda3d.bullet import BulletPlaneShape
 from panda3d.bullet import BulletRigidBodyNode
 from runFile import runFile
 
-from Blaster import Blaster
-from PositionTrigger import PositionTrigger
+from weapon.Blaster import Blaster
+from trigger.PositionTrigger import PositionTrigger
 from CubeObject import CubeObject
 
 def parseVec3(string):

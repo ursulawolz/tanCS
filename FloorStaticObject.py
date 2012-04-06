@@ -13,7 +13,7 @@ class FloorStaticObject(StaticWorldObject):
 		cm=CardMaker('')
 		cm.setFrame(0,1,0,1)
 		floor = render.attachNewNode(PandaNode("floor"))
-		tex = loader.loadTexture('ground.png')
+		tex = loader.loadTexture('media/'+'ground.png')
 		tex.setMagfilter(Texture.FTNearest)
 		tex.setMinfilter(Texture.FTNearest)
 		size = 44

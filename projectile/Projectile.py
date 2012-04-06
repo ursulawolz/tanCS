@@ -1,3 +1,6 @@
+import sys
+
+sys.path.append("..")
 from DynamicWorldObject import *
 from panda3d.bullet import BulletSphereShape
 

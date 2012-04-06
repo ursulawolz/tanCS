@@ -1,12 +1,13 @@
+import sys
+sys.path.append("..")
+
 from Trigger import Trigger
 from panda3d.core import *
-import sys
 
 import TaskList
 
 from CubeObject import CubeObject
 
-import pdb
 
 class PositionTrigger(Trigger, CubeObject):
 	def __init__(self, tankWorld, tracking_object, radius, position=Vec3(0,0,0) ):

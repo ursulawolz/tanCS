@@ -1,5 +1,7 @@
+import sys
+sys.path.append("..")
 from Weapon import *
-from Blast import Blast
+from projectile.Blast import Blast
 
 class Blaster(Weapon):
 	'''

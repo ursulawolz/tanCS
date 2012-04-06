@@ -5,13 +5,11 @@ tank = tankWorld.getUserTank()
 def userFun(tank):
     while 1==1:
     
-    	tank.move(10)
+    	tank.move(30)
         yield()
-    	tank.rotateTime(1.3)
-        yield()
+    	#tank.rotateTime(1.3)
     
-    	print tank.getPos()
-        yield()
+    	#print tank.getPos()
     
     
 

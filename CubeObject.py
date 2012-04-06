@@ -7,7 +7,7 @@ class CubeObject(StaticWorldObject):
 		shape = BulletBoxShape(scale/2)
 		self._transformState = TransformState.makePos(Point3(scale.x/2,scale.y/2,scale.z/2)) #offset
 		
-		tex = loader.loadTexture(texture)
+		tex = loader.loadTexture('media/'+texture)
 		tex.setMagfilter(Texture.FTNearest)
 		tex.setMinfilter(Texture.FTNearest)
 		
@@ -15,7 +15,7 @@ class CubeObject(StaticWorldObject):
 			for y in range(int(scale[1])):
 				for z in range(int(scale[2])):
 
-					geo = loader.loadModel('cube.x')
+					geo = loader.loadModel('media/'+'cube.x')
 					#geo.setScale(scale)
 					geo.setPos(position+VBase3(x,y,z))
 					#geo.setHpr(orientation)
