@@ -1,10 +1,20 @@
 #!/usr/bin/env python
 from gi.repository import Gtk, Gdk, GtkSource
 
-
 class Editor(Gtk.Window):
-	def __init__(self,UI_INFO,on_menu_node_changed):
-		#import glade file and initiate window
+
+	def kill(self,parentwindow):
+		parentwindow.destroy()
+
+	def __init__(self,UI_INFO,on_menu_mode_changed):
+		Gtk.Window.__init__(self,title='tanCS Editor')
+
+		#I think we're getting weird behavior (namely, two different windows) 
+		#when this is called from mainproto2 because I'm importing from glade. 
+		#I'm going to rewrite this manually this weekend.
+		
+		#import glade file and initialize window
+		self.on_menu_mode_changed=on_menu_mode_changed
 		self.builder=Gtk.Builder()
 		self.builder.add_from_file("gladetest.glade")
 		self.builder.connect_signals({ "on_window_destroy" : Gtk.main_quit })
@@ -31,6 +41,13 @@ class Editor(Gtk.Window):
 		self.sbuff.set_text('Lorem ipsum dolor sit amet, \nconsectetur adipiscing elit. Sed et \nenim vitae augue dictum vehicula. Duis \nsit amet velit ipsum. Donec n\nibh leo, blandit et porttitor quis, aliquet sed est. Nam mollis pellentesque orci id pharetra. Curabitur eros arcu, mollis in ultricies nec, convallis a risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut pharetra leo quis risus volutpat porta. Praesent bibendum mi nec erat scelerisque vitae pellentesque massa eleifend. Aliquam aliquet venenatis odio id hendrerit. Nulla accumsan tincidunt mauris, nec mollis justo feugiat sit amet. Nullam quis sagittis neque. Integer dui augue, molestie vel semper at, iaculis sed metus. Mauris tempor nibh quis sem pellentesque vulputate. Nullam varius magna rhoncus lectus tempor at viverra tellus pretium.')
 		self.sview.show()
 		self.sview.connect("key-press-event",self.on_key_press)
+
+		#self.connect("delete-event",self.destroy)
+
+	def start(self):
+		Gtk.main()
+		self.connect("delete-event",self.destroy)
+
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
@@ -128,6 +145,7 @@ class Editor(Gtk.Window):
 		print "Hello World" #test func
 
 	def copy_text(self,widget):
+		#TODO: get URL of source? offer to add source to user?
 		print 'copying'
 
 	def cut_text(self,widget):
@@ -191,7 +209,6 @@ class Editor(Gtk.Window):
 			return [-1]
 
 	def comment_block(self,widget):
-		#TODO: comment this code block!
 		select=self.sbuff.get_selection_bounds()
 		if not select==():
 			lines=self.get_lines_from_block(select)
@@ -293,3 +310,4 @@ class Editor(Gtk.Window):
 #win.connect("delete-event",Gtk.main_quit)
 #win.show_all()
 #Gtk.main()
+
