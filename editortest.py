@@ -9,10 +9,25 @@ class Editor(Gtk.Window):
 	def __init__(self,UI_INFO,on_menu_mode_changed):
 		Gtk.Window.__init__(self,title='tanCS Editor')
 
-		#I think we're getting weird behavior (namely, two different windows) 
-		#when this is called from mainproto2 because I'm importing from glade. 
-		#I'm going to rewrite this manually this weekend.
+		#structure rewrite
+		self.set_default_size(800,500)
+		self.vbox_top = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
+		self.vbox_top.set_homogeneous(False)
+		self.add(self.vbox_top)
+		self.scrolledwindow = Gtk.ScrolledWindow()
+		self.scrolledwindow.set_hexpand(True)
+		self.scrolledwindow.set_vexpand(True)
+		self.statusbar=Gtk.Statusbar()
+
+		#toolbar
+		self.create_toolbar()
+
+		self.vbox_top.pack_start(self.toolbar,False,True,0)
+		self.vbox_top.pack_start(self.scrolledwindow,True,True,0)
+		self.vbox_top.pack_start(self.statusbar,False,True,0)
 		
+		'''
+		#Glade imports (DEPRECATED)
 		#import glade file and initialize window
 		self.on_menu_mode_changed=on_menu_mode_changed
 		self.builder=Gtk.Builder()
@@ -22,10 +37,7 @@ class Editor(Gtk.Window):
 		self.window.set_default_size(800, 500)
 		self.window.show()
 		self.scroll = self.builder.get_object("scrolledwindow1")
-		self.vbox = self.builder.get_object("vbox1")
-
-		#toolbar
-		self.create_toolbar()
+		self.vbox = self.builder.get_object("vbox1")'''
 
 		#create gtksourceview objects
 		self.sbuff = GtkSource.Buffer()
@@ -37,17 +49,10 @@ class Editor(Gtk.Window):
 		self.sbuff.set_language(self.lang)
 
 		#add sourceview to window and initialize properties
-		Gtk.ScrolledWindow.add(self.scroll,self.sview)
+		Gtk.ScrolledWindow.add(self.scrolledwindow,self.sview)
 		self.sbuff.set_text('Lorem ipsum dolor sit amet, \nconsectetur adipiscing elit. Sed et \nenim vitae augue dictum vehicula. Duis \nsit amet velit ipsum. Donec n\nibh leo, blandit et porttitor quis, aliquet sed est. Nam mollis pellentesque orci id pharetra. Curabitur eros arcu, mollis in ultricies nec, convallis a risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut pharetra leo quis risus volutpat porta. Praesent bibendum mi nec erat scelerisque vitae pellentesque massa eleifend. Aliquam aliquet venenatis odio id hendrerit. Nulla accumsan tincidunt mauris, nec mollis justo feugiat sit amet. Nullam quis sagittis neque. Integer dui augue, molestie vel semper at, iaculis sed metus. Mauris tempor nibh quis sem pellentesque vulputate. Nullam varius magna rhoncus lectus tempor at viverra tellus pretium.')
 		self.sview.show()
 		self.sview.connect("key-press-event",self.on_key_press)
-
-		#self.connect("delete-event",self.destroy)
-
-	def start(self):
-		Gtk.main()
-		self.connect("delete-event",self.destroy)
-
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
@@ -263,51 +268,49 @@ class Editor(Gtk.Window):
 				self.sbuff.insert(itera,'#')
 
 	def create_toolbar(self):
-		toolbar=Gtk.Toolbar()
-		self.vbox.pack_start(toolbar,False,True,0)
-		self.vbox.reorder_child(toolbar,0) #hackish - do differently
+		self.toolbar=Gtk.Toolbar()
 		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
-		toolbar.insert(button_new, 0)
+		self.toolbar.insert(button_new, 0)
 		#button_new.connect("clicked", self.create_new)
 
 		button_savepoint=Gtk.ToolButton.new_from_stock(Gtk.STOCK_SAVE)
-		toolbar.insert(button_savepoint, 1)
+		self.toolbar.insert(button_savepoint, 1)
 		#button_savepoint.connect("clicked", self.create_save_point)
 
 		button_copy=Gtk.ToolButton.new_from_stock(Gtk.STOCK_COPY)
-		toolbar.insert(button_copy, 2)
+		self.toolbar.insert(button_copy, 2)
 		button_copy.connect("clicked", self.copy_text)
 
 		button_cut=Gtk.ToolButton.new_from_stock(Gtk.STOCK_CUT)
-		toolbar.insert(button_cut, 3)
+		self.toolbar.insert(button_cut, 3)
 		button_cut.connect("clicked", self.cut_text)
 
 		button_paste=Gtk.ToolButton.new_from_stock(Gtk.STOCK_PASTE)
-		toolbar.insert(button_paste, 4)
+		self.toolbar.insert(button_paste, 4)
 		button_paste.connect("clicked", self.paste_text)
 
 		comment_icon=Gtk.Image.new_from_file('comment-icon.png')
 		button_comment=Gtk.ToolButton()
 		button_comment.set_icon_widget(comment_icon)
-		toolbar.insert(button_comment, 5)
+		self.toolbar.insert(button_comment, 5)
 		button_comment.connect("clicked", self.comment_block)
 
 		button_indent=Gtk.ToolButton.new_from_stock(Gtk.STOCK_INDENT)
-		toolbar.insert(button_indent, 6)
+		self.toolbar.insert(button_indent, 6)
 		button_indent.connect("clicked", self.indent_block)
 
 		button_unindent=Gtk.ToolButton.new_from_stock(Gtk.STOCK_UNINDENT)
-		toolbar.insert(button_unindent, 7)
+		self.toolbar.insert(button_unindent, 7)
 		button_unindent.connect("clicked", self.unindent_block)
 
-		toolbar.show_all()
+		self.toolbar.show_all()
 
 
 
-
+'''
 #initiate window
-#win = Editor()
-#win.connect("delete-event",Gtk.main_quit)
-#win.show_all()
-#Gtk.main()
+win = Editor(-1,-1)
+win.connect("delete-event",Gtk.main_quit)
+win.show_all()
+Gtk.main()'''
 
