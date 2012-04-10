@@ -21,7 +21,7 @@ class Tank(DynamicWorldObject):
             turretPitch = 0): 
 
         #Constant Relevant Instatiation Parameters
-        self._tankSideLength = 7
+        self._tankSize = Vec3(1, 1.5, .5) # Actually a half-size
         friction = .3
         tankMass = 800.0
 
@@ -67,8 +67,8 @@ class Tank(DynamicWorldObject):
         np  = loader.loadModel('box')
 
         np.reparentTo(self._nodePath)
-        np.setScale(Vec3(1,1.5,.5)*2)
-        np.setPos(-Vec3(1,1.5,.5)+Vec3(0, 0, 0))
+        np.setScale(self._tankSize*2)
+        np.setPos(-self._tankSize+Vec3(0, 0, 0))
        
         # Vehicle
         self.vehicle = BulletVehicle(bulletWorld, self._nodePath.node())
@@ -443,7 +443,7 @@ class Tank(DynamicWorldObject):
         v = self._nodePath.node().getLinearVelocity().length()
         slowAccel = 2
         slowDist = v**2 / (2 * slowAccel * self._breakForce)
-        brakePercent = slowAccel * 800 / self._breakForce
+        brakePercent = slowAccel * self._nodePath.node().getMass() / self._breakForce
 
         deltaPos = (self.getPos() - self._moveLoc[1])
         distFromStart = deltaPos.length()
@@ -460,7 +460,7 @@ class Tank(DynamicWorldObject):
             self.applyBrakes(brakePercent * 1.1)
         elif distance > slowDist:
             if self._moveLoc[2] > 0:
-                self.applyThrusters()
+                self.applyThrusters(1,1)
             else:
                 self.applyThrusters(-1, -1)
         else:
@@ -475,6 +475,7 @@ class Tank(DynamicWorldObject):
 
     
     def nextTask(self,task):
+        self._nodePath.node().setActive(True)
         self.onTask += 1
         if(self._tankWorld.isDead):
             return
@@ -579,8 +580,3 @@ class Tank(DynamicWorldObject):
 
     def fire(self, amt = 1):
         return self._weapon.fire(amt)        
-
-    def getCenter(self):
-        center = self.getPos() + Point3(1,1.5, .5)
-        center = Point3(center[0], center[1], center[2])
-        return center
