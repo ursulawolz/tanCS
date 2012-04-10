@@ -3,6 +3,7 @@ from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 import viewerproto2 as viewer
 import editortest as editor
+import explorerproto2 as explorer
 ###-------------------------------Menu UI----------------------------------###
 UI_INFO="""
 <ui>
