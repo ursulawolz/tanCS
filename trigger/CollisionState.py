@@ -1,7 +1,7 @@
 import sys
 sys.path.append("..")
 
-from Trigger import Trigger
+from State import State
 from panda3d.core import *
 
 import TaskList
@@ -9,8 +9,8 @@ import TaskList
 from CubeObject import CubeObject
 
 
-class PositionTrigger(Trigger, CubeObject):
-	def __init__(self, tankWorld, tracking_object, radius=1, position=Vec3(0,0,0) ):
+class CollisionState(State, CubeObject):
+	def __init__(self, tankWorld, tracking_name, position=Vec3(0,0,0), name='collisionShape'):
 		'''
 			TrackingObject is the world object that we are tracking
 			Position trigger has a representation needs to be added.
@@ -19,14 +19,12 @@ class PositionTrigger(Trigger, CubeObject):
 
 
 		self.position = position
-		self.radius = radius
-		self.tracking_object = tracking_object
-		print self.tracking_object
+		self.tracking_name = tracking_name
 		print "PositionTrigger.__init__: Trigger created"
 
 		
 
-		Trigger.__init__(self,tankWorld)
+		State.__init__(self,tankWorld)
 		CubeObject.__init__(self, tankWorld, tankWorld.render, name = '', position = position, orientation = Vec3(0,0,0), scale = VBase3(2,2,2), texture='trigger.png' )
 		#must be after the cubeobject instantiator
 		TaskList.setCollision(self, tankWorld)
@@ -51,12 +49,6 @@ class PositionTrigger(Trigger, CubeObject):
 
 	def handleCollision(self, collide, taskName):
 
-		#print self._tankWorld.taskMgr.getTasks()
-		#self._tankWorld.taskMgr.remove(taskName)
-		#print type(x)
-		#self._tankWorld.removeRigidBody(x)
-		#elf._nodePath.removeNode()
-
-		print collide.getNode0().getName() , collide.getNode1().getName() 
-		if collide.getNode0().getName() == self.tracking_object.getName() or collide.getNode1().getName()== self.tracking_object.getName():
-			self.win()
+		if collide.getNode0().getName() == self.tracking_name or collide.getNode1().getName()== self.tracking_name:
+			self.triggered=True
+			#pass

@@ -6,4 +6,9 @@ makeCubeObject(size=(1,5,3), position=(19,1,0), name='wall4')
 
 tank = makeTank(position=(3,3.5,2), orientation=(90,0,0), name="tank")
 makeBlaster(tank)
-makePositionTrigger(target = tank, position=(17,3,0))
+def nothing():
+	print  "wined"
+
+trigger = makeTrigger(function=nothing)
+makeCollisionState(trigger, position=(16,2.5,0), tracking_object=tank)
+

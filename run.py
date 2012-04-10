@@ -1,7 +1,7 @@
 from TankWorld import TankWorld
 from runFile import runFile
 import sys
-import xmlParse
+#import xmlParse
 import levels.MakeLevel
 level = 'testLevel'
 userfile = 'userScripts/user.py'
