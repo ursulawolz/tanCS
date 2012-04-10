@@ -10,7 +10,6 @@ import TaskList
 
 from runFile import runFile
 
-import xmlParse
 import sys, os
 from direct.interval.IntervalGlobal import *
 from direct.showbase.InputStateGlobal import inputState
