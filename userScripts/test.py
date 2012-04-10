@@ -1,4 +1,7 @@
-def coolFunction():
-    tank.move(2)
-    coolFunction()
+def coolFunction(x):
+    tank.move(x)
+    coolFunction(x)
     print "asdf"
+
+
+coolFunction(3)

@@ -81,9 +81,11 @@ tank.runTasks()'''
 		prevTabs = getInitialWhitespace(line)
 		
 		if x == '' or ':' in line or '#' is x[0]:
-			code = code + tabClause + line
+			code = code + tabClause
 		else:
-			code = code + tabClause + line + tabClause + prevTabs + yieldClause
+			code = code + tabClause
+
+		hasBroke = False
 		for function in userFunc:
 			print function
 			if line.count(function[0]) != 0:
@@ -94,8 +96,20 @@ tank.runTasks()'''
 				if spl[0].count('def ') ==0:
 					args = spl[len(spl)-1]
 					print args
-					code = code + tabClause + tabClause + 'for i in '  + function[0]+'('+args.strip()+':\n'
-					code = code +tabClause+tabClause+prevTabs+yieldClause
+					print 'lengthprev', len(prevTabs)
+					code = code + prevTabs + 'for i in '  + function[0]+'('+args.strip()+':\n'
+					code = code + prevTabs+tabClause+tabClause+yieldClause
+					hasBroke = True
+					break
+
+		if hasBroke:
+			continue
+
+		if x == '' or ':' in line or '#' is x[0]:
+			code = code+ line
+		else:
+			code = code +line + tabClause + prevTabs + yieldClause
+
 
 
 	code = code + appendToEnd
