@@ -13,7 +13,7 @@ class Blaster(Weapon):
 		posDelta = Vec3(0,0,1) #Incorrect currently
 		barrelLength = 2 # Incorrect currently
 
-		Weapon.__init__(self, posDelta, barrelLength, maxVel)
+		Weapon.__init__(self, tank, posDelta, barrelLength, maxVel)
 
 		
 
