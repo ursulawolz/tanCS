@@ -27,4 +27,17 @@ class Projectile(DynamicWorldObject):
 	def getDamage(self):
 		return self._damage
 
+	def handleCollision(self, collide, taskName):
+		self._collisionCounter += 1
+
+		#Always in called twice in succession
+
+		if (self._collisionCounter % 2 == 0):
+			print "Projectile.handleCollision:(pos) ", self.getPos()
+
+			self._tankWorld.taskMgr.remove(taskName)
+			x = self._nodePath.node()
+
+			self._tankWorld.removeRigidBody(x)
+			self._nodePath.removeNode()
 	

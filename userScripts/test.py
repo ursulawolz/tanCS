@@ -1,3 +1,4 @@
-for i in range(4):
-	tank.move(19)
-	tank.face(Point3(0,0,0))
+
+	tank.waitTime(5)
+	print tank.aimAt(Point3(25,25,1), False)
+	tank.fire()

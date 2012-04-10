@@ -54,22 +54,31 @@ class Weapon(object):
 	def setPitch(self,goal):
 		self.setHp(self.direction[0], goal)
 
+	def getHpr(self):
+		return self._nodePath.getHpr()
+
+	def getHp(self):
+		hpr = self.getHpr()
+		hp = (hpr[0], hpr[1])
+		return hp
+
 	def setHeading(self,goal):
 		self.setHp(goal, self.direction[1])
 
 	def aimAt(self, pointAim, aimLow = True):
-		pos = self.tank.getAbsPos()
+		pos = self.getAbsPos()
 
 		point = Point3(pointAim[0] - pos[0], pointAim[1] - pos[1], pointAim[2] - pos[2])
 
-		angle1 = math.atan2(point[0], point[1])
+		angle1 = math.atan2(point[1], point[0])
 
 		x = math.sqrt(point[0]**2 + point[1]**2)
 		y = point[2]
+
 		v = self.maxVel
 		tanks = self.tank
 		gravity = self.tank._tankWorld.getPhysics().getGravity() #Vector
-		g = gravity[2]	
+		g = abs(gravity[2])	
 
 		discriminant = v**4 - g * (g * x**2 + 2 * y * v**2)
 
@@ -80,6 +89,9 @@ class Weapon(object):
 			angle2 = math.atan((v**2 - math.sqrt(discriminant))/(g * x))
 		else:
 			angle2 = math.atan((v**2 + math.sqrt(discriminant))/(g * x))
+
+		angle1 = angle1 * 180 / math.pi
+		angle2 = angle2 * 180 / math.pi
 
 		self.setHp(angle1, angle2)
 

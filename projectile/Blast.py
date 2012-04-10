@@ -17,35 +17,26 @@ class Blast(Projectile):
 		damage = 1 #Blast should be weakest, base damage
 		mass = .1 
 
-		direction = weapon.getTank()._nodePath.getQuat().getForward();		
-		shape = BulletSphereShape(.5)
+		hpr = weapon.getHpr()
+		h = (hpr[0] ) * math.pi / 180
+		p = hpr[1] * math.pi / 180
+
+		direction = Vec3(math.cos(h) * math.cos(p), math.sin(h) * math.cos(p), math.sin(p))
+
+		shape = BulletSphereShape(.1)
 		name = weapon.getTank()._nodePath.node().getName() + ' blast'
 
 		pos = weapon.getAbsPos()
 		pos = Point3(pos[0], pos[1], pos[2])
 
-		vel = direction * speed * -1 #LVecBase3f
+		vel = direction * speed #LVecBase3f
 		vel = Vec3(vel[0], vel[1], vel[2])
 
 		np  = loader.loadModel('smiley')
-
-		print "Blast.__init__: ", pos
 
 		Projectile.__init__(self, weapon, pos, name, shape, vel, mass, damage)
 		self._collisionCounter = 0
 
 		np.reparentTo(self._nodePath)
 
-	def handleCollision(self, collide, taskName):
-		self._collisionCounter += 1
 
-		#Always in called twice in succession
-
-		if (self._collisionCounter % 2 == 0):
-			#print self._tankWorld.taskMgr.getTasks()
-			print "Blast.handleCollision: ", self.getPos()
-			self._tankWorld.taskMgr.remove(taskName)
-			x = self._nodePath.node()
-			#print type(x)
-			self._tankWorld.removeRigidBody(x)
-			self._nodePath.removeNode()
