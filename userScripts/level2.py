@@ -1,5 +1,5 @@
 tank.move(19)
-tank.rotate(90)
+tank.left()
 tank.move(20)
 
 

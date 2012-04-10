@@ -10,10 +10,10 @@ class Blaster(Weapon):
 	def __init__(self, tank):
 
 		maxVel = 100  #Condition ??
-		posDelta = Vec3(0,0,0) #Incorrect currently
+		posDelta = Vec3(0,0,1) #Incorrect currently
 		barrelLength = 2 # Incorrect currently
 
-		print (tank.getPos() + posDelta)
+		print "Blaster: ", tank.getPos() + posDelta
 
 		Weapon.__init__(self, tank, tank.getPos() + posDelta, barrelLength, maxVel)
 

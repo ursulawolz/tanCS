@@ -11,7 +11,7 @@ from FloorStaticObject import FloorStaticObject
 from Tank import Tank
 from weapon.Blaster import Blaster
 
-t = None #globnal cube object
+t = None #global cube object
 
 def vec(val):
 	return VBase3(val[0],val[1],val[2])

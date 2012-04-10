@@ -34,7 +34,6 @@ class Tank(DynamicWorldObject):
        
         self._shape = BulletBoxShape(Vec3(1,1.5,.5)) #chassis
         self._transformState = TransformState.makePos(Point3(0, 0, 0)) #offset 
-        print "Tank.__init__: " + name
         DynamicWorldObject.__init__(self, world, attach, name, position, self._shape, orientation, Vec3(0,0,0), mass = tankMass)   #Initial velocity must be 0
         self.__createVehicle(self._tankWorld.getPhysics())
 
@@ -54,7 +53,8 @@ class Tank(DynamicWorldObject):
         #register tank
         world.registerTank(self)
 
-
+        print "Tank.__init__: " + name
+        
         # Set up the 
     def __createVehicle(self,bulletWorld):
         '''
@@ -312,6 +312,38 @@ class Tank(DynamicWorldObject):
         self._moveLoc = (Point3(pos[0] + math.sin(heading) * dist, pos[1] - math.cos(heading) * dist, pos[2]), pos, dist)
         
         self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
+
+    def turnTo(self, newH):
+        '''Turn so that you have the given heading value
+        '''
+        self.rotate(newH - self._nodePath.getH())
+
+    def left(self, angle = 90):
+        if angle < 0:
+            raise ValueError("For left and right, angle must be greater than 0.")
+
+        self.rotate(angle)
+
+    def right(self, angle = 90):
+        if angle < 0:
+            raise ValueError("For left and right, angle must be greater than 0.")
+
+        self.rotate(-angle)
+
+    def face(self, point):
+        '''Turn so that you are facing a point. Uses rotate and faceRel
+        Assumes absolute coordinate system for the point
+        '''
+        deltaPos = point - self.getPos()
+        self.faceRel(deltaPos)
+
+    def faceRel(self, pointRel):
+        '''Turn so that you face a pointRel relative to the tank.
+        Uses rotate
+        '''
+        newH = math.atan2(pointRel[0], pointRel[1])
+        self.turnTo(newH)
+
 
     def rotate(self, angle):
         '''Rotate function. All angles given between 0 and 360
