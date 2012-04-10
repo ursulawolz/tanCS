@@ -18,22 +18,18 @@ class Blast(Projectile):
 		mass = .1 
 
 		direction = weapon.getTank()._nodePath.getQuat().getForward();		
-		shape = BulletSphereShape(.2)
+		shape = BulletSphereShape(.5)
 		name = weapon.getTank()._nodePath.node().getName() + ' blast'
 
 		pos = weapon.getAbsPos()
 		pos = Point3(pos[0], pos[1], pos[2])
 
-		#print direction
-
-
 		vel = direction * speed * -1 #LVecBase3f
 		vel = Vec3(vel[0], vel[1], vel[2])
 
-
-		#print direction, vel
-
 		np  = loader.loadModel('smiley')
+
+		print "Blast.__init__: ", pos
 
 		Projectile.__init__(self, weapon, pos, name, shape, vel, mass, damage)
 		self._collisionCounter = 0
@@ -47,6 +43,7 @@ class Blast(Projectile):
 
 		if (self._collisionCounter % 2 == 0):
 			#print self._tankWorld.taskMgr.getTasks()
+			print "Blast.handleCollision: ", self.getPos()
 			self._tankWorld.taskMgr.remove(taskName)
 			x = self._nodePath.node()
 			#print type(x)

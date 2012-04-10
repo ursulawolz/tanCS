@@ -46,7 +46,7 @@ class Weapon(object):
 		return self._nodePath.getPos()
 
 	def getAbsPos(self):
-		return self._nodePath.getPos() + self.tank._nodePath.getPos()
+		return self._nodePath.getPos() + self.tank.getPos()
 
 	def getTank(self):
 		return self.tank
@@ -57,8 +57,8 @@ class Weapon(object):
 	def setHeading(self,goal):
 		self.setHp(goal, self.direction[1])
 
-	def aimAt(self, pointAim, aimLow):
-		pos = self.tank.getPos()
+	def aimAt(self, pointAim, aimLow = True):
+		pos = self.tank.getAbsPos()
 
 		point = Point3(pointAim[0] - pos[0], pointAim[1] - pos[1], pointAim[2] - pos[2])
 
