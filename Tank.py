@@ -579,3 +579,8 @@ class Tank(DynamicWorldObject):
 
     def fire(self, amt = 1):
         return self._weapon.fire(amt)        
+
+    def getCenter(self):
+        center = self.getPos() + Point3(1,1.5, .5)
+        center = Point3(center[0], center[1], center[2])
+        return center
