@@ -26,6 +26,16 @@ def getInitialWhitespace(string):
 			break
 	return ' ' * res
 
+def getFunctionNames(lines):
+	functions = []
+	for line in lines:
+		if line[0:4] == 'def ' or line.count(' def ')!=0:
+			#function on this line
+			c = line.split('def ')
+			fName = c[1].split('(')[0]
+			args = c[1].split('(')[1].split(')')[0].split(',')
+			functions.append([fName, args])
+	return functions
 
 def runFile(filename, tankWorld):
 	'''readFile opens and runs a user file, making sure that none of the 
@@ -50,6 +60,8 @@ tank.runTasks()'''
 
 	script = open(filename, 'rb')
 	lines = script.readlines()
+	userFunc = getFunctionNames(lines)
+	print userFunc
 	#Check for illegal strings in file
 	for line in lines:
 		for illegal in illegalStrings:
@@ -72,6 +84,19 @@ tank.runTasks()'''
 			code = code + tabClause + line
 		else:
 			code = code + tabClause + line + tabClause + prevTabs + yieldClause
+		for function in userFunc:
+			print function
+			if line.count(function[0]) != 0:
+				#grab the user funcions
+				print "there?", function[0], line.split(function[0]+'(')
+				spl = line.split(function[0]+'(')
+				#if not on the line with def
+				if spl[0].count('def ') ==0:
+					args = spl[len(spl)-1]
+					print args
+					code = code + tabClause + tabClause + 'for i in '  + function[0]+'('+args.strip()+':\n'
+					code = code +tabClause+tabClause+prevTabs+yieldClause
+
 
 	code = code + appendToEnd
 	

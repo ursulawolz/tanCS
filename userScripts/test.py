@@ -1,3 +1,4 @@
-for i in range(4):
-	tank.move(19)
-	tank.face(Point3(0,0,0))
+def coolFunction():
+    tank.move(2)
+    coolFunction()
+    print "asdf"
