@@ -42,6 +42,9 @@ def makeBlaster(tank):
 	b = Blaster(tank)
 	tank.setWeapon(b)
 
+def addLevelData(data):
+	t.setLevelData(data)
+
 def makeLevel(fileName, tankWorld= None):
 	global t
 	if tankWorld == None:
@@ -50,4 +53,5 @@ def makeLevel(fileName, tankWorld= None):
 	t = tankWorld
 	execfile('levels/'+fileName+'.py')
 	return t
+
 

@@ -199,3 +199,7 @@ class TankWorld(ShowBase):
 			print "error in tankworld.stepTasks",  sys.exc_info()[0],sys.exc_info()[1]
 		return task.cont
 
+	def setLevelData(self,level):
+		self.levelData = level
+	def getLevelData(self):
+		return self.levelData
