@@ -33,9 +33,7 @@ def on_menu_mode_changed(widget,current,parent_window):
 		window2=editor.Editor(UI_INFO,on_menu_mode_changed)
 		window2.connect("delete-event",Gtk.main_quit)
 		window2.show_all()
-
 	parent_window.destroy()
-	Gtk.main()
 
 	#print current.get_name() + " was selected."
 ###-----------------------------------MAIN---------------------------------###
