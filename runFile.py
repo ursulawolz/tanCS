@@ -11,6 +11,7 @@ class PermissionError(Exception):
 	def __init__(self, illegalChars, codeLine):
 		self.value = illegalChars
 		self.line = codeLine
+		self.levelData = {}
 
 	def __str__(self):
 		return "\n" + self.line + "User defined scripts are not allowed to include \"" + self.value + "\""
@@ -47,11 +48,12 @@ def runFile(filename, tankWorld):
 	appendToBeginning = '''
 
 tank = tankWorld.getUserTank()
+levelData = tankWorld.getLevelData()
 
-def userFun(tank):
+def userFun(tank, levelData):
 '''
 	appendToEnd = '''
-x = userFun(tank)
+x = userFun(tank, levelData)
 tank.setGenerator(x)
 tank.runTasks()'''
 

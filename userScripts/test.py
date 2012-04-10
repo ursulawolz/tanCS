@@ -1,3 +1,4 @@
+print levelData
 def coolFunction(x):
     tank.move(x)
     coolFunction(x)
