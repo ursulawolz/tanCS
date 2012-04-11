@@ -3,10 +3,10 @@ from gi.repository import Gdk
 
 ###------------------------Explorer Class--------------------------###
 class explorer_window(Gtk.Window):
-	def __init__(self, UI_INFO,on_menu_mode_changed):
+	def __init__(self, UI_INFO,on_window_mode_changed):
 		Gtk.Window.__init__(self,title="Entry Demo")
 		#action_group = Gtk.ActionGroup("my_actions")
-		#add_mode_menu_actions(action_group,on_menu_mode_changed,self)
+		#add_mode_menu_actions(action_group,on_window_mode_changed,self)
 		#uimanager = create_ui_manager(UI_INFO)
 		#uimanager.insert_action_group(action_group)
 		#menubar = uimanager.get_widget("/MenuBar")
@@ -36,10 +36,15 @@ class explorer_window(Gtk.Window):
 		self.toplevel.pack_start(self.quicknav,False,False,0)
 		self.current_page=self.make_search_results("type_results","identifier")
 
-		self.toggle.connect("clicked",self.new_page,self.current_page,self.toplevel)
+		#self.toggle.connect("clicked",self.new_page,self.current_page,self.toplevel)
+		self.toggle.connect("clicked",self.change,on_window_mode_changed,'Editor')
 
 		self.toplevel.pack_start(self.current_page,False,False,0)
 		self.add(self.toplevel)
+
+	def change(self,widget,on_window_mode_changed,winname):
+		on_window_mode_changed(winname,self)
+
 
 ###-------------------------------METHODS------------------------------###
 	def new_page(self, widget,old_page,toplevel):
@@ -71,12 +76,12 @@ class explorer_window(Gtk.Window):
 		return self.return_box
 		
 
-
+'''
 UI_INFO="blah"
-on_menu_mode_changed="moar blah"
-win=explorer_window(UI_INFO,on_menu_mode_changed)
+on_window_mode_changed="moar blah"
+win=explorer_window(UI_INFO,on_window_mode_changed)
 win.connect("delete-event",Gtk.main_quit)
 win.show_all()
 Gtk.main()	
-
+'''
 

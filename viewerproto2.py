@@ -1,7 +1,7 @@
 ###------------------------------Inclusions--------------------------------###
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
-#from mainproto2 import on_menu_mode_changed
+#from mainproto2 import on_window_mode_changed
 ###-------------------------------Main Functions---------------------------###
 
 #How the user creates line comments. Should involve clicking on the line or something like that. So this will get called by a button I think.Should add a line comment to the code.
@@ -14,7 +14,7 @@ def submit_file_comment(account,text):
 	print(account+" says: '"+text+"' about this file")
 	return
 
-def add_mode_menu_actions(action_group,on_menu_mode_changed,parent_window):
+def add_mode_menu_actions(action_group,on_window_mode_changed,parent_window):
 	action_modemenu=Gtk.Action("ModeMenu","Mode",None,None)
 	action_group.add_action(action_modemenu)
 	
@@ -22,7 +22,13 @@ def add_mode_menu_actions(action_group,on_menu_mode_changed,parent_window):
 		("Viewer", None, "Viewer", None, None, 1),
 		("Explorer", None, "Explorer", None, None, 2),
 		("Editor", None, "Editor", None, None, 3)
-	], 1, on_menu_mode_changed,parent_window)
+	], 1, change_window,[on_window_mode_changed,parent_window])
+
+def change_window(widget,current,params):
+	on_window_mode_changed=params[0]
+	parent_window=params[1]
+	new_window_name=current.get_name()
+	on_window_mode_changed(new_window_name,parent_window)
 
 def create_ui_manager(UI_INFO):
 	uimanager = Gtk.UIManager()
@@ -31,16 +37,16 @@ def create_ui_manager(UI_INFO):
 	uimanager.add_ui_from_string(UI_INFO)
 	return uimanager
 
-#def on_menu_mode_changed(widget, current):
+#def on_window_mode_changed(widget, current):
 	#print current.get_name() + " was selected."
 
 ###------------------------------Viewer Class------------------------------###
 class TempWindow(Gtk.Window):
-	def __init__(self,UI_INFO,on_menu_mode_changed):
+	def __init__(self,UI_INFO,on_window_mode_changed):
 		Gtk.Window.__init__(self,title="Entry Demo")
 
 		action_group = Gtk.ActionGroup("my_actions")
-		add_mode_menu_actions(action_group,on_menu_mode_changed,self)
+		add_mode_menu_actions(action_group,on_window_mode_changed,self)
 		uimanager = create_ui_manager(UI_INFO)
 		uimanager.insert_action_group(action_group)
 		menubar = uimanager.get_widget("/MenuBar")
