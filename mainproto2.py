@@ -27,7 +27,7 @@ def on_menu_mode_changed(widget,current,parent_window):
 		window.connect("delete-event",Gtk.main_quit)
 		window.show_all()
 	if new_window_name==("Explorer"):
-		window=viewer.TempWindow(UI_INFO,on_menu_mode_changed)
+		window=explorer.explorer_window(UI_INFO,on_menu_mode_changed)
 		window.connect("delete-event",Gtk.main_quit)
 		window.show_all()
 	if new_window_name==("Editor"):
@@ -42,6 +42,7 @@ def on_menu_mode_changed(widget,current,parent_window):
 ###-----------------------------------MAIN---------------------------------###
 
 win=viewer.TempWindow(UI_INFO,on_menu_mode_changed)
+print("Start Window")
 win.connect("delete-event",Gtk.main_quit)
 win.show_all()
 Gtk.main()

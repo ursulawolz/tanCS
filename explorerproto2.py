@@ -14,8 +14,9 @@ class explorer_window(Gtk.Window):
 		self.x=640
 		self.y=280
 		self.set_size_request(self.x,self.y)
-
-		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+		
+		#becuase of the way things are destroyed spacing on the next line needs to be 0
+		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
 
 		self.quicknav=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
 
@@ -36,20 +37,20 @@ class explorer_window(Gtk.Window):
 		self.toplevel.pack_start(self.quicknav,False,False,0)
 		self.current_page=self.make_search_results("type_results","identifier")
 
-		self.toggle.connect("clicked",self.new_page,self.current_page,self.toplevel)
+		self.toggle.connect("clicked",self.new_page,self.toplevel)
 
 		self.toplevel.pack_start(self.current_page,False,False,0)
 		self.add(self.toplevel)
 
 ###-------------------------------METHODS------------------------------###
-	def new_page(self, widget,old_page,toplevel):
-		children=old_page.get_children()
+	def new_page(self, widget,toplevel):
+		children=self.current_page.get_children()
 		index=0
 		while index<len(children):
 			children[index].destroy()
 			index=index+1	
-		self.new_page=self.make_homepage()
-		toplevel.pack_start(self.new_page,False,False,0)
+		self.current_page=self.make_homepage()
+		toplevel.pack_start(self.current_page,False,False,0)
 		toplevel.show_all()
 			
 	def make_homepage(self):
