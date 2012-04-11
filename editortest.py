@@ -1,13 +1,13 @@
-#!/usr/bin/env python
-from gi.repository import Gtk, Gdk, GtkSource
+from gi.repository import Gtk, Gdk, GtkSource, GObject
 
 class Editor(Gtk.Window):
 
-	def kill(self,parentwindow):
-		parentwindow.destroy()
-
-	def __init__(self,UI_INFO,on_menu_mode_changed):
+	def __init__(self,UI_INFO,on_window_mode_changed):
 		Gtk.Window.__init__(self,title='tanCS Editor')
+		
+		self.on_window_mode_changed=on_window_mode_changed
+		self.UI_INFO=UI_INFO
+		#uimanager=self.create_ui_manager(self.UI_INFO)
 
 		#structure rewrite
 		self.set_default_size(800,500)
@@ -29,7 +29,6 @@ class Editor(Gtk.Window):
 		'''
 		#Glade imports (DEPRECATED)
 		#import glade file and initialize window
-		self.on_menu_mode_changed=on_menu_mode_changed
 		self.builder=Gtk.Builder()
 		self.builder.add_from_file("gladetest.glade")
 		self.builder.connect_signals({ "on_window_destroy" : Gtk.main_quit })
@@ -39,6 +38,7 @@ class Editor(Gtk.Window):
 		self.scroll = self.builder.get_object("scrolledwindow1")
 		self.vbox = self.builder.get_object("vbox1")'''
 
+		
 		#create gtksourceview objects
 		self.sbuff = GtkSource.Buffer()
 		self.sview = GtkSource.View()
@@ -53,6 +53,13 @@ class Editor(Gtk.Window):
 		self.sbuff.set_text('Lorem ipsum dolor sit amet, \nconsectetur adipiscing elit. Sed et \nenim vitae augue dictum vehicula. Duis \nsit amet velit ipsum. Donec n\nibh leo, blandit et porttitor quis, aliquet sed est. Nam mollis pellentesque orci id pharetra. Curabitur eros arcu, mollis in ultricies nec, convallis a risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut pharetra leo quis risus volutpat porta. Praesent bibendum mi nec erat scelerisque vitae pellentesque massa eleifend. Aliquam aliquet venenatis odio id hendrerit. Nulla accumsan tincidunt mauris, nec mollis justo feugiat sit amet. Nullam quis sagittis neque. Integer dui augue, molestie vel semper at, iaculis sed metus. Mauris tempor nibh quis sem pellentesque vulputate. Nullam varius magna rhoncus lectus tempor at viverra tellus pretium.')
 		self.sview.show()
 		self.sview.connect("key-press-event",self.on_key_press)
+	
+	def create_ui_manager(self,UI_INFO):
+		uimanager = Gtk.UIManager()
+
+		# Throws exception if something went wrong
+		uimanager.add_ui_from_string(UI_INFO)
+		return uimanager
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
@@ -267,6 +274,8 @@ class Editor(Gtk.Window):
 				print 'comment'
 				self.sbuff.insert(itera,'#')
 
+
+
 	def create_toolbar(self):
 		self.toolbar=Gtk.Toolbar()
 		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
@@ -302,10 +311,23 @@ class Editor(Gtk.Window):
 		button_unindent=Gtk.ToolButton.new_from_stock(Gtk.STOCK_UNINDENT)
 		self.toolbar.insert(button_unindent, 7)
 		button_unindent.connect("clicked", self.unindent_block)
+		
+		viewer_icon=Gtk.Image.new_from_file('viewer-icon.png')
+		button_viewer=Gtk.ToolButton()
+		button_viewer.set_icon_widget(viewer_icon)
+		self.toolbar.insert(button_viewer, 8)
+		button_viewer.connect("clicked", change_window,"Viewer",self,self.on_window_mode_changed)
+
+		explorer_icon=Gtk.Image.new_from_file('explorer-icon.png')
+		button_explorer=Gtk.ToolButton()
+		button_explorer.set_icon_widget(explorer_icon)
+		self.toolbar.insert(button_explorer, 9)
+		button_explorer.connect("clicked",change_window,"Explorer",self,self.on_window_mode_changed)
 
 		self.toolbar.show_all()
 
-
+def change_window(widget,new_window_name,parent_window,on_window_mode_changed):
+	on_window_mode_changed(new_window_name,parent_window)
 
 '''
 #initiate window
