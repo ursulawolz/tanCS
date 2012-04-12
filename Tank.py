@@ -47,7 +47,8 @@ class Tank(DynamicWorldObject):
 
         # Make collide mask (What collides with what)
         self._nodePath.setCollideMask(0xFFFF0000)
-        
+        #self._nodePath.setCollideMask(BitMask32.allOff())
+
         self.movementPoint = Point3(10,10,0)
 
         #register tank

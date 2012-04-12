@@ -19,6 +19,6 @@ class Turret(CubeObject):
 
 	def setWeapon(self, weapon):
 		self._weapon = weapon
-		self._weapon._nodePath.setPos(self._weapon._nodePath, Vec3(0,0,3))
+		self._weapon._nodePath.setPos(self._weapon._nodePath, Vec3(1,1,1))
 		self._weapon.setHp(self.orientation[0],self.orientation[1])
 

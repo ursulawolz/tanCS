@@ -11,7 +11,7 @@ def setCollision(worldObject, tankWorld):
 	bulletNode = worldObject.getNodePath().node()
 	taskName = bulletNode.getName() + 'collide'
 
-	#Nested functions?
+	#Nested functions? are legit
 	def collide(task):
 
 		result = bulletWorld.contactTest(bulletNode)

@@ -39,4 +39,5 @@ class Blast(Projectile):
 
 		np.reparentTo(self._nodePath)
 
+		
 

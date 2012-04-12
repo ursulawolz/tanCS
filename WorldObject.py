@@ -22,7 +22,7 @@ class WorldObject(object):
         self._nodePath.node().setMass(mass)					#Only static objects should have 0 mass
 
 
-#The NodePath holds rendering state variables	
+        #The NodePath holds rendering state variables	
         self._nodePath.setPos(position[0], position[1], position[2]) 
         self._nodePath.setHpr(orientation[0], orientation[1], orientation[2])		
 
@@ -32,6 +32,8 @@ class WorldObject(object):
         
         self._nodePath.node().addShape(shape,self._transformState)
         self._tankWorld.attachRigidBody(self._nodePath.node())
+        
+        #self._nodePath.setCollideMask(BitMask32.allOn())
 
     def getVel(self):
         return self._nodePath.node().getLinearVelocity()

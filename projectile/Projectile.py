@@ -22,23 +22,34 @@ class Projectile(DynamicWorldObject):
 		DynamicWorldObject.__init__(self, world, attach, name, pos, shape, direction, vel, mass)
 		self._weapon = weapon
 		self._damage = damageGiven
-
-
-
+		self._nodePath.node().removeShape(shape)
+		self.shape = shape
+		self._tankWorld.doMethodLater(.01, self.startCollide, 'turn collide on')
+		#self._nodePath.setFromCollideMask(BitMask32.allOff())
+		#self._tankWorld.doMethodLater(1, self.startCollide, 'turn collide on') #attempt to make collisions turn on able. 
+		#Something odd with collide masks
+		#self._nodePath.node().setCcdMotionThreshold(1e-7)
+		#self._nodePath.node().setCcdSweptSphereRadius(0.50)
 	def getDamage(self):
 		return self._damage
+	
+	def startCollide(self, task):
+		if not self._nodePath.is_empty():
+			self._nodePath.node().addShape(self.shape)
+			#self._nodePath.setCollideMask(BitMask32.allOn())
+		return task.done
 
 	def handleCollision(self, collide, taskName):
 		self._collisionCounter += 1
 
 		#Always in called twice in succession
 
-		if (self._collisionCounter % 2 == 0):
-			print "Projectile.handleCollision:(pos) ", self.getPos()
+		#if (self._collisionCounter % 2 == 0):
+		print "Projectile.handleCollision:(pos) ", self.getPos()
 
-			self._tankWorld.taskMgr.remove(taskName)
-			x = self._nodePath.node()
+		self._tankWorld.taskMgr.remove(taskName)
+		x = self._nodePath.node()
 
-			self._tankWorld.removeRigidBody(x)
-			self._nodePath.removeNode()
-	
+		self._tankWorld.removeRigidBody(x)
+		self._nodePath.removeNode()
+		#del self
