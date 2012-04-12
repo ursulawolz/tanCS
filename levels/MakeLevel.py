@@ -11,6 +11,7 @@ from FloorStaticObject import FloorStaticObject
 from Tank import Tank
 from weapon.Blaster import Blaster
 
+from Turret import Turret
 t = None #global cube object
 
 def vec(val):
@@ -34,14 +35,18 @@ def makeCollisionState(trigger, tracking_object=None, tracking_name='name', posi
 		
 	s = CollisionState(t,tracking_name, position=vec(position), name=name)
 	trigger.addState(s)
+def makeTurret(position=(0,0,0), orientation=(0,0,0), name='turret'):
+	return Turret(t, t.render, position=vec(position), orientation=vec(orientation), name=name)
+
+
 
 def makeTank(position=(0,0,0), orientation=(0,0,0), name='tank'):
 	return Tank(t,t.render, position=vec(position), orientation=vec(orientation), name=name)
 
-def makeBlaster(tank):
-	b = Blaster(tank)
-	tank.setWeapon(b)
-
+def makeBlaster(obj):
+	b = Blaster(obj)
+	obj.setWeapon(b)
+	
 def addLevelData(data):
 	t.setLevelData(data)
 
