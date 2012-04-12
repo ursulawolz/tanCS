@@ -9,6 +9,6 @@ makeBlaster(tank)
 def nothing():
 	print  "wined"
 
-trigger = makeTrigger(function=nothing)
+trigger = makeTrigger(function=tankWorld.victory)
 makeCollisionState(trigger, position=(16,2.5,0), tracking_object=tank)
 

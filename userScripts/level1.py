@@ -1,6 +1,4 @@
-try:
-	print levelData
-except:
-	print "no level data"
+print levelData
+
 
 tank.move(30)

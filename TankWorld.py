@@ -35,12 +35,12 @@ class TankWorld(ShowBase):
 
 		#This creates a task named update and runs every frame
 		taskMgr.add(self.stepTasks,'SOME NAME')
-		self.add(self.__update,"update")
+		self.taskMgr.add(self.__update,"bullet-update")
 		self._deltaTimeAccumulator = 0;
 
 		self.tanks = []
 		self.isDead = False
-
+		self.levelData = {}
 	def __del__(self):
 		#self.shutdown()
 		#del self
@@ -83,7 +83,7 @@ class TankWorld(ShowBase):
 		self.left = inputState.watch('left','a','a-up')
 		self.right = inputState.watch('right','d','d-up')
 
-	def close(self):
+	def close(self, task=None):
 		self.taskMgr.removeTasksMatching("*")
 		self.isDead = True
 		self.shutdown()
@@ -165,7 +165,8 @@ class TankWorld(ShowBase):
 		'''
 		print "YOU HAVE WON THE GAME"
 		#pdb.set_trace()
-		self.close()
+		self.taskMgr.remove('bullet-update')
+		self.taskMgr.doMethodLater(2, self.close, 'Task Name')
 
 	def lose(self):
 		'''
