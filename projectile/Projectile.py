@@ -4,7 +4,7 @@ import sys
 sys.path.append("..")
 from DynamicWorldObject import *
 from panda3d.bullet import BulletSphereShape
-
+import pdb
 	
 class Projectile(DynamicWorldObject):
 	"""Child of DynamicWorldObject, fired by a Weapon, has a certain damage that it gives on impact
@@ -28,8 +28,9 @@ class Projectile(DynamicWorldObject):
 		#self._nodePath.setFromCollideMask(BitMask32.allOff())
 		#self._tankWorld.doMethodLater(1, self.startCollide, 'turn collide on') #attempt to make collisions turn on able. 
 		#Something odd with collide masks
-		#self._nodePath.node().setCcdMotionThreshold(1e-7)
-		#self._nodePath.node().setCcdSweptSphereRadius(0.50)
+		
+		self._nodePath.node().setCcdMotionThreshold(1e-7)
+		self._nodePath.node().setCcdSweptSphereRadius(0.10)
 	def getDamage(self):
 		return self._damage
 	
@@ -38,6 +39,11 @@ class Projectile(DynamicWorldObject):
 			self._nodePath.node().addShape(self.shape)
 			#self._nodePath.setCollideMask(BitMask32.allOn())
 		return task.done
+	def deleteAfter(self, task):
+		x = self._nodePath.node()
+
+		self._tankWorld.removeRigidBody(x)
+		self._nodePath.removeNode()
 
 	def handleCollision(self, collide, taskName):
 		self._collisionCounter += 1
@@ -45,11 +51,14 @@ class Projectile(DynamicWorldObject):
 		#Always in called twice in succession
 
 		#if (self._collisionCounter % 2 == 0):
-		print "Projectile.handleCollision:(pos) ", self.getPos()
+		if not self._nodePath.is_empty():
+			print "Projectile.handleCollision:(pos) ", self.getPos(), 'obj 1', collide.getNode0().getName(), 'obj 2', collide.getNode1().getName()
 
-		self._tankWorld.taskMgr.remove(taskName)
-		x = self._nodePath.node()
+			self._tankWorld.taskMgr.remove(taskName)
+			self._tankWorld.taskMgr.doMethodLater(.01, self.deleteAfter, 'deleteAfter')
 
-		self._tankWorld.removeRigidBody(x)
-		self._nodePath.removeNode()
+		else:
+			print "Projectile.handleCollision Failed to have _nodepath"
+			self._tankWorld.taskMgr.remove(taskName)
+		#pdb.set_trace()
 		#del self

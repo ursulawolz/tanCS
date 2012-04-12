@@ -6,7 +6,7 @@ class CubeObject(StaticWorldObject):
 	def __init__(self, world, attach, name = '', position = Vec3(0,0,0), orientation = Vec3(0,0,0), scale = Vec3(1,1,1), texture='test.png' ):
 		shape = BulletBoxShape(scale/2)
 		self._transformState = TransformState.makePos(Point3(scale.x/2,scale.y/2,scale.z/2)) #offset
-		
+			
 		geo = loader.loadModel('media/'+'cube.x')
 		
 

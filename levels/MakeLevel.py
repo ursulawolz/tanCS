@@ -29,7 +29,7 @@ def makeTrigger(target = None, function=None, position=(0,0,0)):
 		function = t.victory
 	return Trigger(t,function=function)
 
-def makeCollisionState(trigger, tracking_object=None, tracking_name='name', position=(0,0,0), orientation=(0,0,0), name='collisionState' ):
+def makeCollisionState(trigger, tracking_object=None, tracking_name='collisionState', position=(0,0,0), orientation=(0,0,0), name='collisionState' ):
 	if tracking_object != None:
 		tracking_name = tracking_object.getName()
 		
@@ -46,7 +46,7 @@ def makeTank(position=(0,0,0), orientation=(0,0,0), name='tank'):
 def makeBlaster(obj):
 	b = Blaster(obj)
 	obj.setWeapon(b)
-	
+	return b
 def addLevelData(data):
 	t.setLevelData(data)
 

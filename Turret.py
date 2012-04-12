@@ -13,9 +13,10 @@ class Turret(CubeObject):
 
 	def fireTask(self, task):
 		print "fired"
-
+		self._weapon.aimAt(self._tankWorld.getUserTank().getPos())
 		self._weapon.fire(1)
 		return task.again
+	
 
 	def setWeapon(self, weapon):
 		self._weapon = weapon

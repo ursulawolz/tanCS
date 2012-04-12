@@ -23,8 +23,8 @@ class Blast(Projectile):
 
 		direction = Vec3(math.cos(h) * math.cos(p), math.sin(h) * math.cos(p), math.sin(p))
 
-		shape = BulletSphereShape(.05)
-		name = weapon.getTank()._nodePath.node().getName() + ' blast'
+		shape = BulletSphereShape(.1)
+		self.name = weapon.getTank()._nodePath.node().getName() + ' blast'
 
 		pos = weapon.getAbsPos()
 		pos = Point3(pos[0], pos[1], pos[2])
@@ -34,10 +34,10 @@ class Blast(Projectile):
 
 		np  = loader.loadModel('smiley')
 		np.setScale(Vec3(.5,.5,.5))
-		Projectile.__init__(self, weapon, pos, name, shape, vel, mass, damage)
+		Projectile.__init__(self, weapon, pos, self.name, shape, vel, mass, damage)
 		self._collisionCounter = 0
 
 		np.reparentTo(self._nodePath)
-
+	
 		
 

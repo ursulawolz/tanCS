@@ -90,7 +90,6 @@ class Tank(DynamicWorldObject):
             self.__createWheel(wheel)
             self.vehicle.setSteeringValue(0,i)
             wheel.setRollInfluence((-2*(i%2)+1)*0.2)
-
     def __createWheel(self,wheel):
         '''
             sets up properties for wheel.

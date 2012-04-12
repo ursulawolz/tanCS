@@ -15,7 +15,8 @@ class Blaster(Weapon):
 
 		Weapon.__init__(self, tank, posDelta, barrelLength, maxVel)
 
-		
+	def getBulletName(self):
+		return self.tank.getNodePath().getName() + ' blast'
 
 	def fire(self, amt = 1):
 		'''
