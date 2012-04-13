@@ -14,9 +14,9 @@ class Weapon(object):
 		self._nodePath = tank._nodePath.attachNewNode(PandaNode(name))
 		self._nodePath.setPos(pos[0], pos[1], pos[2])
 		self._nodePath.setHpr(0,0,0)
-		
+	
 		self.tank = tank
-
+		self._tankWorld = self.tank._tankWorld
 		self.barrel = length
 		self.maxVel = vel
 
@@ -40,7 +40,7 @@ class Weapon(object):
 		Gets the direction that the turret
 		Returns Vec3 of direction
 		'''
-		return self._nodePath.getHpr()	
+		return self._nodePath.getHpr(render) #LINE THAT WILL PROBABLY BREAK	
 
 	def getRelPos(self):
 		return self._nodePath.getPos()
@@ -55,7 +55,7 @@ class Weapon(object):
 		self.setHp(self.direction[0], goal)
 
 	def getHpr(self):
-		return self._nodePath.getHpr()
+		return self._nodePath.getHpr(render) #LINE THAT WILL PROBABLY BREAK	
 
 	def getHp(self):
 		hpr = self.getHpr()
@@ -84,7 +84,9 @@ class Weapon(object):
 
 		if discriminant < 0:
 			return False
-
+		if x == 0:
+			return False
+		
 		if aimLow:
 			angle2 = math.atan((v**2 - math.sqrt(discriminant))/(g * x))
 		else:

@@ -17,8 +17,10 @@ def setCollision(worldObject, tankWorld):
 		result = bulletWorld.contactTest(bulletNode)
 		for i in range(result.getNumContacts()):
 			worldObject.handleCollision(result.getContact(i), taskName)
+			#if result.getContact(i).getNode0().getName() != 'tank':
+				#print 'TaskList: ' , result.getContact(i).getNode1().getName(),
 
 		return task.cont
-
+		#print ''
 	tankWorld.taskMgr.add(collide, taskName)
 	

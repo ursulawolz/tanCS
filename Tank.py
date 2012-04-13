@@ -22,6 +22,7 @@ class Tank(DynamicWorldObject):
 
         #Constant Relevant Instatiation Parameters
         self._tankSize = Vec3(1, 1.5, .5) # Actually a half-size
+        self._tankSideLength = max(self._tankSize)*2
         friction = .3
         tankMass = 800.0
 
@@ -90,7 +91,6 @@ class Tank(DynamicWorldObject):
             self.__createWheel(wheel)
             self.vehicle.setSteeringValue(0,i)
             wheel.setRollInfluence((-2*(i%2)+1)*0.2)
-
     def __createWheel(self,wheel):
         '''
             sets up properties for wheel.
@@ -141,21 +141,26 @@ class Tank(DynamicWorldObject):
         This scan has the feature that it will pick up a lone object 
         guaranteed at any distance.
         '''
-
+        self.waitTime(.1)
         potentialNPs = self._tankWorld.render.getChildren()
         found = []
 
         for np in potentialNPs:
             if type(np.node()) == BulletRigidBodyNode and np != self:
-                pFrom = np.getPos() 
+                pFrom = np.getPos(render) 
                 pTo = self.getPos() + self.getPos() - pFrom 
                 #pTo is a Vec3, turned to a point for rayTest
                 
                 result = self._tankWorld.getPhysics().rayTestClosest(
                         pFrom, Point3(pTo[0], pTo[1], pTo[2]))
+
                 if result.hasHit() and result.getNode() == self._nodePath.node():
-                    found.append((np.node().getPrevTransform().getPos(),
-                        np.node().getName()))      
+
+                    #found.append((np.node().getPrevTransform().getPos(),
+                    #    np.node().getName()))
+                    found.append((np.getPos(render),
+                        np.node().getName()))
+
         return found
 
 
@@ -170,8 +175,7 @@ class Tank(DynamicWorldObject):
         distanceOfMap = 100000
         results = []
         scanResolution = numPoints / 360.0
-        pos = self._nodePath.getPos()   
-        prevNodes = dict()
+        pos = self._nodePath.getPos()
         heading = self._nodePath.getH()
         
         for i in range(int(relAngleRange[0] * scanResolution), 
@@ -199,6 +203,7 @@ class Tank(DynamicWorldObject):
         found = []
         numFound = 0
         results = self.__bulletRays(numPoints, relAngleRange, height)
+        prevNodes = dict()
 
         for item in results:
             result = item[0]
@@ -570,6 +575,7 @@ class Tank(DynamicWorldObject):
         return self._weapon.aimAt(point, aimLow)
 
 
+
     def backward(self, dist):
         if dist <=0:
             raise ValueError("Distance must be positive")
@@ -589,4 +595,7 @@ class Tank(DynamicWorldObject):
         pass
 
     def fire(self, amt = 1):
-        return self._weapon.fire(amt)        
+
+        x = self._weapon.fire(amt)        
+        self.waitTime(.1)
+        return x;

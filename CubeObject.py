@@ -6,14 +6,14 @@ class CubeObject(StaticWorldObject):
 	def __init__(self, world, attach, name = '', position = Vec3(0,0,0), orientation = Vec3(0,0,0), scale = Vec3(1,1,1), texture='test.png' ):
 		shape = BulletBoxShape(scale/2)
 		self._transformState = TransformState.makePos(Point3(scale.x/2,scale.y/2,scale.z/2)) #offset
-		
-		geo = loader.loadModel('media/'+'cube.x')
+			
+		self.geo = loader.loadModel('media/'+'cube.x')
 		
 
 		tex = loader.loadTexture('media/'+texture)
 		tex.setMagfilter(Texture.FTNearest)
 		tex.setMinfilter(Texture.FTNearest)
-		geo.setTexture(tex)
+		self.geo.setTexture(tex)
 
 		for x in range(int(scale[0])):
 			for y in range(int(scale[1])):
@@ -23,7 +23,7 @@ class CubeObject(StaticWorldObject):
 					#geo.setScale(scale)
 					newNode.setPos(position+VBase3(x,y,z))
 					#geo.setHpr(orientation)
-					geo.instanceTo(newNode)
+					self.geo.instanceTo(newNode)
 					
 
 
@@ -33,3 +33,8 @@ class CubeObject(StaticWorldObject):
 		
 		StaticWorldObject.__init__(self, world, attach, name, position, shape, orientation) 
 
+	def setTexture(self, texture):
+		tex = loader.loadTexture('media/'+texture)
+		tex.setMagfilter(Texture.FTNearest)
+		tex.setMinfilter(Texture.FTNearest)
+		self.geo.setTexture(tex)
