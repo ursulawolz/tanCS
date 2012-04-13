@@ -141,7 +141,7 @@ class Tank(DynamicWorldObject):
         This scan has the feature that it will pick up a lone object 
         guaranteed at any distance.
         '''
-        self.waitTime(.1)
+        self.wait(.1)
         potentialNPs = self._tankWorld.render.getChildren()
         found = []
 
@@ -574,7 +574,10 @@ class Tank(DynamicWorldObject):
     def aimAt(self, point, aimLow = True):
         return self._weapon.aimAt(point, aimLow)
 
-
+    def fireAt(self, point, amt = 1, aimLow = True):
+        '''Calls aimAt and fire in succession'''
+        self.aimAt(point, aimLow)
+        self.fire(amt)
 
     def backward(self, dist):
         if dist <=0:
@@ -597,5 +600,5 @@ class Tank(DynamicWorldObject):
     def fire(self, amt = 1):
 
         x = self._weapon.fire(amt)        
-        self.waitTime(.1)
+        self.wait(.1)
         return x;
