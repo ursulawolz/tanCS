@@ -41,13 +41,13 @@ class WorldObject(object):
         return self._nodePath.getName()
         
     def getPos(self):
-        return self._nodePath.getPos()
+        return self._nodePath.getPos(render)
 
     def getTankWorld(self):
         return self._tankWorld
 
     def getHpr(self):
-        return self._nodePath.getHpr()
+        return self._nodePath.getHpr(render)
 
     def getShape(self):
         return self.__shape ##I'm not sure this is the correct implimentation.

@@ -12,8 +12,8 @@ class Turret(CubeObject):
 		self.orientation = orientation
 
 	def fireTask(self, task):
-		print "fired"
-		self._weapon.aimAt(self._tankWorld.getUserTank().getPos())
+
+		self._weapon.aimAt(self._tankWorld.getUserTank().getPos(), True)
 		self._weapon.fire(1)
 		return task.again
 	
@@ -22,4 +22,3 @@ class Turret(CubeObject):
 		self._weapon = weapon
 		self._weapon._nodePath.setPos(self._weapon._nodePath, Vec3(1,1,1))
 		self._weapon.setHp(self.orientation[0],self.orientation[1])
-

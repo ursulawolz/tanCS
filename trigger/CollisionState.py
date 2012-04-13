@@ -53,5 +53,6 @@ class CollisionState(State, CubeObject):
 		
 		if collide.getNode0().getName() == self.tracking_name or collide.getNode1().getName()== self.tracking_name:
 			self.triggered=True
+			self.setTexture('activated.png')
 			#pass
 		#self.tankWorld.taskMgr.remove(taskName)

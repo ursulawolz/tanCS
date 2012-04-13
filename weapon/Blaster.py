@@ -12,9 +12,11 @@ class Blaster(Weapon):
 		maxVel = 100  #Condition ??
 		posDelta = Vec3(0,0,1) #Incorrect currently
 		barrelLength = 2 # Incorrect currently
-
+		self.canFire = True;
+		self.reloadTimer = .5;
 		Weapon.__init__(self, tank, posDelta, barrelLength, maxVel)
-
+	def setCanFire(self, task):
+		self.canFire = True
 	def getBulletName(self):
 		return self.tank.getNodePath().getName() + ' blast'
 
@@ -22,5 +24,9 @@ class Blaster(Weapon):
 		'''
 		Fires a blaster bullet
 		'''
-		x = Blast(self, amt * self.maxVel)
-		return x
+		if self.canFire == True:
+			self.canFire = False
+			x = Blast(self, amt * self.maxVel)
+			self._tankWorld.taskMgr.doMethodLater(self.reloadTimer, self.setCanFire, 'can fire reload')
+			return x
+		
