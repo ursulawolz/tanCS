@@ -16,7 +16,7 @@ def makeTableStructure(host , password , username, personalpassword) :
 	cur.execute("create table account(account_id int, username tinytext, password tinytext, avatar blob, groups text);")
 	cur.execute("create table borrow( borrow_id int, date_taken datetime, project_to_id smallint, project_id smallint, revision_id smallint, file_name tinytext, line_range tinytext);")
 	cur.execute("create table comment(all_of_the_text longtext, time_of_post datetime, account_posting_id smallint, project_id smallint, revision_number smallint, file_name tinytext, line_number tinyint);")
-	cur.execute("create table file_info( project_id smallint, revision_number smallint, file_name tinytext, file_content blob, checksum tinytext);")
+	cur.execute("create table file_info( project_id smallint, revision_number smallint, file_name tinytext, file_content blob);")
 	cur.execute("create table group_info( group_id smallint, group_projects text, account_ids text, god_id int);")
 	cur.execute("create table project_info( project_id smallint, parent_id smallint, children_ids text, borrow_ids text, group_id smallint, revisions text, locked tinyint, tags text);")
 	cur.execute("create table revision( revision_number tinyint, filenames text, project_id smallint, revision_time datetime);")
@@ -28,7 +28,7 @@ def makeTableStructure(host , password , username, personalpassword) :
 
 
 
-def Update(information , information_type , identifier , identifier_type, host,password):
+def update(information , information_type , identifier , identifier_type, host,password): #creations come before updates. ie an update doesnt create a NEW but a NEW can create an update
 
 	import MySQLdb as mdb 
 	import sys
@@ -49,11 +49,11 @@ def Update(information , information_type , identifier , identifier_type, host,p
 	if information_type == "file_content" :
 		cur.execute("update file_info set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
 
-	elif information_type == "filenames":
+	elif information_type == "filenames":  #only called when a new file is created
 		cur.execute("update revision set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
 
 
-	elif information_type == "avatar" or information_type == "password" :
+	elif information_type == "avatar" or information_type == "password" :   
 		cur.execute('update account set ' + information_type + ' = ' + information + ' where ' + identifier_type + ' = ' + identifier)
 
 	elif information_type == "locked" :
@@ -63,28 +63,28 @@ def Update(information , information_type , identifier , identifier_type, host,p
 	elif information_type == "tags" or information_type == "children_ids" or information_type == "borrow_ids" or information_type == "revisions" :
 		con.query("select %s from project_info where %s = %s" , (information_type , identifier_type, identifier))
 		current = con.store_result()
-		new_info = current + information
+		new_info = current + '$$$$' + information
 		cur.execute("update project_info set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
 
 
 	elif information_type == "group_projects":
 		con.query("select %s from group_info where %s = %s" , (information_type , identifier_type, identifier))
 		current = con.store_result()
-		new_info = current + information
-		cur.execute("update group_info set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
+		new_info = current + '$$$$' + information
+		cur.execute("update group_info set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 
 	elif information_type == "groups" :
 		con.query("select %s from account where %s = %s" , (information_type , identifier_type, identifier))
 		current = con.store_result()
-		new_info = current + information
-		cur.execute("update account set %s =  %s  where  %s = %s" ,(information_type, new_info , identifier_type , identifier))
+		new_info = current + '$$$$' + information
+		cur.execute("update account set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 		cur.execute("update group_info set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
 
 	elif information_type == "account_ids":
 		con.query("select %s from group_info where %s = %s" , (information_type , identifier_type, identifier))
 		current = con.store_result()
-		new_info = current + information
-		cur.execute("update group_info set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
+		new_info = current + '$$$$' + information
+		cur.execute("update group_info set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 		cur.execute("update account set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
 
 	con.commit()
@@ -93,7 +93,7 @@ def Update(information , information_type , identifier , identifier_type, host,p
 
 
 
-def NewEntry(object_type, column_info, column_type, host,password):
+def NewEntry(object_type, column_info, column_type, host,password):  #if a person creates a new revision they must also provide the changes made
 	import MySQLdb as mdb 
 	import sys
 	
@@ -124,6 +124,8 @@ def NewEntry(object_type, column_info, column_type, host,password):
 
 	elif object_type == "project_info":
 		update(column_info[0], "group_projects", column_info[4], "group_id" , host,password)
+		if not column_info[1] == None :
+			update(column_info[0],'children_ids',column_info[1], 'project_id', host, password)
 
 	elif object_type == "group_info":
 		update(column_info[0], "groups", column_info[3], "account_id", host,password )
@@ -133,6 +135,12 @@ def NewEntry(object_type, column_info, column_type, host,password):
 
 	elif object_type == "revision":
 		update(column_info[0], "revisions", column_info[2], "project_id" , host,password)
+		string = column_info[1]
+		list_of_files = string[3:].split('$$$')
+			new_types = ['project_id', 'revision_number', 'file_name', 'file_content']
+		for i in list_of_files:
+			new_info = [column_info[2], column_info[0], i, column_info[4]]
+			NewEntry('file_info', new_info, new_types, host, password)
  
 
 def SearchAll(search_type, search_value, object_type, fist, last, host, password):  # ex: give me all of the object_type who have search_type equal to search_value
