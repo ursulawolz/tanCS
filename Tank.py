@@ -340,6 +340,8 @@ class Tank(DynamicWorldObject):
         '''Turn so that you are facing a point. Uses rotate and faceRel
         Assumes absolute coordinate system for the point
         '''
+        if type(point) == tuple or type(point) == list:
+            point = Point3(point[0], point[1], 0)
         deltaPos = point - self.getPos()
         self.faceRel(deltaPos)
 
@@ -347,7 +349,9 @@ class Tank(DynamicWorldObject):
         '''Turn so that you face a pointRel relative to the tank.
         Uses rotate
         '''
-        newH = math.atan2(pointRel[0], pointRel[1])
+        if type(pointRel) == tuple or type(pointRel) == list:
+            pointRel = Point3(pointRel[0], pointRel[1], 0)
+        newH = math.atan2(pointRel[1], pointRel[0]) * 180/math.pi + 90
         self.turnTo(newH)
 
 
@@ -359,6 +363,8 @@ class Tank(DynamicWorldObject):
         angle = angle % 360
         if angle > 180:
             angle -= 360
+
+        
         heading = self.fixAngle(self._nodePath.getH())
         newH = self.fixAngle(heading + angle)
 
@@ -377,7 +383,7 @@ class Tank(DynamicWorldObject):
         self._tankWorld.taskMgr.add(self.updateRotate,'userTask',uponDeath=self.nextTask)
 
 
-    def waitTime(self, waitTime):
+    def wait(self, waitTime):
         self._taskTimer = waitTime
         self._tankWorld.taskMgr.add(self.updateWait,'userTask',uponDeath=self.nextTask)
 
@@ -407,6 +413,9 @@ class Tank(DynamicWorldObject):
         if theta > 180:
             theta -= 360
         thetaFromStart = heading - self._moveLoc[1]
+        thetaFromStart = thetaFromStart % 360
+        if thetaFromStart > 180:
+            thetaFromStart -= 360
 
         if self._stop:
             if abs(w) < .1:
@@ -426,7 +435,7 @@ class Tank(DynamicWorldObject):
         else:
             self.applyBrakes(brakePercent)
         
-        if abs(theta) < .1: 
+        if abs(theta) < .1:
             self._stop = True
         if abs(thetaFromStart + .1) > abs(self._moveLoc[2]):
             self._stop = True
