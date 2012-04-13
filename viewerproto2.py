@@ -31,24 +31,10 @@ def change_window(widget,current,params):
 	new_window_name="Editor"
 	on_window_mode_changed(new_window_name,parent_window)
 
-def create_ui_manager(UI_INFO):
-	uimanager = Gtk.UIManager()
-
-	# Throws exception if something went wrong
-	uimanager.add_ui_from_string(UI_INFO)
-	return uimanager
-
 ###------------------------------Viewer Class------------------------------###
 class TempWindow(Gtk.Window):
-	def __init__(self,UI_INFO,on_window_mode_changed):
+	def __init__(self,on_window_mode_changed):
 		Gtk.Window.__init__(self,title="Entry Demo")
-		
-		'''
-		action_group = Gtk.ActionGroup("my_actions")
-		add_mode_menu_actions(action_group,on_window_mode_changed,self)
-		uimanager = create_ui_manager(UI_INFO)
-		uimanager.insert_action_group(action_group)
-		menubar = uimanager.get_widget("/MenuBar")'''
 		
 		color=Gdk.Color(1000,1000,1000)
 		self.x=840
