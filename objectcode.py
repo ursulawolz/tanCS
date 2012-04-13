@@ -3,8 +3,8 @@
 class Account:
     ## Object for an individual user's account.
 
-    def __init__(self,hashID,username,password,avatar):
-        self.hashID = hashID
+    def __init__(self, userID, username, password, avatar):
+        self.accountID = accountID
         self.username = username
         self.password = password
         self.avatar = avatar
@@ -30,15 +30,23 @@ class Account:
         ## Removes a group from the user's list of groups.
         self.group_list.remove( group )
 
+class Borrow:
+    def __init(self, date_taken, projectID, revisionID, file_name, line_range):
+        self.date_taken = date_taken
+        self.projectID = projectID
+        self.revisionID = revisionID
+        self.file_name = file_name
+        self.line_range = line_range
+
 
 class Project:
-    def __init__(self, projID, parentID, groupID):
+    def __init__(self, projID, parentID, groupID, borrows):
         self.projID = projID
         self.parentID = parentID
         self.groupID = groupID
 
         self.children = set()
-        self.borrows = set()
+        self.borrows = borrows
 
         ## Revisions is a dict, for which each key is a datetime,
         ## and the values are the revisions.
@@ -76,18 +84,39 @@ class Project:
         self.tags.remove( tag )
 
 
+class File:
+    ## Object for a revision file.
+
+    def __init__(self, projectID, revision_number, file_name, content)
+        self.projectID = projectID
+        self.revision_number = revision_number
+        self.file_name = file_name
+        self.content = content
+
+
 class Group:
     ## Object which defines a user-group.
 
-    def __init__(self, groupID, projIDs, accountIDs, godID):
+    def __init__(self, groupID, accountIDs, godID):
         # groupID is the group's unique hash ID.
-        # projIDs and accountIDs are each sets of project and account hashes.
+        # projIDs and accountIDs are sets of project and account hashes.
         # godID is the account hash of the group god.
         self.groupID = groupID
-        self.projIDs = projIDs
+        self.projIDs = set()
         self.accountIDs = accountIDs
         self.godID = godID
 
+    def add_project(self, projectID):
+        self.projIDs.add(projectID)
+
+    def remove_project(self, projectID):
+        self.projIDs.remove(projectID)
+
+    def add_user(self, userID):
+        self.accountIDs.add(userID)
+
+    def remove_user(self, userID):
+        self.accountIDs.remove(userID)
 
 
 class Comment:
@@ -96,16 +125,19 @@ class Comment:
     def __init__(self,text,time,hashID,which_file,which_line=-1):
         self.text = text
         self.time = time
-        self.hashID = hashID
-        self.which_file = which_file
-        if which_line != -1:
-            self.which_line == which_line
-        self.lastEdited = -1
+        self.last_edited = time
+
+        self.accountID = accountID
+        self.projectID = projectID
+        self.revisionID = revisionID
+
+        self.file_name = file_name
+        self.line_number = line_number
 
     def edit(self,new_text,edit_time):
         ## To be called when a user edits a comment.
         self.text = new_text
-        self.lastEdited = edit_time
+        self.last_edited = edit_time
 
     def delete(self):
         ## To be called when a user deletes their comment.
