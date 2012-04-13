@@ -42,13 +42,14 @@ def create_ui_manager(UI_INFO):
 class TempWindow(Gtk.Window):
 	def __init__(self,UI_INFO,on_window_mode_changed):
 		Gtk.Window.__init__(self,title="Entry Demo")
+		
 		'''
 		action_group = Gtk.ActionGroup("my_actions")
 		add_mode_menu_actions(action_group,on_window_mode_changed,self)
 		uimanager = create_ui_manager(UI_INFO)
 		uimanager.insert_action_group(action_group)
-		menubar = uimanager.get_widget("/MenuBar")
-		'''
+		menubar = uimanager.get_widget("/MenuBar")'''
+		
 		color=Gdk.Color(1000,1000,1000)
 		self.x=840
 		self.y=280
@@ -207,6 +208,7 @@ class TempWindow(Gtk.Window):
 		vbox.pack_start(hbox2,False,False,0)
 
 		toplevel.pack_start(vbox,False,False,0)
+		#Gtk.UIManager()
 
 ###---------------------------------METHODS--------------------------------###
 
