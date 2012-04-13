@@ -2,12 +2,10 @@ from gi.repository import Gtk, Gdk, GtkSource, GObject
 
 class Editor(Gtk.Window):
 
-	def __init__(self,UI_INFO,on_window_mode_changed):
+	def __init__(self,on_window_mode_changed):
 		Gtk.Window.__init__(self,title='tanCS Editor')
 		
 		self.on_window_mode_changed=on_window_mode_changed
-		self.UI_INFO=UI_INFO
-		#uimanager=self.create_ui_manager(self.UI_INFO)
 
 		#structure rewrite
 		self.set_default_size(800,500)
@@ -26,19 +24,6 @@ class Editor(Gtk.Window):
 		self.vbox_top.pack_start(self.scrolledwindow,True,True,0)
 		self.vbox_top.pack_start(self.statusbar,False,True,0)
 		
-		'''
-		#Glade imports (DEPRECATED)
-		#import glade file and initialize window
-		self.builder=Gtk.Builder()
-		self.builder.add_from_file("gladetest.glade")
-		self.builder.connect_signals({ "on_window_destroy" : Gtk.main_quit })
-		self.window = self.builder.get_object("window")
-		self.window.set_default_size(800, 500)
-		self.window.show()
-		self.scroll = self.builder.get_object("scrolledwindow1")
-		self.vbox = self.builder.get_object("vbox1")'''
-
-		
 		#create gtksourceview objects
 		self.sbuff = GtkSource.Buffer()
 		self.sview = GtkSource.View()
@@ -53,13 +38,6 @@ class Editor(Gtk.Window):
 		self.sbuff.set_text('Lorem ipsum dolor sit amet, \nconsectetur adipiscing elit. Sed et \nenim vitae augue dictum vehicula. Duis \nsit amet velit ipsum. Donec n\nibh leo, blandit et porttitor quis, aliquet sed est. Nam mollis pellentesque orci id pharetra. Curabitur eros arcu, mollis in ultricies nec, convallis a risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut pharetra leo quis risus volutpat porta. Praesent bibendum mi nec erat scelerisque vitae pellentesque massa eleifend. Aliquam aliquet venenatis odio id hendrerit. Nulla accumsan tincidunt mauris, nec mollis justo feugiat sit amet. Nullam quis sagittis neque. Integer dui augue, molestie vel semper at, iaculis sed metus. Mauris tempor nibh quis sem pellentesque vulputate. Nullam varius magna rhoncus lectus tempor at viverra tellus pretium.')
 		self.sview.show()
 		self.sview.connect("key-press-event",self.on_key_press)
-	
-	def create_ui_manager(self,UI_INFO):
-		uimanager = Gtk.UIManager()
-
-		# Throws exception if something went wrong
-		uimanager.add_ui_from_string(UI_INFO)
-		return uimanager
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
