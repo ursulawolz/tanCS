@@ -3,13 +3,8 @@ from gi.repository import Gdk
 
 ###------------------------Explorer Class--------------------------###
 class explorer_window(Gtk.Window):
-	def __init__(self, UI_INFO,on_window_mode_changed):
+	def __init__(self,on_window_mode_changed):
 		Gtk.Window.__init__(self,title="Entry Demo")
-		#action_group = Gtk.ActionGroup("my_actions")
-		#add_mode_menu_actions(action_group,on_window_mode_changed,self)
-		#uimanager = create_ui_manager(UI_INFO)
-		#uimanager.insert_action_group(action_group)
-		#menubar = uimanager.get_widget("/MenuBar")
 
 		self.x=640
 		self.y=280
