@@ -8,12 +8,12 @@ class Turret(CubeObject):
 		#StaticWorldObject.__init__(self, world, attach, name, position, shape, orientation)
 		CubeObject.__init__(self, world, attach, name, position, scale = Vec3(2,2,2), texture='test.png' )
 		self._tankWorld = world
-		world.taskMgr.doMethodLater(1,self.fireTask, 'fire task')
+		world.taskMgr.doMethodLater(3,self.fireTask, 'fire task')
 		self.orientation = orientation
 
 	def fireTask(self, task):
 
-		self._weapon.aimAt(self._tankWorld.getUserTank().getPos(), True)
+		self._weapon.aimAt(self._tankWorld.getUserTank().getPos(), False)
 		self._weapon.fire(1)
 		return task.again
 	

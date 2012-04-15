@@ -24,7 +24,7 @@ class Projectile(DynamicWorldObject):
 		self._damage = damageGiven
 		self._nodePath.node().removeShape(shape)
 		self.shape = shape
-		self._tankWorld.doMethodLater(.05, self.startCollide, 'turn collide on')
+		self._tankWorld.doMethodLater(.2, self.startCollide, 'turn collide on')
 		#self._nodePath.setFromCollideMask(BitMask32.allOff())
 		#self._tankWorld.doMethodLater(1, self.startCollide, 'turn collide on') #attempt to make collisions turn on able. 
 		#Something odd with collide masks
@@ -40,11 +40,13 @@ class Projectile(DynamicWorldObject):
 			#self._nodePath.setCollideMask(BitMask32.allOn())
 		return task.done
 	def deleteAfter(self, task):
+		print "Projectile.deleteAfter: 1",
 		if not self._nodePath.is_empty():
 			x = self._nodePath.node()
 
 			self._tankWorld.removeRigidBody(x)
 			self._nodePath.removeNode()
+			print '2'
 
 	def handleCollision(self, collide, taskName):
 		self._collisionCounter += 1

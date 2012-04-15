@@ -13,7 +13,7 @@ class Weapon(object):
 		name = tank._nodePath.node().getName() + " Blaster"
 		self._nodePath = tank._nodePath.attachNewNode(PandaNode(name))
 		self._nodePath.setPos(pos[0], pos[1], pos[2])
-		self._nodePath.setHpr(0,0,0)
+		self._nodePath.setHpr(-90,0,0)
 	
 		self.tank = tank
 		self._tankWorld = self.tank._tankWorld
@@ -26,14 +26,22 @@ class Weapon(object):
 		'''
 		pass
 
-	def setHp(self, heading, pitch):
+	def setRelHp(self, heading, pitch):
 		'''
-		Aims the turret to the direction
+		Aims the turret to the direction, relative to tank's direction
 		float heading
 		float pitch
 		'''
 		self._nodePath.setHpr(heading, pitch, 0)
-		
+
+	def setHp(self, heading, pitch):
+		'''Uses absolute hpr to aim the weapon in a direction
+		'''
+		tankHpr = self.tank.getHpr()
+
+		deltaHpr = Vec3(heading, pitch, 0) - self.tank.getHpr()
+		self.setRelHp(deltaHpr[0], deltaHpr[1])
+
 
 	def getDirection(self):
 		'''
@@ -46,7 +54,7 @@ class Weapon(object):
 		return self._nodePath.getPos()
 
 	def getAbsPos(self):
-		return self._nodePath.getPos() + self.tank.getPos()
+		return self._nodePath.getPos(render)
 
 	def getTank(self):
 		return self.tank
@@ -68,7 +76,7 @@ class Weapon(object):
 	def aimAt(self, pointAim, aimLow = True):
 		pos = self.getAbsPos()
 
-		point = Point3(pointAim[0] - pos[0], pointAim[1] - pos[1], pointAim[2] - pos[2])
+		point = Point3(pointAim[0] - pos[0], pointAim[1] - pos[1], pointAim[2] - pos[2]) #Blast collides at 1.1?
 
 		angle1 = math.atan2(point[1], point[0])
 

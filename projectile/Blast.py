@@ -18,12 +18,12 @@ class Blast(Projectile):
 		mass = .1 
 
 		hpr = weapon.getHpr()
-		h = (hpr[0] ) * math.pi / 180
+		h = (hpr[0] + 0) * math.pi / 180
 		p = hpr[1] * math.pi / 180
 
 		direction = Vec3(math.cos(h) * math.cos(p), math.sin(h) * math.cos(p), math.sin(p))
 
-		shape = BulletSphereShape(.1)
+		shape = BulletSphereShape(.5)
 		self.name = weapon.getTank()._nodePath.node().getName() + ' blast'
 
 		pos = weapon.getAbsPos()
