@@ -1,6 +1,8 @@
 ###------------------------------Inclusions--------------------------------###
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
+from objectcode import *
+import datetime
 #from mainproto2 import on_window_mode_changed
 ###-------------------------------Main Functions---------------------------###
 
@@ -24,11 +26,7 @@ def add_mode_menu_actions(action_group,on_window_mode_changed,parent_window):
 		("Editor", None, "Editor", None, None, 3)
 	], 1, change_window,[on_window_mode_changed,parent_window])
 
-def change_window(widget,current,params):
-	on_window_mode_changed=params[0]
-	parent_window=params[1]
-	#new_window_name=current.get_name()
-	new_window_name="Editor"
+def change_window(widget,new_window_name,parent_window,on_window_mode_changed):
 	on_window_mode_changed(new_window_name,parent_window)
 
 ###------------------------------Viewer Class------------------------------###
@@ -42,11 +40,16 @@ class TempWindow(Gtk.Window):
 		self.set_size_request(self.x,self.y)
 		self.timeout_id=None
 
+		self.on_window_mode_changed=on_window_mode_changed
+
+		#make toolbar
+		self.create_toolbar()
+
 		#self.image=Gtk.Image()
 		#self.image=Gtk.set_from_image("side.jpg")
 		imagebox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=50)
-		self.image2=Gtk.Image.new_from_file("/home/brendan/Desktop/softdev/side.jpg")
-		self.image=Gtk.Image.new_from_file("/home/brendan/Desktop/softdev/sideb.jpg")
+		self.image2=Gtk.Image.new_from_file("side.jpg")
+		self.image=Gtk.Image.new_from_file("sideb.jpg")
 		
 		imagebox.pack_start(self.image,False,False,0)
 		imagebox.pack_start(self.image2,False,False,0)
@@ -72,9 +75,12 @@ class TempWindow(Gtk.Window):
 		self.thecode.set_size_request(self.x-150,560)
 		self.thecodeframe=Gtk.Frame()
 		self.thecodeframe.add(self.thecode)
+		self.thecode.set_editable(False)
+		self.thecode.connect("key-press-event",self.on_key_press)
 		codescroll=Gtk.ScrolledWindow()
 		codescroll.add_with_viewport(self.thecodeframe)
 		codescroll.set_size_request(self.x-150,400)	
+		vbox.pack_start(self.toolbar,False,True,0)
 		vbox.pack_start(codescroll,False,False,0)	
 
 		hbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
@@ -93,16 +99,16 @@ class TempWindow(Gtk.Window):
 		commentswindow.set_size_request(200,100)
 		commentswindow.set_hexpand(True)
 		commentswindow.set_vexpand(True)
-		'''
-		self.label2=Gtk.Label("I see how you have added many buttons. Is there anyway to dynamically create widgets?",halign=Gtk.Align.START)
+		
+		self.label2=Gtk.Label("I see how you have added many oranges. Is there any way to dynamically create widgets?",halign=Gtk.Align.START)
 		self.label2.set_justify(Gtk.Justification.RIGHT)
-		self.label3=Gtk.Label("Well, yes and no. Its a little hard but you can definitely do it.",halign=Gtk.Align.START)
-		self.label4=Gtk.Label("Thank you for the help. Also I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?",halign=Gtk.Align.START)
-		self.label5=Gtk.Label("They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date",halign=Gtk.Align.START)
+		self.label3=Gtk.Label("Well, yes and no. It's a little hard, but you can definitely do it. Papayas?",halign=Gtk.Align.START)
+		self.label4=Gtk.Label("Thanks for the help. Also, I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?",halign=Gtk.Align.START)
+		self.label5=Gtk.Label("They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever, it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date",halign=Gtk.Align.START)
 
-# I am so very sorry for doing this. The comments need to be made dynamically according to this way of making comments.'''
+# I am so very sorry for doing this. The comments need to be made dynamically according to this way of making comments.
 		frame=Gtk.Frame()
-		'''frame2=Gtk.Frame()
+		frame2=Gtk.Frame()
 		frame3=Gtk.Frame()
 		frame4=Gtk.Frame()
 		frame5=Gtk.Frame()
@@ -144,12 +150,18 @@ class TempWindow(Gtk.Window):
 		frame3.set_label_widget(title3)
 		frame4.set_label_widget(title4)
 		frame5.set_label_widget(title5)
-'''
+
 		vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-		'''vbox2.pack_start(frame2,False,False,0)
+		vbox2.pack_start(frame2,False,False,0)
 		vbox2.pack_start(frame3,False,False,0)
 		vbox2.pack_start(frame4,False,False,0)
-		vbox2.pack_start(frame5,False,False,0)'''
+		vbox2.pack_start(frame5,False,False,0)
+
+# Just to make it clear for later, there is a label, which is the text of the comment. It is placed within an event box for border reasons. 
+# Then frames are created. The event boxes are added to the frames. The account name associated with the comment is then made as a label for bold reasons. 
+# Markup allows gtk to read the bold tags. Then those account names are added as labels (little things at the top of frames in this case) to the frames. 
+# The frames are then added to a vertical box
+
 		#vbox2.pack_start(hbox,False,False,0)
 		
 		commentswindow.add_with_viewport(vbox2)
@@ -190,22 +202,7 @@ class TempWindow(Gtk.Window):
 		toplevel.pack_start(vbox,False,False,0)
 		#Gtk.UIManager()
 
-###-------------------------------METHODS-------------------------------###
-
-# Just to make it clear for later, there is a label, which is the text of the comment. It is placed within an event box for border reasons. 
-# Then frames are created. The event boxes are added to the frames. The account name associated with the comment is then made as a label for bold reasons. 
-# Markup allows gtk to read the bold tags. Then those account names are added as labels (little things at the top of frames in this case) to the frames. 
-# The frames are then added to a vertical box
-	def create_comment(self,comment):
-		temp_label=Gtk.Label(comment.text)
-		temp_frame=Gtk.Frame()
-		temp_event=Gtk.EventBox()
-		temp_event.set_border_width(6)
-		temp_frame.add(temp_event)
-		temp_title=Gtk.Label("<b>"+comment.account+"</b>")
-		temp_title.set_use_markup(True)
-		temp_frame.set_label_widget(temp_title)
-		return temp_frame
+###---------------------------------METHODS--------------------------------###
 
 #Should unpackage the code from how ever it is stored in the revision and make a text buffer out of it so that it can be displayed later in a text view.  	
 	def get_code(revision):
@@ -250,6 +247,77 @@ class TempWindow(Gtk.Window):
 		thetext=tempbuffer.get_text(startiter,enditer,False)
 		submit_file_comment(account,thetext)
 		return
+
+#Creates the top toolbar for the window.
+	def create_toolbar(self):
+		pass
+		
+		self.toolbar=Gtk.Toolbar()
+		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
+		self.toolbar.insert(button_new, 0)
+		#button_new.connect("clicked", self.create_new)
+
+		button_copy=Gtk.ToolButton.new_from_stock(Gtk.STOCK_COPY)
+		self.toolbar.insert(button_copy, 1)
+		button_copy.connect("clicked", self.copy_text)
+
+		editor_icon=Gtk.Image.new_from_file('editor-icon.png')
+		button_editor=Gtk.ToolButton()
+		button_editor.set_icon_widget(editor_icon)
+		self.toolbar.insert(button_editor, 2)
+		button_editor.connect("clicked",change_window,"Editor",self,self.on_window_mode_changed)
+
+		explorer_icon=Gtk.Image.new_from_file('explorer-icon.png')
+		button_explorer=Gtk.ToolButton()
+		button_explorer.set_icon_widget(explorer_icon)
+		self.toolbar.insert(button_explorer, 3)
+		button_explorer.connect("clicked",change_window,"Explorer",self,self.on_window_mode_changed)
+
+		self.toolbar.show_all()
+
+	def on_key_press(self,widget,data):
+		#runs when any key is pressed
+
+		#c is 99
+
+		val=data.keyval #get the pressed key
+		if val==99:
+			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
+				self.copy_text()
+
+	def copy_text(self):
+		date=datetime.date.today()
+		select=self.thecodebuffer.get_selection_bounds()
+		if select==():
+			select=self.sbuff.get_iter_at_mark(self.sbuff.get_insert())
+
+		a=self.thecodebuffer.get_end_iter()
+		#copy=Borrow(date,self.projID,self.projrev,self.filename)
+
+	def get_lines_from_block(self,select):
+		#takes in a tuple with the selection bounds
+		#outputs a list containing the offset for the start of each line
+		#if select is empty, returns a list containing -1
+		if not select==():
+			frontoffset=self.get_line_start(select[0])
+			backoffset=self.get_line_start(select[1])
+			front=self.sbuff.get_iter_at_offset(frontoffset)
+			back=self.sbuff.get_iter_at_offset(backoffset)
+			tempoffset=backoffset-1
+			lines=[backoffset]
+			while tempoffset>frontoffset:
+				backa=self.sbuff.get_iter_at_offset(tempoffset-1)
+				backb=self.sbuff.get_iter_at_offset(tempoffset)
+				txt=self.sbuff.get_slice(backa,backb,True)
+				if txt=='\n':
+					lines.append(tempoffset)
+				tempoffset-=1
+			lines.append(frontoffset)
+			lines.reverse()
+			return lines
+		else:
+			return [-1]
+
 ###-----------------------------ADDITIONAL WINDOWS-------------------------###
 class LineCommentDialog(Gtk.Dialog):
 	def __init__(self, parent):

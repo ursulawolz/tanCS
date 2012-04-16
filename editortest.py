@@ -20,6 +20,8 @@ class Editor(Gtk.Window):
 		#toolbar
 		self.create_toolbar()
 
+		self.borrows=()
+
 		self.vbox_top.pack_start(self.toolbar,False,True,0)
 		self.vbox_top.pack_start(self.scrolledwindow,True,True,0)
 		self.vbox_top.pack_start(self.statusbar,False,True,0)
@@ -39,6 +41,7 @@ class Editor(Gtk.Window):
 		self.sview.show()
 		self.sview.connect("key-press-event",self.on_key_press)
 
+
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
 
@@ -51,7 +54,6 @@ class Editor(Gtk.Window):
 		#x is 120
 		#Ctrl is 65507
 		val=data.keyval #get the pressed key
-		print val
 		cursor=self.sbuff.get_iter_at_mark(self.sbuff.get_insert()) #get iter at cursor position
 		back=self.sbuff.get_iter_at_offset(cursor.get_offset()-1) #get iter at cursor position-1
 		if val==65289: #tab key ####TODO: what if user selects text
@@ -85,6 +87,7 @@ class Editor(Gtk.Window):
 		elif val==118:
 			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
 				self.paste_text()
+				return True
 
 	def check_colon(self,cursor):
 		#check if previous line ended in a colon
@@ -134,15 +137,33 @@ class Editor(Gtk.Window):
 	def on_button_clicked(self,widget):
 		print "Hello World" #test func
 
-	def copy_text(self,widget):
+	def copy_text(self,widget=None):
 		#TODO: get URL of source? offer to add source to user?
 		print 'copying'
 
-	def cut_text(self,widget):
+	def cut_text(self,widget=None):
 		print 'cutting'
 
-	def paste_text(self,widget):
-		print 'pasting'
+	def paste_text(self,widget=None):
+		pasted = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
+		if self.isBorrow(pasted):
+			pass
+		else:
+			dialog = ReferenceDialog(self,pasted)
+			response = dialog.run()
+			if response==Gtk.ResponseType.OK:
+				text=dialog.reference.get_text()
+				if not text.strip()==None:
+					print 'Source cited:'+text
+					#TODO: create a new Borrow object
+			dialog.destroy()
+
+	def isBorrow(self,text):
+		if self.borrows==():
+			return False
+		else:
+			pass
+		return True
 
 	def indent_block(self,widget):
 		print 'indenting block'
@@ -258,59 +279,112 @@ class Editor(Gtk.Window):
 		self.toolbar=Gtk.Toolbar()
 		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
 		self.toolbar.insert(button_new, 0)
+		button_new.set_tooltip_text('New File')
 		#button_new.connect("clicked", self.create_new)
 
 		button_savepoint=Gtk.ToolButton.new_from_stock(Gtk.STOCK_SAVE)
 		self.toolbar.insert(button_savepoint, 1)
+		button_savepoint.set_tooltip_text('Save to New Revision')
 		#button_savepoint.connect("clicked", self.create_save_point)
 
 		button_copy=Gtk.ToolButton.new_from_stock(Gtk.STOCK_COPY)
 		self.toolbar.insert(button_copy, 2)
+		button_copy.set_tooltip_text('Copy')
 		button_copy.connect("clicked", self.copy_text)
 
 		button_cut=Gtk.ToolButton.new_from_stock(Gtk.STOCK_CUT)
 		self.toolbar.insert(button_cut, 3)
+		button_cut.set_tooltip_text('Cut')
 		button_cut.connect("clicked", self.cut_text)
 
 		button_paste=Gtk.ToolButton.new_from_stock(Gtk.STOCK_PASTE)
 		self.toolbar.insert(button_paste, 4)
+		button_paste.set_tooltip_text('Paste')
 		button_paste.connect("clicked", self.paste_text)
 
 		comment_icon=Gtk.Image.new_from_file('comment-icon.png')
 		button_comment=Gtk.ToolButton()
 		button_comment.set_icon_widget(comment_icon)
+		button_comment.set_tooltip_text('Toggle comment on code block')
 		self.toolbar.insert(button_comment, 5)
 		button_comment.connect("clicked", self.comment_block)
 
 		button_indent=Gtk.ToolButton.new_from_stock(Gtk.STOCK_INDENT)
 		self.toolbar.insert(button_indent, 6)
+		button_indent.set_tooltip_text('Indent code block')
 		button_indent.connect("clicked", self.indent_block)
 
 		button_unindent=Gtk.ToolButton.new_from_stock(Gtk.STOCK_UNINDENT)
 		self.toolbar.insert(button_unindent, 7)
+		button_unindent.set_tooltip_text('Unindent code block')
 		button_unindent.connect("clicked", self.unindent_block)
+		button_unindent.set_label('hello')
+
+		sep=Gtk.SeparatorToolItem()
+		self.toolbar.insert(sep,8)
 		
 		viewer_icon=Gtk.Image.new_from_file('viewer-icon.png')
 		button_viewer=Gtk.ToolButton()
 		button_viewer.set_icon_widget(viewer_icon)
-		self.toolbar.insert(button_viewer, 8)
+		button_viewer.set_tooltip_text('Switch to Viewer')
+		self.toolbar.insert(button_viewer, 9)
 		button_viewer.connect("clicked", change_window,"Viewer",self,self.on_window_mode_changed)
 
 		explorer_icon=Gtk.Image.new_from_file('explorer-icon.png')
 		button_explorer=Gtk.ToolButton()
 		button_explorer.set_icon_widget(explorer_icon)
-		self.toolbar.insert(button_explorer, 9)
+		button_explorer.set_tooltip_text('Switch to Explorer')
+		self.toolbar.insert(button_explorer, 10)
 		button_explorer.connect("clicked",change_window,"Explorer",self,self.on_window_mode_changed)
+
+		sep2=Gtk.SeparatorToolItem()
+		self.toolbar.insert(sep2,11)
+
+		run_icon=Gtk.Image.new_from_file('run-icon.png')
+		button_run=Gtk.ToolButton()
+		button_run.set_icon_widget(run_icon)
+		button_run.set_tooltip_text('Run Program')
+		self.toolbar.insert(button_run, 12)
+		button_run.connect("clicked",change_window,self,self.on_window_mode_changed)
+
+		level_icon=Gtk.Image.new_from_file('level-icon.png')
+		button_level=Gtk.ToolButton()
+		button_level.set_icon_widget(level_icon)
+		button_level.set_tooltip_text('Level Select')
+		self.toolbar.insert(button_level, 13)
+		button_level.connect("clicked",change_window,self,self.on_window_mode_changed)
 
 		self.toolbar.show_all()
 
 def change_window(widget,new_window_name,parent_window,on_window_mode_changed):
 	on_window_mode_changed(new_window_name,parent_window)
 
-'''
+
+class ReferenceDialog(Gtk.Dialog):
+	def __init__(self,parent,text):
+		#Gtk.Dialog.__init__(self, "Search", parent,Gtk.DialogFlags.MODAL, buttons=(Gtk.STOCK_FIND, Gtk.ResponseType.OK,Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
+
+		Gtk.Dialog.__init__(self, flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, title="My Dialog", parent=parent, buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK))
+		
+		self.text=text
+		length=len(self.text)
+		if length>80:
+			self.text=self.text[:40]+'......'+self.text[length-40:]
+		self.label1=Gtk.Label('You\'re copying the following into your project:\n')
+		self.label2=Gtk.Label('"'+self.text+'"')
+		self.label3=Gtk.Label('\nPlease cite your source by entering it in the box below.\n\n')
+		self.reference=Gtk.Entry()
+		box=self.get_content_area()
+		box.add(self.label1)
+		box.add(self.label2)
+		box.add(self.label3)
+		box.add(self.reference)
+
+		self.show_all()
+
+
 #initiate window
-win = Editor(-1,-1)
+win = Editor(-1)
 win.connect("delete-event",Gtk.main_quit)
 win.show_all()
-Gtk.main()'''
-
+Gtk.main()
