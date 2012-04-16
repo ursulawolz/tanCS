@@ -496,6 +496,7 @@ class Tank(DynamicWorldObject):
             return
         #if self.onTask >= len(self.taskList):
         #   return
+        print "Tank.nextTask being called"
         def getNumUserTask():
             
             taskAmount = 0

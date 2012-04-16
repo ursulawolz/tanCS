@@ -5,7 +5,7 @@ import pdb
 
 class Trigger(object):
 	
-	def __init__(self, tankWorld, function=None, numTriggers=1):
+	def __init__(self, tankWorld, function=None, numTriggers=-1):
 		#print tankWorld.taskMgr
 		#tankWorld.add(self.checkConditions,"asddff") #This creates a task named update and runs every frame
 		self.tankWorld = tankWorld
@@ -31,8 +31,10 @@ class Trigger(object):
 		for s in self.states:
 			triggeredCount += s.hasTriggered()
 
-		if triggeredCount >= self.numTriggers or self.numTriggers==-1:
+		if triggeredCount >= self.numTriggers and self.numTriggers >= 0:
 			self.function()
 
+		if triggeredCount ==  len(self.states) and self.numTriggers == -1:
+			self.function()
 		return task.cont
 		

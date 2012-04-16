@@ -29,11 +29,11 @@ def makeTrigger(target = None, function=None, position=(0,0,0)):
 		function = t.victory
 	return Trigger(t,function=function)
 
-def makeCollisionState(trigger, tracking_object=None, tracking_name='collisionState', position=(0,0,0), orientation=(0,0,0), name='collisionState' ):
+def makeCollisionState(trigger, tracking_object=None, tracking_name='collisionState', position=(0,0,0), orientation=(0,0,0), name='collisionState', size=(2,2,2) ):
 	if tracking_object != None:
 		tracking_name = tracking_object.getName()
 		
-	s = CollisionState(t,tracking_name, position=vec(position), name=name)
+	s = CollisionState(t,tracking_name, position=vec(position), name=name, size=vec(size))
 	trigger.addState(s)
 def makeTurret(position=(0,0,0), orientation=(0,0,0), name='turret'):
 	return Turret(t, t.render, position=vec(position), orientation=vec(orientation), name=name)
