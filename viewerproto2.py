@@ -100,16 +100,16 @@ class TempWindow(Gtk.Window):
 		commentswindow.set_hexpand(True)
 		commentswindow.set_vexpand(True)
 		
-		self.label2=Gtk.Label("I see how you have added many oranges. Is there any way to dynamically create widgets?",halign=Gtk.Align.START)
+		'''self.label2=Gtk.Label("I see how you have added many oranges. Is there any way to dynamically create widgets?",halign=Gtk.Align.START)
 		self.label2.set_justify(Gtk.Justification.RIGHT)
 		self.label3=Gtk.Label("Well, yes and no. It's a little hard, but you can definitely do it. Papayas?",halign=Gtk.Align.START)
 		self.label4=Gtk.Label("Thanks for the help. Also, I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?",halign=Gtk.Align.START)
 		self.label5=Gtk.Label("They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever, it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date",halign=Gtk.Align.START)
 
-# I am so very sorry for doing this. The comments need to be made dynamically according to this way of making comments.
+# I am so very sorry for doing this. The comments need to be made dynamically according to this way of making comments.'''
 		frame=Gtk.Frame()
-		frame2=Gtk.Frame()
-		frame3=Gtk.Frame()
+		'''frame2=Gtk.Frame()
+		frame3Gtk.Frame()
 		frame4=Gtk.Frame()
 		frame5=Gtk.Frame()
 
@@ -155,14 +155,7 @@ class TempWindow(Gtk.Window):
 		vbox2.pack_start(frame2,False,False,0)
 		vbox2.pack_start(frame3,False,False,0)
 		vbox2.pack_start(frame4,False,False,0)
-		vbox2.pack_start(frame5,False,False,0)
-
-# Just to make it clear for later, there is a label, which is the text of the comment. It is placed within an event box for border reasons. 
-# Then frames are created. The event boxes are added to the frames. The account name associated with the comment is then made as a label for bold reasons. 
-# Markup allows gtk to read the bold tags. Then those account names are added as labels (little things at the top of frames in this case) to the frames. 
-# The frames are then added to a vertical box
-
-		#vbox2.pack_start(hbox,False,False,0)
+		vbox2.pack_start(frame5,False,False,0)'''
 		
 		commentswindow.add_with_viewport(vbox2)
 		commentswindow.set_size_request(self.x-150,240)
@@ -203,6 +196,22 @@ class TempWindow(Gtk.Window):
 		#Gtk.UIManager()
 
 ###---------------------------------METHODS--------------------------------###
+
+# Just to make it clear for later, there is a label, which is the text of the comment. It is placed within an event box for border reasons. 
+# Then frames are created. The event boxes are added to the frames. The account name associated with the comment is then made as a label for bold reasons. 
+# Markup allows gtk to read the bold tags. Then those account names are added as labels (little things at the top of frames in this case) to the frames. 
+# The frames are then added to a vertical box
+
+  def create_comment(self,comment):
+    temp_label=Gtk.Label(comment.text)
+    temp_frame=Gtk.Frame()
+    temp_event=Gtk.EventBox()
+    temp_event.set_border_width(6)
+    temp_frame.add(temp_event)
+    temp_title=Gtk.Label("<b>"+comment.account+"</b>")
+    temp_title.set_use_markup(True)
+    temp_frame.set_label_widget(temp_title)
+    return temp_frame
 
 #Should unpackage the code from how ever it is stored in the revision and make a text buffer out of it so that it can be displayed later in a text view.  	
 	def get_code(revision):
