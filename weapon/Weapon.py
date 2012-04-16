@@ -73,7 +73,7 @@ class Weapon(object):
 	def setHeading(self,goal):
 		self.setHp(goal, self.direction[1])
 
-	def aimAt(self, pointAim, aimLow = True):
+	def aimAt(self, pointAim, amt = 1, aimLow = True):
 		pos = self.getAbsPos()
 
 		point = Point3(pointAim[0] - pos[0], pointAim[1] - pos[1], pointAim[2] - pos[2]) #Blast collides at 1.1?
@@ -83,7 +83,7 @@ class Weapon(object):
 		x = math.sqrt(point[0]**2 + point[1]**2)
 		y = point[2]
 
-		v = self.maxVel
+		v = self.maxVel * amt
 		tanks = self.tank
 		gravity = self.tank._tankWorld.getPhysics().getGravity() #Vector
 		g = abs(gravity[2])	

@@ -117,8 +117,6 @@ class Tank(DynamicWorldObject):
         float pitch
         '''
 
-        #Note: currently instantaneous - we need to figure out how to move 
-        #continuously (or not, Turrets don't collide...)
         self._weapon.setHp(heading,pitch)
 
     def moveWeapon(self, heading = 0, pitch = 0):
@@ -143,11 +141,19 @@ class Tank(DynamicWorldObject):
         '''
         self.wait(.1)
         potentialNPs = self._tankWorld.render.getChildren()
+
+        print "Tank.distanceScan: ", 
+
         found = []
 
         for np in potentialNPs:
             if type(np.node()) == BulletRigidBodyNode and np != self:
+                
                 pFrom = np.getPos(render) 
+                #Fix for cubeObjects (z = 0). They collide with the floor
+                if pFrom[2] < 1:
+                    pFrom[2] = 1.1
+
                 pTo = self.getPos() + self.getPos() - pFrom 
                 #pTo is a Vec3, turned to a point for rayTest
                 
@@ -158,8 +164,12 @@ class Tank(DynamicWorldObject):
 
                     #found.append((np.node().getPrevTransform().getPos(),
                     #    np.node().getName()))
+
                     found.append((np.getPos(render),
                         np.node().getName()))
+                elif result.hasHit():
+                    print np, result.getNode(), pFrom, pTo
+                    print "Neigh"
 
         return found
 
@@ -229,7 +239,7 @@ class Tank(DynamicWorldObject):
             if result.hasHit():
                 newNode = result.getNode()
                 found.append((result.getHitPos(), item[1], newNode.getName()))
-
+                
         return found
 
     def pingPoints(self, numPoints = 360, relAngleRange = (-180, 180), height = 1):
@@ -318,42 +328,6 @@ class Tank(DynamicWorldObject):
         self._moveLoc = (Point3(pos[0] + math.sin(heading) * dist, pos[1] - math.cos(heading) * dist, pos[2]), pos, dist)
         
         self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
-
-    def turnTo(self, newH):
-        '''Turn so that you have the given heading value
-        '''
-        self.rotate(newH - self._nodePath.getH())
-
-    def left(self, angle = 90):
-        if angle < 0:
-            raise ValueError("For left and right, angle must be greater than 0.")
-
-        self.rotate(angle)
-
-    def right(self, angle = 90):
-        if angle < 0:
-            raise ValueError("For left and right, angle must be greater than 0.")
-
-        self.rotate(-angle)
-
-    def face(self, point):
-        '''Turn so that you are facing a point. Uses rotate and faceRel
-        Assumes absolute coordinate system for the point
-        '''
-        if type(point) == tuple or type(point) == list:
-            point = Point3(point[0], point[1], 0)
-        deltaPos = point - self.getPos()
-        self.faceRel(deltaPos)
-
-    def faceRel(self, pointRel):
-        '''Turn so that you face a pointRel relative to the tank.
-        Uses rotate
-        '''
-        if type(pointRel) == tuple or type(pointRel) == list:
-            pointRel = Point3(pointRel[0], pointRel[1], 0)
-        newH = math.atan2(pointRel[1], pointRel[0]) * 180/math.pi + 90
-        self.turnTo(newH)
-
 
     def rotate(self, angle):
         '''Rotate function. All angles given between 0 and 360
@@ -571,31 +545,12 @@ class Tank(DynamicWorldObject):
     def update(self, task):
         pass
         
-    def aimAt(self, point, aimLow = True):
+    def aimAt(self, point, amt = 1, aimLow = True):
         return self._weapon.aimAt(point, aimLow)
-
-    def fireAt(self, point, amt = 1, aimLow = True):
-        '''Calls aimAt and fire in succession'''
-        self.aimAt(point, aimLow)
-        self.fire(amt)
-
-    def backward(self, dist):
-        if dist <=0:
-            raise ValueError("Distance must be positive")
-        else:
-            self.move(-1*distance)
-    
-    def forward(self, distance):
-        if (dist <=0):
-            raise ValueError("Distance must be positive")
-        else:
-            self.move(distance)
 
     def setWeapon(self, weopwn):
         self._weapon = weopwn
 
-    def setSteering(self, angle):
-        pass
 
     def fire(self, amt = 1):
 
