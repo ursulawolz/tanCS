@@ -1,7 +1,7 @@
 ###------------------------------Inclusions--------------------------------###
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
-from objectcode import *
+from objectcode import Account,Comment
 import datetime
 #from mainproto2 import on_window_mode_changed
 ###-------------------------------Main Functions---------------------------###
@@ -33,7 +33,7 @@ def change_window(widget,new_window_name,parent_window,on_window_mode_changed):
 class TempWindow(Gtk.Window):
 	def __init__(self,on_window_mode_changed):
 		Gtk.Window.__init__(self,title="Entry Demo")
-		
+		fake_user=Account("Random Hash","The instigator","Password","Avatar")
 		color=Gdk.Color(1000,1000,1000)
 		self.x=840
 		self.y=280
@@ -100,58 +100,16 @@ class TempWindow(Gtk.Window):
 		commentswindow.set_hexpand(True)
 		commentswindow.set_vexpand(True)
 		
-		'''self.label2=Gtk.Label("I see how you have added many oranges. Is there any way to dynamically create widgets?",halign=Gtk.Align.START)
-		self.label2.set_justify(Gtk.Justification.RIGHT)
-		self.label3=Gtk.Label("Well, yes and no. It's a little hard, but you can definitely do it. Papayas?",halign=Gtk.Align.START)
-		self.label4=Gtk.Label("Thanks for the help. Also, I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?",halign=Gtk.Align.START)
-		self.label5=Gtk.Label("They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever, it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date",halign=Gtk.Align.START)
-
-# I am so very sorry for doing this. The comments need to be made dynamically according to this way of making comments.'''
 		frame=Gtk.Frame()
-		'''frame2=Gtk.Frame()
-		frame3Gtk.Frame()
-		frame4=Gtk.Frame()
-		frame5=Gtk.Frame()
-
-# This is a cheat so I can have padding around the comment text within the frame so it looks nice. 
-# Since label is not a container I can't just add border to it so I have to put it in an event box first
-
-		cheat2=Gtk.EventBox()
-		cheat3=Gtk.EventBox()
-		cheat4=Gtk.EventBox()
-		cheat5=Gtk.EventBox()
-
-		cheat2.set_border_width(6)
-		cheat3.set_border_width(6)
-		cheat4.set_border_width(6)
-		cheat5.set_border_width(6)
-
-		cheat2.add(self.label2)
-		cheat3.add(self.label3)
-		cheat4.add(self.label4)
-		cheat5.add(self.label5)
-
-		frame2.add(cheat2)
-		frame3.add(cheat3)
-		frame4.add(cheat4)
-		frame5.add(cheat5)
-
-		title2=Gtk.Label("<b>Code-11</b>")
-		title3=Gtk.Label("<b>The Instigat0r</b>")
-		title4=Gtk.Label("<b>Code-11</b>")
-		title5=Gtk.Label("<b>The Instigat0r</b>")
-
-		title2.set_use_markup(True)
-		title3.set_use_markup(True)
-		title4.set_use_markup(True)
-		title5.set_use_markup(True)
-
-		frame2.set_label_widget(title2)
-		frame3.set_label_widget(title3)
-		frame4.set_label_widget(title4)
-		frame5.set_label_widget(title5)
-'''
 		vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+
+		self.filecomments=self.get_file_comments("This file")
+		index=0
+		while index<len(self.filecomments):
+			vbox2.pack_start(self.create_comment(self.filecomments[index]),False,False,0)
+			index=index+1	
+		
+
 		
 		commentswindow.add_with_viewport(vbox2)
 		commentswindow.set_size_request(self.x-150,240)
@@ -199,30 +157,40 @@ class TempWindow(Gtk.Window):
 # The frames are then added to a vertical box
 
 	def create_comment(self,comment):
-		temp_label=Gtk.Label(comment.text)
+		temp_label=Gtk.Label(comment.text,halign=Gtk.Align.START)
 		temp_frame=Gtk.Frame()
 		temp_event=Gtk.EventBox()
 		temp_event.set_border_width(6)
+		temp_event.add(temp_label)
 		temp_frame.add(temp_event)
-		temp_title=Gtk.Label("<b>"+comment.account+"</b>")
+		temp_title=Gtk.Label("<b>"+"Account Name Goes Here"+"</b>")
 		temp_title.set_use_markup(True)
 		temp_frame.set_label_widget(temp_title)
 		return temp_frame
 
 #Should unpackage the code from how ever it is stored in the revision and make a text buffer out of it so that it can be displayed later in a text view.  	
-	def get_code(revision):
+	def get_code(self,revision):
 		return textbuffer
 
 #should unpack the comments from where they are in revision and make a list of all the file comments so that they can be displayed.
-	def get_file_comments(revision):
+	def get_file_comments(self,revision):
+		text1="I see how you have added many oranges. Is there any way to dynamically create widgets?"
+		text2="Well, yes and no. It's a little hard, but you can definitely do it. Papayas?"
+		text3="Thanks for the help. Also, I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?"
+		text4="They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever, it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date"
+		fake1=Comment(text1,"10:20","Random Hash","This file")
+		fake2=Comment(text2,"10:35","Random Hash","This file")
+		fake3=Comment(text3,"10:47","Random Hash","This file")
+		fake4=Comment(text4,"11:00","Random Hash","This file")
+		filecommentlist=[fake1,fake2,fake3,fake4]
 		return filecommentlist
 
 #should unpack the line comments from where they are in revision and make a list of all of them so that they can be displayed.
-	def get_line_comments(revision):
+	def get_line_comments(self,revision):
 		return linecommentlist
 
 # Not quite sure how to do this one. It needs to dynamically create a revision map for the whole project and allow you to move from one revision to another as well as load those revision. 
-	def create_revision_map():
+	def create_revision_map(self):
 		return notsure	
 
 #What happens when you click on the list comments only button

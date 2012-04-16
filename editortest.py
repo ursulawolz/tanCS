@@ -382,9 +382,9 @@ class ReferenceDialog(Gtk.Dialog):
 
 		self.show_all()
 
-
+'''
 #initiate window
 win = Editor(-1)
 win.connect("delete-event",Gtk.main_quit)
 win.show_all()
-Gtk.main()
+Gtk.main()'''

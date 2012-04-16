@@ -3,7 +3,7 @@
 class Account:
     ## Object for an individual user's account.
 
-    def __init__(self, userID, username, password, avatar):
+    def __init__(self, accountID, username, password, avatar):
         self.accountID = accountID
         self.username = username
         self.password = password
@@ -127,12 +127,12 @@ class Comment:
         self.time = time
         self.last_edited = time
 
-        self.accountID = accountID
-        self.projectID = projectID
-        self.revisionID = revisionID
+        #self.accountID = accountID
+        #self.projectID = projectID
+        #self.revisionID = revisionID
 
-        self.file_name = file_name
-        self.line_number = line_number
+        #self.file_name = file_name
+        #self.line_number = line_number
 
     def edit(self,new_text,edit_time):
         ## To be called when a user edits a comment.
