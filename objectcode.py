@@ -87,7 +87,7 @@ class Project:
 class File:
     ## Object for a revision file.
 
-    def __init__(self, projectID, revision_number, file_name, content)
+    def __init__(self, projectID, revision_number, file_name, content):
         self.projectID = projectID
         self.revision_number = revision_number
         self.file_name = file_name
