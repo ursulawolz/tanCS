@@ -6,6 +6,7 @@ from panda3d.core import *
 
 from CubeObject import CubeObject
 from trigger.CollisionState import CollisionState
+from trigger.PadState import PadState
 from trigger.Trigger import Trigger
 from FloorStaticObject import FloorStaticObject
 from Tank import Tank
@@ -29,15 +30,21 @@ def makeTrigger(target = None, function=None, position=(0,0,0)):
 		function = t.victory
 	return Trigger(t,function=function)
 
-def makeCollisionState(trigger, tracking_object=None, tracking_name='collisionState', position=(0,0,0), orientation=(0,0,0), name='collisionState' ):
+def makeCollisionState(trigger, tracking_object=None, tracking_name='tank', position=(0,0,0), orientation=(0,0,0), name='collisionState', size=(2,2,2) ):
 	if tracking_object != None:
 		tracking_name = tracking_object.getName()
 		
-	s = CollisionState(t,tracking_name, position=vec(position), name=name)
+	s = CollisionState(t,tracking_name, position=vec(position), name=name, size=vec(size))
 	trigger.addState(s)
 def makeTurret(position=(0,0,0), orientation=(0,0,0), name='turret'):
 	return Turret(t, t.render, position=vec(position), orientation=vec(orientation), name=name)
 
+def makePadState(trigger, tracking_object=None, tracking_name='tank', position=(0,0,0), orientation=(0,0,0), name='PadState', size=(2,2,2) ):
+	if tracking_object != None:
+		tracking_name = tracking_object.getName()
+		
+	s = PadState(t,tracking_name, position=vec(position), name=name, size=vec(size))
+	trigger.addState(s)
 
 
 def makeTank(position=(0,0,0), orientation=(0,0,0), name='tank'):

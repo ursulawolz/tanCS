@@ -10,7 +10,7 @@ from CubeObject import CubeObject
 
 
 class CollisionState(State, CubeObject):
-	def __init__(self, tankWorld, tracking_name, position=Vec3(0,0,0), name='collisionShape'):
+	def __init__(self, tankWorld, tracking_name, position=Vec3(0,0,0), name='collisionShape', size=Vec3(2,2,2)):
 		'''
 			TrackingObject is the world object that we are tracking
 			Position trigger has a representation needs to be added.
@@ -25,7 +25,7 @@ class CollisionState(State, CubeObject):
 		
 
 		State.__init__(self,tankWorld)
-		CubeObject.__init__(self, tankWorld, tankWorld.render, name = name, position = position, orientation = Vec3(0,0,0), scale = VBase3(2,2,2), texture='trigger.png' )
+		CubeObject.__init__(self, tankWorld, tankWorld.render, name = name, position = position, orientation = Vec3(0,0,0), scale = size, texture='trigger.png' )
 		#must be after the cubeobject instantiator
 		TaskList.setCollision(self, tankWorld)
 

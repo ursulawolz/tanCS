@@ -30,7 +30,7 @@ class Projectile(DynamicWorldObject):
 		#Something odd with collide masks
 		
 		self._nodePath.node().setCcdMotionThreshold(1e-7)
-		self._nodePath.node().setCcdSweptSphereRadius(0.10)
+		self._nodePath.node().setCcdSweptSphereRadius(0.40)
 	def getDamage(self):
 		return self._damage
 	

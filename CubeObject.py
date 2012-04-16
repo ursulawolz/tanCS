@@ -9,7 +9,7 @@ class CubeObject(StaticWorldObject):
 			
 		self.geo = loader.loadModel('media/'+'cube.x')
 		
-
+		
 		tex = loader.loadTexture('media/'+texture)
 		tex.setMagfilter(Texture.FTNearest)
 		tex.setMinfilter(Texture.FTNearest)

@@ -414,6 +414,11 @@ class Tank(DynamicWorldObject):
         if abs(thetaFromStart + .1) > abs(self._moveLoc[2]):
             self._stop = True
         
+        #emergency stop based on a long time.
+        if task.time > 5:
+            print "Tank.updateRotateLoc", "your rotate could not be completed, sorry"
+            return task.done
+            
         return task.cont
 
     def updateMoveLoc(self, task):
@@ -470,6 +475,7 @@ class Tank(DynamicWorldObject):
             return
         #if self.onTask >= len(self.taskList):
         #   return
+        print "Tank.nextTask being called"
         def getNumUserTask():
             
             taskAmount = 0
@@ -536,9 +542,11 @@ class Tank(DynamicWorldObject):
                 self.applyBrakes(1)
             else:
                 self.applyThrusters(1,-1)
+            
 
             if self._taskTimer < -1: #one second to stop
                 return task.done
+
         except:
             print "ERROR in tank.updateRotate"
         return task.cont
