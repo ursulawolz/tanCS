@@ -150,12 +150,8 @@ class TempWindow(Gtk.Window):
 		frame3.set_label_widget(title3)
 		frame4.set_label_widget(title4)
 		frame5.set_label_widget(title5)
-
+'''
 		vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-		vbox2.pack_start(frame2,False,False,0)
-		vbox2.pack_start(frame3,False,False,0)
-		vbox2.pack_start(frame4,False,False,0)
-		vbox2.pack_start(frame5,False,False,0)'''
 		
 		commentswindow.add_with_viewport(vbox2)
 		commentswindow.set_size_request(self.x-150,240)
@@ -202,16 +198,16 @@ class TempWindow(Gtk.Window):
 # Markup allows gtk to read the bold tags. Then those account names are added as labels (little things at the top of frames in this case) to the frames. 
 # The frames are then added to a vertical box
 
-  def create_comment(self,comment):
-    temp_label=Gtk.Label(comment.text)
-    temp_frame=Gtk.Frame()
-    temp_event=Gtk.EventBox()
-    temp_event.set_border_width(6)
-    temp_frame.add(temp_event)
-    temp_title=Gtk.Label("<b>"+comment.account+"</b>")
-    temp_title.set_use_markup(True)
-    temp_frame.set_label_widget(temp_title)
-    return temp_frame
+	def create_comment(self,comment):
+		temp_label=Gtk.Label(comment.text)
+		temp_frame=Gtk.Frame()
+		temp_event=Gtk.EventBox()
+		temp_event.set_border_width(6)
+		temp_frame.add(temp_event)
+		temp_title=Gtk.Label("<b>"+comment.account+"</b>")
+		temp_title.set_use_markup(True)
+		temp_frame.set_label_widget(temp_title)
+		return temp_frame
 
 #Should unpackage the code from how ever it is stored in the revision and make a text buffer out of it so that it can be displayed later in a text view.  	
 	def get_code(revision):
@@ -259,7 +255,6 @@ class TempWindow(Gtk.Window):
 
 #Creates the top toolbar for the window.
 	def create_toolbar(self):
-		pass
 		
 		self.toolbar=Gtk.Toolbar()
 		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
