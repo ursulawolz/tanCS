@@ -10,7 +10,7 @@ from trigger.Trigger import Trigger
 from FloorStaticObject import FloorStaticObject
 from Tank import Tank
 from weapon.Blaster import Blaster
-
+from UserTank import UserTank
 from Turret import Turret
 t = None #global cube object
 
@@ -20,7 +20,7 @@ def vec(val):
 def makeCubeObject(position=(0,0,0), size=(1,1,1), name='cubeobject', orientation=(0,0,0)):
 	return CubeObject(t, t.render, position=vec(position), orientation=vec(orientation), name=name, scale = vec(size))
 
-def makeFloor(position=(0,0,0), name='cubeobject', orientation=(0,0,0)):	
+def makeFloor(position=(0,0,0), name='floor', orientation=(0,0,0)):	
 	return FloorStaticObject(t,t.render, position=vec(position), orientation=vec(orientation), name=name)
 
 def makeTrigger(target = None, function=None, position=(0,0,0)):
@@ -41,7 +41,10 @@ def makeTurret(position=(0,0,0), orientation=(0,0,0), name='turret'):
 
 
 def makeTank(position=(0,0,0), orientation=(0,0,0), name='tank'):
-	return Tank(t,t.render, position=vec(position), orientation=vec(orientation), name=name)
+	
+	tank = Tank(t,t.render, position=vec(position), orientation=vec(orientation), name=name)
+	usertank = UserTank(tank)
+	return tank
 
 def makeBlaster(obj):
 	b = Blaster(obj)

@@ -53,7 +53,7 @@ class Tank(DynamicWorldObject):
         self.movementPoint = Point3(10,10,0)
 
         #register tank
-        world.registerTank(self)
+        
 
         print "Tank.__init__: " + name
         
@@ -495,6 +495,7 @@ class Tank(DynamicWorldObject):
     
     def setGenerator(self, gen):
         self.taskList = gen
+        self.runTasks()
 
     def updateMove(self, task):
         '''

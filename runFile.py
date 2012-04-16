@@ -48,14 +48,13 @@ def runFile(filename, tankWorld):
 	appendToBeginning = '''
 
 tank = tankWorld.getUserTank()
-levelData = tankWorld.getLevelData()
+level_data = tankWorld.getLevelData()
 
-def userFun(tank, levelData):
+def user_fun(tank, level_data):
 '''
 	appendToEnd = '''
-x = userFun(tank, levelData)
-tank.setGenerator(x)
-tank.runTasks()'''
+x = user_fun(tank, level_data)
+tank.set_generator(x)'''
 
 	yieldClause = 'yield()\n'
 	tabClause = '    '

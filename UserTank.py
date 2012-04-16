@@ -7,10 +7,11 @@ class UserTank:
 
     def __init__(self, tank):
         self.__tank = tank
+        tank._tankWorld.registerTank(self)
 
     def wait(self, time):
-    	'''The tank waits, doing nothing, for the specified time, in seconds'''
-    	self.__tank.wait(time)
+        '''The tank waits, doing nothing, for the specified time, in seconds'''
+        self.__tank.wait(time)
 
     #MOVEMENT
 
@@ -95,7 +96,7 @@ class UserTank:
         '''
         if type(pointRel) == tuple or type(pointRel) == list:
             point_rel = Point3(point_rel[0], point_rel[1], 0)
-		        
+
         newH = math.atan2(pointRel[1], pointRel[0]) * 180/math.pi + 90
         self.turnTo(newH)
 
@@ -103,7 +104,7 @@ class UserTank:
     #SCANNING
 
     def distance_scan(self):
-    	'''
+        '''
         This scan projects rays from the objects in the field toward the tank 
         in question. This scan does not perform as well as scan when the 
         objects are bunched together. When small objects are spread out 
@@ -157,34 +158,38 @@ class UserTank:
     def fire(self, power = 1):
         '''Fires a projectile of a type specified by the tank's weapon
         @param power: 0 to 1, how much of the maximum velocity will be given to the projectile'''
-        if (amt < 0 or power > 1):
+        if (power < 0 or power > 1):
             raise ValueError("Firing power must be between 0 and 1")
 
         return self.__tank.fire(power)
 
     def aim_at(self, point = (0,0,0), aim_low = True, power = 1 ):
-    	'''Aims at the specified point, moving the tank's weapon
-    	@param point: Point3, list, or tuple containing the x,y,z positions of the desired point
-    	@param aim_low: Boolean deciding whether the lower trajectory or the higher trajectory will be chosen
-    	@param power: 0 to 1, how much power will the bullet be fired with
-    	Returns true if it is possible to hit the point
-    	'''
-    	return self.__tank.aimAt(self, point, power, aim_low)
+        '''Aims at the specified point, moving the tank's weapon
+        @param point: Point3, list, or tuple containing the x,y,z positions of the desired point
+        @param aim_low: Boolean deciding whether the lower trajectory or the higher trajectory will be chosen
+        @param power: 0 to 1, how much power will the bullet be fired with
+        Returns true if it is possible to hit the point
+        '''
+        return self.__tank.aimAt(self, point, power, aim_low)
 
 
     def fire_at(self, point, power = 1, aim_low = True):
-    '''Calls aim_at and fire in succession'''
+        '''Calls aim_at and fire in succession'''
 
-        if (self.aim_at(point, aim_low, power):
-        	return self.fire(power)
-       	else:
-       		return false
+        if (self.aim_at(point, aim_low, power)):
+            return self.fire(power)
+        else:
+            return false
 
     def move_weapon(self, heading, pitch):
-    	'''Moves the weapon of the tank to the sepcified heading and pitch values
-    	This happens instantaneously'''
+        '''Moves the weapon of the tank to the sepcified heading and pitch values
+        This happens instantaneously'''
 
-    	self.__tank.setWeaponHp(heading, pitch)
+        self.__tank.setWeaponHp(heading, pitch)
 
 
     #GETTER METHODS?
+
+    def set_generator(self, gen):
+        '''Please don't ask'''
+        self.__tank.setGenerator(gen)
