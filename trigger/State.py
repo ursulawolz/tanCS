@@ -9,7 +9,7 @@ class State(object):
 		#tankWorld.add(self.checkConditions,"asddff") #This creates a task named update and runs every frame
 		self.tankWorld = tankWorld
 		self.states = []
-		tankWorld.add(self.checkConditions,0)
+		tankWorld.taskMgr.add(self.checkConditions,'state checking')
 
 		self.triggered = False
 
