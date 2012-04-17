@@ -12,6 +12,7 @@ class UserTank:
     def wait(self, time):
         '''The tank waits, doing nothing, for the specified time, in seconds'''
         self.__tank.wait(time)
+        return
 
     #MOVEMENT
 
@@ -179,7 +180,7 @@ class UserTank:
         if (self.aim_at(point, aim_low, power)):
             return self.fire(power)
         else:
-            return false
+            return False
 
     def move_weapon(self, heading, pitch):
         '''Moves the weapon of the tank to the sepcified heading and pitch values
@@ -189,6 +190,19 @@ class UserTank:
 
 
     #GETTER METHODS?
+    def get_projectile_name(self):
+        '''Gets the name of the projectile that will be fired from this tank.
+        All such projectiles will have the same name. 
+        This method is useful for sorting scan outputs
+        '''
+        return self.__tank._weapon.getBulletName()
+
+    def get_pos(self):
+        '''Returns the position of this UserTank as a Point3
+        Point3's are callable, as if they were lists or tuples
+        '''
+        return self.__tank.getPos()
+    #OH GOD
 
     def set_generator(self, gen):
         '''Please don't ask'''

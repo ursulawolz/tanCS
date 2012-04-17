@@ -40,13 +40,11 @@ class Projectile(DynamicWorldObject):
 			#self._nodePath.setCollideMask(BitMask32.allOn())
 		return task.done
 	def deleteAfter(self, task):
-		print "Projectile.deleteAfter: 1",
 		if not self._nodePath.is_empty():
 			x = self._nodePath.node()
 
 			self._tankWorld.removeRigidBody(x)
 			self._nodePath.removeNode()
-			print '2'
 
 	def handleCollision(self, collide, taskName):
 		self._collisionCounter += 1
@@ -55,7 +53,7 @@ class Projectile(DynamicWorldObject):
 
 		#if (self._collisionCounter % 2 == 0):
 		if not self._nodePath.is_empty():
-			print "Projectile.handleCollision:(pos) ", self.getPos(), 'obj 1', collide.getNode0().getName(), 'obj 2', collide.getNode1().getName()
+			#print "Projectile.handleCollision:(pos) ", self.getPos(), 'obj 1', collide.getNode0().getName(), 'obj 2', collide.getNode1().getName()
 
 			self._tankWorld.taskMgr.remove(taskName)
 			self._tankWorld.taskMgr.doMethodLater(.01, self.deleteAfter, 'deleteAfter')
