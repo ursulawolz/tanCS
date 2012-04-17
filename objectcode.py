@@ -122,12 +122,12 @@ class Group:
 class Comment:
     ## Object for comments on users' codes, be they in-line or general.
 
-    def __init__(self,text,time,hashID,which_file,which_line=-1):
+    def __init__(self,text,time,hashID,which_file,accountID,which_line=-1):
         self.text = text
         self.time = time
         self.last_edited = time
 
-        #self.accountID = accountID
+        self.accountID = accountID
         #self.projectID = projectID
         #self.revisionID = revisionID
 

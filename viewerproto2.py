@@ -8,11 +8,15 @@ import datetime
 
 #How the user creates line comments. Should involve clicking on the line or something like that. So this will get called by a button I think.Should add a line comment to the code.
 def submit_line_comment(account,linenum,text):
+	time=datetime.date.today()
+	new_comment=Comment(text,time,"Hash","Which_file",self.fake_user,linenum)
 	print(account+" says: '"+text+"' on line "+linenum)
 	return
 
 #How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
 def submit_file_comment(account,text):
+	time=datetime.date.today()
+	new_comment=Comment(text,time,"Hash","Which_file",self.fake_user)
 	print(account+" says: '"+text+"' about this file")
 	return
 
@@ -33,7 +37,9 @@ def change_window(widget,new_window_name,parent_window,on_window_mode_changed):
 class TempWindow(Gtk.Window):
 	def __init__(self,on_window_mode_changed):
 		Gtk.Window.__init__(self,title="Entry Demo")
-		fake_user=Account("Random Hash","The instigator","Password","Avatar")
+
+		self.fake_user=Account("Random Hash","The instigator","Password","Avatar")
+		
 		color=Gdk.Color(1000,1000,1000)
 		self.x=840
 		self.y=280
@@ -109,9 +115,11 @@ class TempWindow(Gtk.Window):
 			vbox2.pack_start(self.create_comment(self.filecomments[index]),False,False,0)
 			index=index+1	
 		
-
+		self.padding=Gtk.EventBox()
+		self.padding.set_border_width(15)
+		self.padding.add(vbox2)
 		
-		commentswindow.add_with_viewport(vbox2)
+		commentswindow.add_with_viewport(self.padding)
 		commentswindow.set_size_request(self.x-150,240)
 		commentbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
 		commentbox.pack_start(hbox,False,False,0)
@@ -128,7 +136,7 @@ class TempWindow(Gtk.Window):
 
 		commentscroll=Gtk.ScrolledWindow()
 		commentscroll.add_with_viewport(entryframe)
-		commentscroll.set_size_request(self.x-150,100)
+		commentscroll.set_size_request(self.x-150,60)
 
 		self.submitcomment=Gtk.Button("Submit")
 		self.submitcomment.connect("clicked", self.toggle_file_comment,self.entry)
@@ -178,10 +186,10 @@ class TempWindow(Gtk.Window):
 		text2="Well, yes and no. It's a little hard, but you can definitely do it. Papayas?"
 		text3="Thanks for the help. Also, I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?"
 		text4="They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever, it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date"
-		fake1=Comment(text1,"10:20","Random Hash","This file")
-		fake2=Comment(text2,"10:35","Random Hash","This file")
-		fake3=Comment(text3,"10:47","Random Hash","This file")
-		fake4=Comment(text4,"11:00","Random Hash","This file")
+		fake1=Comment(text1,"10:20","Random Hash","This file","Some account")
+		fake2=Comment(text2,"10:35","Random Hash","This file","Some account")
+		fake3=Comment(text3,"10:47","Random Hash","This file","Some account")
+		fake4=Comment(text4,"11:00","Random Hash","This file","Some account")
 		filecommentlist=[fake1,fake2,fake3,fake4]
 		return filecommentlist
 
