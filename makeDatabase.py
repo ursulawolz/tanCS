@@ -13,13 +13,13 @@ def makeTableStructure(host , password , username, personalpassword) :
 	cur.execute("use oogadaBoogada")
 	cur.execute("grant usage on *.* to " + username + " identified by '" + personalpassword + "' ;")
 	cur.execute("grant all privileges on oogadaBoogada.* to " + username + ";")
-	cur.execute("create table account(account_id int, username tinytext, password tinytext, avatar blob, groups text);")
-	cur.execute("create table borrow( borrow_id int, date_taken datetime, project_to_id smallint, project_id smallint, revision_id smallint, file_name tinytext, line_range tinytext);")
-	cur.execute("create table comment(all_of_the_text longtext, time_of_post datetime, account_posting_id smallint, project_id smallint, revision_number smallint, file_name tinytext, line_number tinyint);")
-	cur.execute("create table file_info( project_id smallint, revision_number smallint, file_name tinytext, file_content blob);")
-	cur.execute("create table group_info( group_id smallint, group_projects text, account_ids text, god_id int);")
-	cur.execute("create table project_info( project_id smallint, parent_id smallint, children_ids text, borrow_ids text, group_id smallint, revisions text, locked tinyint, tags text);")
-	cur.execute("create table revision( revision_number tinyint, filenames text, project_id smallint, revision_time datetime);")
+	cur.execute("create table account(account_id int, username tinytext, password tinytext, avatar blob, groups text, creation_time datetime);")
+	cur.execute("create table borrow( borrow_id int, project_to_id smallint, project_id smallint, revision_id smallint, file_name tinytext, line_range tinytext, creation_time datetime);")
+	cur.execute("create table comment(all_of_the_text longtext, account_posting_id smallint, project_id smallint, revision_number smallint, file_name tinytext, line_number tinyint, creation_time datetime);")
+	cur.execute("create table file_info( project_id smallint, revision_number smallint, file_name tinytext, file_content blob, creation_time datetime);")
+	cur.execute("create table group_info( group_id smallint, group_projects text, account_ids text, god_id int, creation_time datetime);")
+	cur.execute("create table project_info( project_id smallint, parent_id smallint, children_ids text, borrow_ids text, group_id smallint, revisions text, locked tinyint, tags text, creation_time datetime);")
+	cur.execute("create table revision( revision_number tinyint, filenames text, project_id smallint, creation_time datetime);")
 	
 
 
@@ -108,19 +108,20 @@ def NewEntry(object_type, column_info, column_type, host,password):  #if a perso
 		if not type(column_info[i]) == str:
 			column_info[i] = str(column_info[i])
 		if i == len(column_info) - 1: 
-			types = types + column_type[i]
-			infos = infos + "'" + column_info[i] + "'"
+			types = types + column_type[i] + ', ' + column_type[i+1]
+			infos = infos + "'" + column_info[i] + "' , NOW()"
 		else:
 			infos = infos + "'" + column_info[i] + "' ,"
 			types = types + column_type[i] + ',' 
 
 
-	cur.execute('insert into ' + object_type + '(' + types + ')' + 'values (' + infos + ');')
+
+	cur.execute('insert into ' + object_type + '(' + types + ')' + 'values (' + infos +  ');')
 	con.commit()
 
 
 	if object_type == "borrow":
-		update(column_info[0], "borrow_ids", column_info[3], "project_id", host,password )
+		update(column_info[0], "borrow_ids", column_info[2], "project_id", host,password )
 
 	elif object_type == "project_info":
 		update(column_info[0], "group_projects", column_info[4], "group_id" , host,password)
@@ -137,7 +138,7 @@ def NewEntry(object_type, column_info, column_type, host,password):  #if a perso
 		update(column_info[0], "revisions", column_info[2], "project_id" , host,password)
 		string = column_info[1]
 		list_of_files = string[3:].split('$$$')
-			new_types = ['project_id', 'revision_number', 'file_name', 'file_content']
+		new_types = ['project_id', 'revision_number', 'file_name', 'file_content']
 		for i in list_of_files:
 			new_info = [column_info[2], column_info[0], i, column_info[4]]
 			NewEntry('file_info', new_info, new_types, host, password)
@@ -177,7 +178,7 @@ def SearchAll(search_type, search_value, object_type, fist, last, host, password
 # test
 makeTableStructure('localhost', 'olin' , 'jrivero', 'x8mafw63')
 meep = [123, 'FearBisquick', 'weee', 'NULL', 'groups and things']
-moop = ['account_id', 'username' , 'password', 'avatar', 'groups' ]
+moop = ['account_id', 'username' , 'password', 'avatar', 'groups', 'creation_time' ]
 NewEntry('account', meep, moop, 'localhost', 'olin')
 SearchAll(['groups', 'account_id'] , ['and', 12], 'account', '0' , '1', 'localhost' , 'olin')
-Update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')
+update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')
