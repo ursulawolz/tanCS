@@ -2,7 +2,7 @@ from gi.repository import Gtk, Gdk, GtkSource, GObject
 
 class Editor(Gtk.Window):
 
-	def __init__(self,parent):
+	def __init__(self,parent,project,revision,file):
 		Gtk.Window.__init__(self,title='tanCS Editor')
 		
 		self.parent=parent
@@ -346,16 +346,22 @@ class Editor(Gtk.Window):
 		button_run.set_icon_widget(run_icon)
 		button_run.set_tooltip_text('Run Program')
 		self.toolbar.insert(button_run, 12)
-		button_run.connect("clicked",change_window,self,self.parent)
+		button_run.connect("clicked",self.run_file)
 
 		level_icon=Gtk.Image.new_from_file('level-icon.png')
 		button_level=Gtk.ToolButton()
 		button_level.set_icon_widget(level_icon)
 		button_level.set_tooltip_text('Level Select')
 		self.toolbar.insert(button_level, 13)
-		button_level.connect("clicked",change_window,self,self.parent)
+		button_level.connect("clicked",self.level_select)
 
 		self.toolbar.show_all()
+
+	def level_select(self, widget):
+		pass
+
+	def run_file(self,widget):
+		pass
 
 def change_window(widget,new_window_name,parent_window,top_parent):
 	top_parent.on_window_mode_changed(new_window_name,parent_window)

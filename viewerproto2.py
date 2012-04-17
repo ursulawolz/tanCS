@@ -86,7 +86,7 @@ class TempWindow(Gtk.Window):
 		self.thecode.connect("key-press-event",self.on_key_press)
 		codescroll=Gtk.ScrolledWindow()
 		codescroll.add_with_viewport(self.thecodeframe)
-		codescroll.set_size_request(self.x-150,400)	
+		codescroll.set_size_request(self.x-150,390)	
 		vbox.pack_start(self.toolbar,False,True,0)
 		vbox.pack_start(codescroll,False,False,0)	
 
@@ -103,7 +103,7 @@ class TempWindow(Gtk.Window):
 		#vbox.pack_start(hbox, False, False,0)
 
 		commentswindow = Gtk.ScrolledWindow()
-		commentswindow.set_size_request(200,100)
+		commentswindow.set_size_request(200,95)
 		commentswindow.set_hexpand(True)
 		commentswindow.set_vexpand(True)
 		
@@ -234,6 +234,7 @@ class TempWindow(Gtk.Window):
 	def create_toolbar(self):
 		
 		self.toolbar=Gtk.Toolbar()
+		self.toolbar.set_size_request(self.x-150,10)
 		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
 		self.toolbar.insert(button_new, 0)
 		#button_new.connect("clicked", self.create_new)
@@ -270,11 +271,11 @@ class TempWindow(Gtk.Window):
 		date=datetime.date.today()
 		select=self.thecodebuffer.get_selection_bounds()
 		if select==():
-			select=self.sbuff.get_iter_at_mark(self.sbuff.get_insert())
-
-		a=self.thecodebuffer.get_end_iter()
-		copy=Borrow(date,'self.projID','self.projrev','self.filename','abcdef')
-		self.parent.borrows.append(copy)
+			print 'There\'s nothing selected, you kiwi.'
+		else:
+			a=self.thecodebuffer.get_end_iter()
+			copy=Borrow(date,self.project.projID,self.revision,self.file.file_name,self.thecodebuffer.get_text(select[0],select[1],True))
+			self.parent.borrows.append(copy)
 
 	def get_lines_from_block(self,select):
 		#takes in a tuple with the selection bounds
