@@ -25,23 +25,31 @@ class explorer_window(Gtk.Window):
 
 		self.tohome=Gtk.EventBox()
 		self.tohome.add(self.home)
-		self.tohome.connect("button_press_event",self.on_home_clicked,self.toplevel)
 
 		self.tomyaccount=Gtk.EventBox()
 		self.tomyaccount.add(self.myaccount)
-		self.tomyaccount.connect("button_press_event",self.on_account_clicked,self.toplevel)
 
 		self.tomygroups=Gtk.EventBox()
 		self.tomygroups.add(self.mygroups)
-		self.tomygroups.connect("button_press_event",self.on_mygroups_clicked,self.toplevel)
 
 		self.tosearch=Gtk.EventBox()
 		self.tosearch.add(self.search)
-		self.tosearch.connect("button_press_event",self.on_search_clicked,self.toplevel)
 
 		self.tohelp=Gtk.EventBox()
 		self.tohelp.add(self.help)
-		self.tohelp.connect("button_press_event",self.on_help_clicked,self.toplevel)
+
+		if not(self.parent.user)==None:
+			self.tohome.connect("button_press_event",self.on_home_clicked,self.toplevel)
+			self.tomyaccount.connect("button_press_event",self.on_account_clicked,self.toplevel)
+			self.tomygroups.connect("button_press_event",self.on_mygroups_clicked,self.toplevel)
+			self.tosearch.connect("button_press_event",self.on_search_clicked,self.toplevel)
+			self.tohelp.connect("button_press_event",self.on_help_clicked,self.toplevel)
+		else:
+			nav_options=[self.tohome,self.tomyaccount,self.tomygroups,self.tosearch,self.tohelp]
+			index=0
+			while index<len(nav_options):
+				nav_options[index].connect("button_press_event",self.on_nologin_clicked,self.toplevel)
+				index=index+1
 
 		self.quicknav.pack_start(self.tohome,True,True,0)
 		self.quicknav.pack_start(self.tomyaccount,True,True,0)
@@ -50,8 +58,11 @@ class explorer_window(Gtk.Window):
 		self.quicknav.pack_start(self.tohelp,True,True,0)
 		self.quicknavframe=Gtk.Frame()
 		self.quicknavframe.add(self.quicknav)
-		
 		self.toplevel.pack_start(self.quicknavframe,False,False,0)
+
+		self.alert=Gtk.Label("This is a Helpful Message!")
+		self.toplevel.pack_start(self.alert,False,False,0)
+
 		self.current_page=self.make_login()
 
 		#self.toggle.connect("clicked",self.new_page,self.current_page,self.toplevel)
@@ -112,6 +123,7 @@ class explorer_window(Gtk.Window):
 	def make_login(self):
 		self.username_entry=Gtk.Entry()
 		self.password_entry=Gtk.Entry()
+		self.password_entry.set_visibility(False)
 		self.username_note=Gtk.Label("Username: ")
 		self.password_note=Gtk.Label("Password: ")
 		self.register=Gtk.Button("Register")
@@ -164,4 +176,6 @@ class explorer_window(Gtk.Window):
 		print("Help clicked")
 		self.the_new_page=self.make_help()
 		self.create_new_page(toplevel,self.the_new_page)
+	def on_nologin_clicked(self,widget,something,toplevel):
+		self.alert.set_text("You have not logged in yet!") 
 

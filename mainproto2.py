@@ -12,7 +12,7 @@ class tanCS(object):
 		win=viewer.TempWindow(self)
 		win.connect("delete-event",Gtk.main_quit)
 		win.show_all()
-
+		self.user=None
 		self.borrows=[]
 		'''
 		#in the process of creating default objects
@@ -22,7 +22,7 @@ class tanCS(object):
 
 		Gtk.main()
 
-	###-------------------------------MAIN SWITCH------------------------------###
+###---------------------------MAIN SWITCH----------------------------###
 	def on_window_mode_changed(self,new_window_name,parent_window):
 		if new_window_name==("Viewer"):
 			window=viewer.TempWindow(self)
@@ -38,6 +38,6 @@ class tanCS(object):
 			window.show_all()
 		parent_window.destroy()
 
-	###-----------------------------------MAIN---------------------------------###
+###---------------------------------MAIN-------------------------------###
 	
 a=tanCS()
