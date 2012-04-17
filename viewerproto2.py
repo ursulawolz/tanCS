@@ -7,17 +7,10 @@ import datetime
 ###-------------------------------Main Functions---------------------------###
 
 #How the user creates line comments. Should involve clicking on the line or something like that. So this will get called by a button I think.Should add a line comment to the code.
-def submit_line_comment(account,linenum,text):
+def submit_line_comment(self,account,linenum,text):
 	time=datetime.date.today()
 	new_comment=Comment(text,time,"Hash","Which_file",self.fake_user,linenum)
 	print(account+" says: '"+text+"' on line "+linenum)
-	return
-
-#How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
-def submit_file_comment(account,text):
-	time=datetime.date.today()
-	new_comment=Comment(text,time,"Hash","Which_file",self.fake_user)
-	print(account+" says: '"+text+"' about this file")
 	return
 
 def add_mode_menu_actions(action_group,on_window_mode_changed,parent_window):
@@ -41,6 +34,7 @@ class TempWindow(Gtk.Window):
 		self.fake_user=Account("Random Hash","The instigator","Password","Avatar")
 		
 		color=Gdk.Color(1000,1000,1000)
+		self.set_resizable(False)
 		self.x=840
 		self.y=280
 		self.set_size_request(self.x,self.y)
@@ -160,6 +154,13 @@ class TempWindow(Gtk.Window):
 
 ###---------------------------------METHODS--------------------------------###
 
+	#How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
+	def submit_file_comment(self,account,text):
+		time=datetime.date.today()
+		new_comment=Comment(text,time,"Hash","Which_file",self.fake_user)
+		print(account+" says: '"+text+"' about this file")
+		return
+
 # Just to make it clear for later, there is a label, which is the text of the comment. It is placed within an event box for border reasons. 
 # Then frames are created. The event boxes are added to the frames. The account name associated with the comment is then made as a label for bold reasons. 
 # Markup allows gtk to read the bold tags. Then those account names are added as labels (little things at the top of frames in this case) to the frames. 
@@ -227,7 +228,7 @@ class TempWindow(Gtk.Window):
 		startiter = tempbuffer.get_start_iter()
 		enditer = tempbuffer.get_end_iter()
 		thetext=tempbuffer.get_text(startiter,enditer,False)
-		submit_file_comment(account,thetext)
+		self.submit_file_comment(account,thetext)
 		return
 
 #Creates the top toolbar for the window.
@@ -316,7 +317,7 @@ class LineCommentDialog(Gtk.Dialog):
 		dframe.add(self.dentry)
 		self.dtext_buffer=self.dentry.get_buffer()"""
 		self.dlabel=Gtk.Label("Line Number")
-		self.spinsubmit.connect("clicked", self.dialog_toggle_line_comment,self.spinbutton,parent.entry)
+		self.spinsubmit.connect("clicked", self.dialog_toggle_line_comment,self.spinbutton,parent)
 		#Note that this uses parent!!!!!!!!!! do not change the name of entry!
 
 		dvbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
@@ -332,12 +333,13 @@ class LineCommentDialog(Gtk.Dialog):
 		box.add(dvbox)
 		self.show_all()
 
-	def dialog_toggle_line_comment(self,button,spinner,entry):
+	def dialog_toggle_line_comment(self,button,spinner,parent):
 		#account=get_account()
+		entry=parent.entry
 		account="The Instigater"
 		tempbuffer=entry.get_buffer()
 		startiter = tempbuffer.get_start_iter()
 		enditer = tempbuffer.get_end_iter()
 		thetext=tempbuffer.get_text(startiter,enditer,False)
-		submit_line_comment(account,str(spinner.get_value()),thetext)
+		submit_line_comment(parent,account,str(spinner.get_value()),thetext)
 		self.destroy()
