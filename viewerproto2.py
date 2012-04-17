@@ -1,7 +1,7 @@
 ###------------------------------Inclusions--------------------------------###
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
-from objectcode import Account,Comment
+from objectcode import Account,Comment,Borrow
 import datetime
 #from mainproto2 import on_window_mode_changed
 ###-------------------------------Main Functions---------------------------###
@@ -30,12 +30,12 @@ def add_mode_menu_actions(action_group,on_window_mode_changed,parent_window):
 		("Editor", None, "Editor", None, None, 3)
 	], 1, change_window,[on_window_mode_changed,parent_window])
 
-def change_window(widget,new_window_name,parent_window,on_window_mode_changed):
-	on_window_mode_changed(new_window_name,parent_window)
+def change_window(widget,new_window_name,parent_window,top_parent):
+	top_parent.on_window_mode_changed(new_window_name,parent_window)
 
 ###------------------------------Viewer Class------------------------------###
 class TempWindow(Gtk.Window):
-	def __init__(self,on_window_mode_changed):
+	def __init__(self,parent):
 		Gtk.Window.__init__(self,title="Entry Demo")
 
 		self.fake_user=Account("Random Hash","The instigator","Password","Avatar")
@@ -46,7 +46,8 @@ class TempWindow(Gtk.Window):
 		self.set_size_request(self.x,self.y)
 		self.timeout_id=None
 
-		self.on_window_mode_changed=on_window_mode_changed
+		self.parent=parent
+		self.on_window_mode_changed=parent.on_window_mode_changed
 
 		#make toolbar
 		self.create_toolbar()
@@ -94,8 +95,8 @@ class TempWindow(Gtk.Window):
 		self.listbutton=Gtk.ToggleButton("List")
 		self.linebutton=Gtk.ToggleButton("Line")
 		
-		self.listbutton.connect("toggled", change_window, "Editor", [on_window_mode_changed,self])
-		self.linebutton.connect("toggled", change_window, "Explorer", [on_window_mode_changed,self])
+		self.listbutton.connect("toggled", change_window, "Editor", [self.parent,self])
+		self.linebutton.connect("toggled", change_window, "Explorer", [self,self.parent])
 		hbox.pack_end(self.listbutton,False, False,0)
 		hbox.pack_end(self.linebutton,False, False,0)
 
@@ -245,13 +246,13 @@ class TempWindow(Gtk.Window):
 		button_editor=Gtk.ToolButton()
 		button_editor.set_icon_widget(editor_icon)
 		self.toolbar.insert(button_editor, 2)
-		button_editor.connect("clicked",change_window,"Editor",self,self.on_window_mode_changed)
+		button_editor.connect("clicked",change_window,"Editor",self,self.parent)
 
 		explorer_icon=Gtk.Image.new_from_file('explorer-icon.png')
 		button_explorer=Gtk.ToolButton()
 		button_explorer.set_icon_widget(explorer_icon)
 		self.toolbar.insert(button_explorer, 3)
-		button_explorer.connect("clicked",change_window,"Explorer",self,self.on_window_mode_changed)
+		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent)
 
 		self.toolbar.show_all()
 
@@ -272,7 +273,8 @@ class TempWindow(Gtk.Window):
 			select=self.sbuff.get_iter_at_mark(self.sbuff.get_insert())
 
 		a=self.thecodebuffer.get_end_iter()
-		#copy=Borrow(date,self.projID,self.projrev,self.filename)
+		copy=Borrow(date,'self.projID','self.projrev','self.filename','abcdef')
+		self.parent.borrows.append(copy)
 
 	def get_lines_from_block(self,select):
 		#takes in a tuple with the selection bounds

@@ -2,10 +2,11 @@ from gi.repository import Gtk, Gdk, GtkSource, GObject
 
 class Editor(Gtk.Window):
 
-	def __init__(self,on_window_mode_changed):
+	def __init__(self,parent):
 		Gtk.Window.__init__(self,title='tanCS Editor')
 		
-		self.on_window_mode_changed=on_window_mode_changed
+		self.parent=parent
+		self.on_window_mode_changed=parent.on_window_mode_changed
 
 		#structure rewrite
 		self.set_default_size(800,500)
@@ -147,7 +148,7 @@ class Editor(Gtk.Window):
 	def paste_text(self,widget=None):
 		pasted = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
 		if self.isBorrow(pasted):
-			pass
+			print self.parent.borrows[0].line_range
 		else:
 			dialog = ReferenceDialog(self,pasted)
 			response = dialog.run()
@@ -159,7 +160,7 @@ class Editor(Gtk.Window):
 			dialog.destroy()
 
 	def isBorrow(self,text):
-		if self.borrows==():
+		if not self.borrows==():
 			return False
 		else:
 			pass
@@ -328,14 +329,14 @@ class Editor(Gtk.Window):
 		button_viewer.set_icon_widget(viewer_icon)
 		button_viewer.set_tooltip_text('Switch to Viewer')
 		self.toolbar.insert(button_viewer, 9)
-		button_viewer.connect("clicked", change_window,"Viewer",self,self.on_window_mode_changed)
+		button_viewer.connect("clicked", change_window,"Viewer",self,self.parent)
 
 		explorer_icon=Gtk.Image.new_from_file('explorer-icon.png')
 		button_explorer=Gtk.ToolButton()
 		button_explorer.set_icon_widget(explorer_icon)
 		button_explorer.set_tooltip_text('Switch to Explorer')
 		self.toolbar.insert(button_explorer, 10)
-		button_explorer.connect("clicked",change_window,"Explorer",self,self.on_window_mode_changed)
+		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent)
 
 		sep2=Gtk.SeparatorToolItem()
 		self.toolbar.insert(sep2,11)
@@ -345,19 +346,19 @@ class Editor(Gtk.Window):
 		button_run.set_icon_widget(run_icon)
 		button_run.set_tooltip_text('Run Program')
 		self.toolbar.insert(button_run, 12)
-		button_run.connect("clicked",change_window,self,self.on_window_mode_changed)
+		button_run.connect("clicked",change_window,self,self.parent)
 
 		level_icon=Gtk.Image.new_from_file('level-icon.png')
 		button_level=Gtk.ToolButton()
 		button_level.set_icon_widget(level_icon)
 		button_level.set_tooltip_text('Level Select')
 		self.toolbar.insert(button_level, 13)
-		button_level.connect("clicked",change_window,self,self.on_window_mode_changed)
+		button_level.connect("clicked",change_window,self,self.parent)
 
 		self.toolbar.show_all()
 
-def change_window(widget,new_window_name,parent_window,on_window_mode_changed):
-	on_window_mode_changed(new_window_name,parent_window)
+def change_window(widget,new_window_name,parent_window,top_parent):
+	top_parent.on_window_mode_changed(new_window_name,parent_window)
 
 
 class ReferenceDialog(Gtk.Dialog):

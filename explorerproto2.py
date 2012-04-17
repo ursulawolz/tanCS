@@ -3,13 +3,15 @@ from gi.repository import Gdk
 
 ###------------------------Explorer Class--------------------------###
 class explorer_window(Gtk.Window):
-	def __init__(self,on_window_mode_changed):
+	def __init__(self,parent):
 		Gtk.Window.__init__(self,title="Entry Demo")
 
 		self.x=640
 		self.y=280
 		self.set_size_request(self.x,self.y)
 		
+		self.parent=parent
+
 		#because of the way things are destroyed spacing on the next line needs to be 0
 		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
 

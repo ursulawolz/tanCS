@@ -31,12 +31,16 @@ class Account:
         self.group_list.remove( group )
 
 class Borrow:
-    def __init(self, date_taken, projectID, revisionID, file_name, line_range):
+    def __init__(self, date_taken, projectID, revisionID, file_name, line_range):
         self.date_taken = date_taken
         self.projectID = projectID
         self.revisionID = revisionID
         self.file_name = file_name
         self.line_range = line_range
+
+    def get_text(self):
+        #returns the borrowed text
+        pass
 
 
 class Project:
