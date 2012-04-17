@@ -170,7 +170,7 @@ class UserTank:
         @param power: 0 to 1, how much power will the bullet be fired with
         Returns true if it is possible to hit the point
         '''
-        return self.__tank.aimAt(self, point, power, aim_low)
+        return self.__tank.aimAt(point, power, aim_low)
 
 
     def fire_at(self, point, power = 1, aim_low = True):
