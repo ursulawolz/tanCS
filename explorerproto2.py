@@ -56,7 +56,7 @@ class explorer_window(Gtk.Window):
 		self.alert=Gtk.Label("This is a Helpful Message!")
 		self.toplevel.pack_start(self.alert,False,False,0)
 
-		self.current_page=self.make_login()
+		self.current_page=self.make_login(self.toplevel)
 
 		#self.toggle.connect("clicked",self.new_page,self.current_page,self.toplevel)
 		#self.toggle.connect("clicked",self.change,on_window_mode_changed,'Editor')
@@ -113,7 +113,7 @@ class explorer_window(Gtk.Window):
 		self.return_box.pack_start(self.label5,True,True,0)
 		return self.return_box
 
-	def make_login(self):
+	def make_login(self,toplevel):
 		self.username_entry=Gtk.Entry()
 		self.password_entry=Gtk.Entry()
 		self.password_entry.set_visibility(False)
@@ -122,7 +122,7 @@ class explorer_window(Gtk.Window):
 		self.register=Gtk.Button("Register")
 		self.login=Gtk.Button("Login")
 
-		self.login.connect("clicked",self.submit_login,self.username_entry,self.password_entry)
+		self.login.connect("clicked",self.submit_login,self.username_entry,self.password_entry,toplevel)
 
 		self.username_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
 		self.password_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
@@ -143,9 +143,9 @@ class explorer_window(Gtk.Window):
 		self.return_box.add(self.total_block)
 		return self.return_box
 
-	def submit_login(self,widget,username,password):
+	def submit_login(self,widget,username,password,toplevel):
 		#check to see if the account is valid
-		#Account=get_account(username,password)
+		#Account=get_account(username.get_text(),password.get_text())
 		Account="Fake Account"
 		if not Account==None:
 			self.parent.user=Account
@@ -163,6 +163,7 @@ class explorer_window(Gtk.Window):
 			self.tosearch.connect("button_press_event",self.on_search_clicked,self.toplevel)
 			self.tohelp.connect("button_press_event",self.on_help_clicked,self.toplevel)
 			#print self.parent.user
+			self.on_home_clicked("widget","something",toplevel)
 
 		else:
 			self.alert.set_text("Your login information is invalid")
@@ -198,6 +199,6 @@ class explorer_window(Gtk.Window):
 		self.the_new_page=self.make_help()
 		self.create_new_page(toplevel,self.the_new_page)
 	def on_nologin_clicked(self,widget,something,toplevel):
-		print not(self.parent.user==None)
+		#print not(self.parent.user==None)
 		self.alert.set_text("You have not logged in yet!") 
 
