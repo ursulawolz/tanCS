@@ -38,18 +38,11 @@ class explorer_window(Gtk.Window):
 		self.tohelp=Gtk.EventBox()
 		self.tohelp.add(self.help)
 
-		if not(self.parent.user)==None:
-			self.tohome.connect("button_press_event",self.on_home_clicked,self.toplevel)
-			self.tomyaccount.connect("button_press_event",self.on_account_clicked,self.toplevel)
-			self.tomygroups.connect("button_press_event",self.on_mygroups_clicked,self.toplevel)
-			self.tosearch.connect("button_press_event",self.on_search_clicked,self.toplevel)
-			self.tohelp.connect("button_press_event",self.on_help_clicked,self.toplevel)
-		else:
-			nav_options=[self.tohome,self.tomyaccount,self.tomygroups,self.tosearch,self.tohelp]
-			index=0
-			while index<len(nav_options):
-				nav_options[index].connect("button_press_event",self.on_nologin_clicked,self.toplevel)
-				index=index+1
+		nav_options=[self.tohome,self.tomyaccount,self.tomygroups,self.tosearch,self.tohelp]
+		index=0
+		while index<len(nav_options):
+			nav_options[index].connect("button_press_event",self.on_nologin_clicked,self.toplevel)
+			index=index+1
 
 		self.quicknav.pack_start(self.tohome,True,True,0)
 		self.quicknav.pack_start(self.tomyaccount,True,True,0)
@@ -129,6 +122,8 @@ class explorer_window(Gtk.Window):
 		self.register=Gtk.Button("Register")
 		self.login=Gtk.Button("Login")
 
+		self.login.connect("clicked",self.submit_login,self.username_entry,self.password_entry)
+
 		self.username_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
 		self.password_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
 		self.button_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
@@ -147,6 +142,32 @@ class explorer_window(Gtk.Window):
 		self.return_box=Gtk.Frame()
 		self.return_box.add(self.total_block)
 		return self.return_box
+
+	def submit_login(self,widget,username,password):
+		#check to see if the account is valid
+		#Account=get_account(username,password)
+		Account="Fake Account"
+		if not Account==None:
+			self.parent.user=Account
+			self.alert.set_text("You have logged in!")
+
+			nav_options=[self.tohome,self.tomyaccount,self.tomygroups,self.tosearch,self.tohelp]
+			index=0
+			while index<len(nav_options):
+				nav_options[index].handler_block_by_func(self.on_nologin_clicked)
+				index=index+1
+
+			self.tohome.connect("button_press_event",self.on_home_clicked,self.toplevel)
+			self.tomyaccount.connect("button_press_event",self.on_account_clicked,self.toplevel)
+			self.tomygroups.connect("button_press_event",self.on_mygroups_clicked,self.toplevel)
+			self.tosearch.connect("button_press_event",self.on_search_clicked,self.toplevel)
+			self.tohelp.connect("button_press_event",self.on_help_clicked,self.toplevel)
+			#print self.parent.user
+
+		else:
+			self.alert.set_text("Your login information is invalid")
+		
+		
 
 	# look for all results of type 'type_results' using 'identifier'
 	# for instance, look for all results of type group using identifier account. This would display all of account's groups
@@ -177,5 +198,6 @@ class explorer_window(Gtk.Window):
 		self.the_new_page=self.make_help()
 		self.create_new_page(toplevel,self.the_new_page)
 	def on_nologin_clicked(self,widget,something,toplevel):
+		print not(self.parent.user==None)
 		self.alert.set_text("You have not logged in yet!") 
 

@@ -85,12 +85,12 @@ class TempWindow(Gtk.Window):
 		vbox.pack_start(codescroll,False,False,0)	
 
 		hbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-		
+		vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
 		self.listbutton=Gtk.ToggleButton("List")
 		self.linebutton=Gtk.ToggleButton("Line")
 		
-		self.listbutton.connect("toggled", change_window, "Editor", [self.parent,self])
-		self.linebutton.connect("toggled", change_window, "Explorer", [self,self.parent])
+		self.listbutton.connect("toggled", self.on_List_toggled,self.listbutton,self.linebutton,vbox2)
+		self.linebutton.connect("toggled", self.on_Line_toggled,self.linebutton,self.listbutton,vbox2)
 		hbox.pack_end(self.listbutton,False, False,0)
 		hbox.pack_end(self.linebutton,False, False,0)
 
@@ -102,7 +102,7 @@ class TempWindow(Gtk.Window):
 		commentswindow.set_vexpand(True)
 		
 		frame=Gtk.Frame()
-		vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+
 
 		self.filecomments=self.get_file_comments("This file")
 		index=0
@@ -197,6 +197,15 @@ class TempWindow(Gtk.Window):
 
 #should unpack the line comments from where they are in revision and make a list of all of them so that they can be displayed.
 	def get_line_comments(self,revision):
+		text1="I see how you have added many oranges. Is there any way to dynamically create widgets?"
+		text2="Well, yes and no. It's a little hard, but you can definitely do it. Papayas?"
+		text3="Thanks for the help. Also, I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?"
+		text4="They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever, it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date"
+		fake1=Comment(text1,"10:20","Random Hash","This file","Some account")
+		fake2=Comment(text2,"10:35","Random Hash","This file","Some account")
+		fake3=Comment(text3,"10:47","Random Hash","This file","Some account")
+		fake4=Comment(text4,"11:00","Random Hash","This file","Some account")
+		linecommentlist=[fake4,fake3,fake2,fake1]
 		return linecommentlist
 
 # Not quite sure how to do this one. It needs to dynamically create a revision map for the whole project and allow you to move from one revision to another as well as load those revision. 
@@ -204,16 +213,36 @@ class TempWindow(Gtk.Window):
 		return notsure	
 
 #What happens when you click on the list comments only button
-	def on_List_toggled(self,button,which,other):
+	def on_List_toggled(self,button,which,other,vbox):
 		if button.get_active()==True:
+			children=vbox.get_children()
+			index=0
+			while index<len(children):
+				children[index].destroy()
+				index=index+1	
+			linecomments=self.get_line_comments("This File")
+			index=0
+			while index<len(linecomments):
+				vbox.pack_start(self.create_comment(linecomments[index]),False,False,0)
+				index=index+1	
 			other.set_active(False)
-			print(which)
+			vbox.show_all()
 
 #What happens when you click on the file comments only button
-	def on_Line_toggled(self,button,which,other):
+	def on_Line_toggled(self,button,which,other,vbox):	
 		if button.get_active()==True:
+			children=vbox.get_children()
+			index=0
+			while index<len(children):
+				children[index].destroy()
+				index=index+1
+			filecomments=self.get_file_comments("This File")
+			index=0
+			while index<len(filecomments):
+				vbox.pack_start(self.create_comment(filecomments[index]),False,False,0)
+				index=index+1	
 			other.set_active(False)
-			print(which)
+			vbox.show_all()
 
 #What happens when you hit the submit line comment button
 	def toggle_line_comment(self,widget):
