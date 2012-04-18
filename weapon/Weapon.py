@@ -87,10 +87,11 @@ class Weapon(object):
 		tanks = self.tank
 		gravity = self.tank._tankWorld.getPhysics().getGravity() #Vector
 		g = abs(gravity[2])	
-
+		print "Weapon.aimAt: ", v**4
 		discriminant = v**4 - g * (g * x**2 + 2 * y * v**2)
 
 		if discriminant < 0:
+			print "Weapon.aimAt: ", discriminant
 			return False
 		if x == 0:
 			return False

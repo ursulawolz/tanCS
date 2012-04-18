@@ -1,4 +1,4 @@
-data = levelData['data']
+data = level_data['data']
 
 for l in data:
 	tank.move(l)

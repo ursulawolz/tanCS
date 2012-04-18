@@ -326,8 +326,9 @@ class Tank(DynamicWorldObject):
         
         #Of the form (goalLoc, startLoc, distance)
         self._moveLoc = (Point3(pos[0] + math.sin(heading) * dist, pos[1] - math.cos(heading) * dist, pos[2]), pos, dist)
-        
+
         self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTank '+self.getName(),uponDeath=self.nextTask)
+
 
     def rotate(self, angle):
         '''Rotate function. All angles given between 0 and 360
@@ -475,7 +476,7 @@ class Tank(DynamicWorldObject):
             return
         #if self.onTask >= len(self.taskList):
         #   return
-        print "Tank.nextTask being called"
+       
         def getNumUserTask():
             
             taskAmount = 0
