@@ -168,15 +168,65 @@ class explorer_window(Gtk.Window):
 		else:
 			self.alert.set_text("Your login information is invalid")
 		
-		
-
 	# look for all results of type 'type_results' using 'identifier'
 	# for instance, look for all results of type group using identifier account. This would display all of account's groups
 	def make_search_results(self,type_results,identifier):
+		#ask for results from network
+		#get_results(type_results,identifier)
+		resultslist=["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b"]
 		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-		self.label4=Gtk.Label("This is the Search Result page")
-		self.return_box.pack_start(self.label4,True,True,0)
+		#self.label4=Gtk.Label("This is the Search Result page")
+		#self.return_box.pack_start(self.label4,True,True,0)
+		search_grid=Gtk.Grid()
+		total=len(resultslist)
+		number=1
+		ypos=1
+		while ypos<5 and number<=total:
+			xpos=1
+			while xpos<9 and number<=total:
+				search_box=self.make_search_box(number,"title","comment","otherinfo")
+				search_grid.attach(search_box,xpos,ypos,1,1)
+				xpos=xpos+1
+				number=number+1
+				print "number: "+str(number)
+				print "xpos: "+str(xpos)
+				print "ypos: "+str(ypos)
+			ypos=ypos+1
+		self.return_box.pack_start(search_grid,True,True,0)
 		return self.return_box
+
+	def make_search_box(self,number,title,comment,other_info):
+		#Get rid of this stuff later
+		title="Title goes here"
+		comment="Comment goes here. This should be very long and take up ALL of the space"
+		other_info="Other info goes here"
+
+		outer_padding=Gtk.EventBox()
+		outer_frame=Gtk.Frame()
+		outer_vbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+		heading=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
+		number=Gtk.Label(number)
+		title=Gtk.Label(title)
+		#comment_padding=Gtk.EventBox()
+		#comment_frame=Gtk.Frame()
+		comment=Gtk.Label(comment)
+		comment.set_line_wrap(True)
+		other_info=Gtk.Label(other_info)
+		
+		outer_padding.add(outer_frame)
+		outer_frame.add(outer_vbox)
+		outer_vbox.pack_start(heading,True,True,0)
+		outer_vbox.pack_start(comment,True,True,0)
+		#outer_vbox.pack_start(comment_padding,True,True,0)
+		outer_vbox.pack_start(other_info,True,True,0)
+		heading.pack_start(number,True,True,0)
+		heading.pack_start(title,True,True,0)
+		#comment_padding.add(comment_frame)
+		#comment_frame.add(comment)	
+
+		outer_padding.set_border_width(6)
+		#comment_padding.set_border_width(3)
+		return outer_padding
 	
 	def on_home_clicked(self,widget,something,toplevel):
 		print("Home clicked")
