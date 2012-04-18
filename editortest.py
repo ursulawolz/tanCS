@@ -40,13 +40,12 @@ class Editor(Gtk.Window):
 		self.sview.set_show_line_numbers(True)
 
 		#set syntax highlighting to python
-		self.lang = GtkSource.LanguageManager.get_default().get_language('python')
+		lang = GtkSource.LanguageManager.get_default().get_language('python')
 		self.sbuff.set_language(self.lang)
 
 		#add sourceview to window and initialize properties
 		Gtk.ScrolledWindow.add(self.scrolledwindow,self.sview)
 		self.sbuff.set_text('Lorem ipsum dolor sit amet, \nconsectetur adipiscing elit. Sed et \nenim vitae augue dictum vehicula. Duis \nsit amet velit ipsum. Donec n\nibh leo, blandit et porttitor quis, aliquet sed est. Nam mollis pellentesque orci id pharetra. Curabitur eros arcu, mollis in ultricies nec, convallis a risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut pharetra leo quis risus volutpat porta. Praesent bibendum mi nec erat scelerisque vitae pellentesque massa eleifend. Aliquam aliquet venenatis odio id hendrerit. Nulla accumsan tincidunt mauris, nec mollis justo feugiat sit amet. Nullam quis sagittis neque. Integer dui augue, molestie vel semper at, iaculis sed metus. Mauris tempor nibh quis sem pellentesque vulputate. Nullam varius magna rhoncus lectus tempor at viverra tellus pretium.')
-		self.sview.show()
 		self.sview.connect("key-press-event",self.on_key_press)
 
 
