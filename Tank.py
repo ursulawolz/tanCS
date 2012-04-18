@@ -382,7 +382,7 @@ class Tank(DynamicWorldObject):
         #Right wheel direction for rotating in the direction of goal
         rFor = self._moveLoc[2]/abs(self._moveLoc[2]) 
 
-        slowTheta = 2.5 * rFor
+        slowTheta = 1.5 * rFor
         brakePercent = w**2 / (2 * slowTheta * self._maxThrusterAccel)
         theta = self.fixAngle(toHeading - heading)
         if theta > 180:
