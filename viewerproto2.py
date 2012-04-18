@@ -1,5 +1,5 @@
 ###------------------------------Inclusions--------------------------------###
-from gi.repository import Gtk,GObject
+from gi.repository import Gtk,GObject,GtkSource
 from gi.repository import Gdk
 from objectcode import Account,Comment,Borrow
 import datetime
@@ -70,7 +70,7 @@ class TempWindow(Gtk.Window):
 		f=open("testingtk3.py")
 		
 
-		self.thecode=Gtk.TextView()
+		self.thecode=Gtk.SourceView()
 		self.thecodebuffer=self.thecode.get_buffer()
 		self.thecodebuffer.set_text(f.read())
 		self.thecode.set_size_request(self.x-150,560)
@@ -256,6 +256,15 @@ class TempWindow(Gtk.Window):
 		self.toolbar.insert(button_explorer, 3)
 		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent)
 
+		sep=Gtk.SeparatorToolItem()
+		self.toolbar.insert(sep,4)
+
+		fork_icon=Gtk.Image.new_from_file('fork-icon.png')
+		button_fork=Gtk.ToolButton()
+		button_fork.set_icon_widget(fork_icon)
+		self.toolbar.insert(button_fork, 5)
+		button_explorer.connect("clicked",self.fork_file)
+
 		self.toolbar.show_all()
 
 	def on_key_press(self,widget,data):
@@ -274,8 +283,18 @@ class TempWindow(Gtk.Window):
 		if select==():
 			print 'There\'s nothing selected, you kiwi.'
 		else:
-			a=self.thecodebuffer.get_end_iter()
-			copy=Borrow(date,self.project.projID,self.revision,self.file.file_name,self.thecodebuffer.get_text(select[0],select[1],True))
+			line1=select[0].get_line()
+			line2=select[1].get_line()
+			lineoffset1=select[0].get_line_offset()
+			lineoffset2=select[1].get_line_offset()
+			offset1=select[0].get_offset()
+			offset2=select[1].get_offset()
+			if line1==line2:
+				print line1
+				copy=Borrow(date,self.project.projID,self.revision,self.file.file_name,(line1),(lineoffset1,lineoffset2))
+			else:
+				print line1,line2
+				copy=Borrow(date,self.project.projID,self.revision,self.file.file_name,(line1,line2),(lineoffset1,lineoffset2))
 			self.parent.borrows.append(copy)
 
 	def get_lines_from_block(self,select):
@@ -301,6 +320,10 @@ class TempWindow(Gtk.Window):
 			return lines
 		else:
 			return [-1]
+
+	def fork_file(self,widget):
+		print 'Would you like a spoon instead?'
+		pass
 
 ###-----------------------------ADDITIONAL WINDOWS-------------------------###
 class LineCommentDialog(Gtk.Dialog):

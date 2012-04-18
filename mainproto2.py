@@ -14,11 +14,11 @@ class tanCS(object):
 		win.show_all()
 		self.user=None
 		self.borrows=[]
-		'''
+		
 		#in the process of creating default objects
 		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH')
-		self.defaultrevision=Revision(0)
-		self.defaultproject=Project'''
+		#self.defaultrevision=Revision(0)
+		self.defaultproject=Project
 
 		Gtk.main()
 

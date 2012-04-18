@@ -31,16 +31,31 @@ class Account:
         self.group_list.remove( group )
 
 class Borrow:
-    def __init__(self, date_taken, projectID, revisionID, file_name, line_range):
+    def __init__(self, date_taken, projectID, revisionID, file_name, line_range, line_offsets, offsets):
         self.date_taken = date_taken
         self.projectID = projectID
         self.revisionID = revisionID
         self.file_name = file_name
+        #line_range is a tuple of 2 line numbers
         self.line_range = line_range
+        #line_offsets is a tuple of 2 offsets representing distance from start of line
+        self.line_offsets = line_offsets
+        #offsets is a tuple of 2 offsets representing absolute distance from start of file
+        self.offsets=offsets
 
     def get_text(self):
         #returns the borrowed text
-        pass
+        codefile = open("sample.txt")
+        while 1:
+            line = self.codefile.readline()
+            if not line:
+                break
+            if count==line_range[0]:
+                break
+
+        while True:
+            #char = 
+            pass
 
 
 class Project:
@@ -52,9 +67,8 @@ class Project:
         self.children = set()
         self.borrows = borrows
 
-        ## Revisions is a dict, for which each key is a datetime,
-        ## and the values are the revisions.
-        self.revisions = {}
+        ## Revisions is an ordered list of revision objects
+        self.revisions = []
 
         self.locked = 0
         self.tags = set()

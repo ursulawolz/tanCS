@@ -1,5 +1,11 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
 
+#----GUI TODOS----
+# Get user preference directory from OS and store settings file there
+# Fix Borrowing
+# New/Open/Save files
+
+
 class Editor(Gtk.Window):
 
 	def __init__(self,parent,project,revision,file):
@@ -31,6 +37,7 @@ class Editor(Gtk.Window):
 		self.sbuff = GtkSource.Buffer()
 		self.sview = GtkSource.View()
 		self.sview.set_buffer(self.sbuff)
+		self.sview.set_show_line_numbers(True)
 
 		#set syntax highlighting to python
 		self.lang = GtkSource.LanguageManager.get_default().get_language('python')
