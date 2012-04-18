@@ -125,11 +125,12 @@ class TankWorld(ShowBase):
 			print "error tankworld.__update"
 
 		return task.cont
-	def getUserTank(self):
+	def getUserTank(self, n=0):
 		'''
 			Gets the user tank. Currently not implemented for multiple tanks.
 		'''
-		return self.tanks[0]
+		return self.tanks[n]
+
 	def registerTank(self, tank):
 		self.tanks.append(tank)
 

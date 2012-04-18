@@ -327,7 +327,7 @@ class Tank(DynamicWorldObject):
         #Of the form (goalLoc, startLoc, distance)
         self._moveLoc = (Point3(pos[0] + math.sin(heading) * dist, pos[1] - math.cos(heading) * dist, pos[2]), pos, dist)
         
-        self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTask',uponDeath=self.nextTask)
+        self._tankWorld.taskMgr.add(self.updateMoveLoc,'userTank '+self.getName(),uponDeath=self.nextTask)
 
     def rotate(self, angle):
         '''Rotate function. All angles given between 0 and 360
@@ -345,21 +345,21 @@ class Tank(DynamicWorldObject):
         self._moveLoc = (newH, heading, angle)
         self._stop = False
 
-        self._tankWorld.taskMgr.add(self.updateRotateLoc, 'userTask', uponDeath=self.nextTask)
+        self._tankWorld.taskMgr.add(self.updateRotateLoc, 'userTank '+self.getName(), uponDeath=self.nextTask)
 
 
     def moveTime(self, moveTime):
         self._taskTimer = moveTime
-        self._tankWorld.taskMgr.add(self.updateMove,'userTask',uponDeath=self.nextTask)
+        self._tankWorld.taskMgr.add(self.updateMove,'userTank '+self.getName(),uponDeath=self.nextTask)
     
     def rotateTime(self, rotateTime):
         self._taskTimer = rotateTime
-        self._tankWorld.taskMgr.add(self.updateRotate,'userTask',uponDeath=self.nextTask)
+        self._tankWorld.taskMgr.add(self.updateRotate,'userTank '+self.getName(),uponDeath=self.nextTask)
 
 
     def wait(self, waitTime):
         self._taskTimer = waitTime
-        self._tankWorld.taskMgr.add(self.updateWait,'userTask',uponDeath=self.nextTask)
+        self._tankWorld.taskMgr.add(self.updateWait,'userTank '+self.getName(),uponDeath=self.nextTask)
 
     def updateWait(self, task):
         '''
@@ -481,7 +481,7 @@ class Tank(DynamicWorldObject):
             taskAmount = 0
             for t in self._tankWorld.taskMgr.getTasks():
 
-                if t.getName() == 'userTask':
+                if t.getName() == 'userTank '+self.getName():
                     taskAmount +=1
             return taskAmount
 

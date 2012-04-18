@@ -38,7 +38,7 @@ def getFunctionNames(lines):
 			functions.append([fName, args])
 	return functions
 
-def runFile(filename, tankWorld):
+def runFile(filename, tankWorld, tankNum=0):
 	'''readFile opens and runs a user file, making sure that none of the 
 	things in said file are illegal in TankWorld, in illegalStrings
 
@@ -47,7 +47,7 @@ def runFile(filename, tankWorld):
 	illegalStrings = ['__', 'TankWorld', 'tankWorld', 'WorldObject', 'Tank']
 	appendToBeginning = '''
 
-tank = tankWorld.getUserTank()
+tank = tankWorld.getUserTank('''+str(tankNum)+''')
 level_data = tankWorld.getLevelData()
 
 def user_fun(tank, level_data):
