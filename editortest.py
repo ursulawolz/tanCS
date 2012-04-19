@@ -2,13 +2,13 @@ from gi.repository import Gtk, Gdk, GtkSource, GObject
 
 #----GUI TODOS----
 # Get user preference directory from OS and store settings file there
-# Fix Borrowing
+# Cement Borrows
 # New/Open/Save files
 
 
 class Editor(Gtk.Window):
 
-	def __init__(self,parent,project,revision,file):
+	def __init__(self,parent):
 		Gtk.Window.__init__(self,title='tanCS Editor')
 		
 		self.parent=parent
@@ -41,7 +41,7 @@ class Editor(Gtk.Window):
 
 		#set syntax highlighting to python
 		lang = GtkSource.LanguageManager.get_default().get_language('python')
-		self.sbuff.set_language(self.lang)
+		self.sbuff.set_language(lang)
 
 		#add sourceview to window and initialize properties
 		Gtk.ScrolledWindow.add(self.scrolledwindow,self.sview)
@@ -94,7 +94,6 @@ class Editor(Gtk.Window):
 		elif val==118:
 			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
 				self.paste_text()
-				return True
 
 	def check_colon(self,cursor):
 		#check if previous line ended in a colon
@@ -145,7 +144,6 @@ class Editor(Gtk.Window):
 		print "Hello World" #test func
 
 	def copy_text(self,widget=None):
-		#TODO: get URL of source? offer to add source to user?
 		print 'copying'
 
 	def cut_text(self,widget=None):
@@ -153,8 +151,12 @@ class Editor(Gtk.Window):
 
 	def paste_text(self,widget=None):
 		pasted = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
-		if self.isBorrow(pasted):
-			print self.parent.borrows[0].line_range
+		isborrow=self.checkBorrow(pasted)
+		if isborrow[0]:
+			line1=isborrow[1].line_range[0]
+			line2=isborrow[1].line_range[1]
+			self.statusbar.push(1,'Lines '+str(line1+1)+' through '+str(line2+1)+' from file $FILE have been linked to this document.')
+			timeout=GObject.timeout_add(4000,self.clear_statusbar,1)
 		else:
 			dialog = ReferenceDialog(self,pasted)
 			response = dialog.run()
@@ -165,12 +167,18 @@ class Editor(Gtk.Window):
 					#TODO: create a new Borrow object
 			dialog.destroy()
 
-	def isBorrow(self,text):
-		if not self.borrows==():
-			return False
+	def clear_statusbar(self,context):
+		self.statusbar.remove_all(context)
+		return False
+
+	def checkBorrow(self,text):
+		if self.borrows==[]:
+			return [False,-1]
 		else:
-			pass
-		return True
+			for item in self.parent.borrows:
+				if item.get_text()==text:
+					return [True,item]
+		return [False,-1]
 
 	def indent_block(self,widget):
 		print 'indenting block'

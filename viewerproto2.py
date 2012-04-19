@@ -58,11 +58,11 @@ class TempWindow(Gtk.Window):
 		imageframe=Gtk.Frame()
 		imageframe.add(imagebox)
 
-		toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-		toplevel.set_size_request(self.x,self.y)
-		self.add(toplevel)
-		#toplevel.pack_start(menubar,False,False,0)
-		toplevel.pack_start(imageframe,True,True,0)
+		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+		self.toplevel.set_size_request(self.x,self.y)
+		self.add(self.toplevel)
+		#self.toplevel.pack_start(menubar,False,False,0)
+		self.toplevel.pack_start(imageframe,True,True,0)
 		
 		vbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
 		#self.add(vbox)
@@ -153,7 +153,7 @@ class TempWindow(Gtk.Window):
 		vbox.pack_start(frame,False,False,0)
 		vbox.pack_start(hbox2,False,False,0)
 
-		toplevel.pack_start(vbox,False,False,0)
+		self.toplevel.pack_start(vbox,False,False,0)
 		#Gtk.UIManager()
 
 ###---------------------------------METHODS--------------------------------###
@@ -314,6 +314,7 @@ class TempWindow(Gtk.Window):
 		date=datetime.date.today()
 		select=self.thecodebuffer.get_selection_bounds()
 		if select==():
+			self.parent.borrows[0].get_text()
 			print 'There\'s nothing selected, you kiwi.'
 		else:
 			line1=select[0].get_line()
@@ -323,12 +324,10 @@ class TempWindow(Gtk.Window):
 			offset1=select[0].get_offset()
 			offset2=select[1].get_offset()
 			if line1==line2:
-				print line1
-				copy=Borrow(date,self.project.projID,self.revision,self.file.file_name,(line1),(lineoffset1,lineoffset2))
+				self.copy=Borrow(date,'self.project.projID','self.revision','self.file.file_name',(line1,line1),(lineoffset1,lineoffset2))
 			else:
-				print line1,line2
-				copy=Borrow(date,self.project.projID,self.revision,self.file.file_name,(line1,line2),(lineoffset1,lineoffset2))
-			self.parent.borrows.append(copy)
+				self.copy=Borrow(date,'self.project.projID','self.revision','self.file.file_name',(line1,line2),(lineoffset1,lineoffset2))
+			self.parent.borrows.append(self.copy)
 
 	def get_lines_from_block(self,select):
 		#takes in a tuple with the selection bounds

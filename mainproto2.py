@@ -5,6 +5,9 @@ import viewerproto2 as viewer
 import editortest as editor
 import explorerproto2 as explorer
 from objectcode import *
+import os
+import platform
+import subprocess
 
 class tanCS(object):
 
@@ -14,6 +17,23 @@ class tanCS(object):
 		win.show_all()
 		self.user=None
 		self.borrows=[]
+		
+		#Checks whether user preference files already exist; if not, creates them.
+		self.USERPATH=os.path.expanduser('~')
+		osname=platform.system()
+		if osname=='Linux':
+			self.USERPATH+='/.tanCS'
+			print self.USERPATH
+			if not os.path.exists(self.USERPATH):
+				print 'Creating new pref file'
+				subprocess.call('mkdir '+self.USERPATH,shell=True)
+		elif osname=='Windows':
+			self.USERPATH+='\\.tanCS'
+			if not os.path.exists(self.USERPATH):
+				subprocess.call('mkdir '+self.USERPATH,shell=True)
+				subprocess.call('attrib +h '+self.USERPATH,shell=True)
+		else:
+			print 'ERROR: You appear to be using an unsupported OS.'
 		
 		#in the process of creating default objects
 		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH',"default group")
