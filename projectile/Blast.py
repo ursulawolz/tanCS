@@ -32,8 +32,8 @@ class Blast(Projectile):
 		vel = direction * speed #LVecBase3f
 		vel = Vec3(vel[0], vel[1], vel[2])
 
-		np  = loader.loadModel('smiley')
-		np.setScale(Vec3(.5,.5,.5))
+		np  = loader.loadModel('media/bullet.x')
+		np.setScale(Vec3(1.5,1.5,1.5))
 		Projectile.__init__(self, weapon, pos, self.name, shape, vel, mass, damage)
 		self._collisionCounter = 0
 
