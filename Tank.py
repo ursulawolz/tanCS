@@ -52,8 +52,10 @@ class Tank(DynamicWorldObject):
 
         self.movementPoint = Point3(10,10,0)
 
+
+
         #register tank
-        
+        self._tankWorld.registerDynamic(self)
 
         print "Tank.__init__: " + name
         
@@ -142,8 +144,6 @@ class Tank(DynamicWorldObject):
         self.wait(.1)
         potentialNPs = self._tankWorld.render.getChildren()
 
-        print "Tank.distanceScan: ", 
-
         found = []
 
         for np in potentialNPs:
@@ -169,7 +169,7 @@ class Tank(DynamicWorldObject):
                         np.node().getName()))
                 elif result.hasHit():
                     print np, result.getNode(), pFrom, pTo
-                    print "Neigh"
+                    print "Tank.distanceScan: Neigh"
 
         return found
 

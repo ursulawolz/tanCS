@@ -35,12 +35,61 @@ class TankWorld(ShowBase):
 
 		#This creates a task named update and runs every frame
 		taskMgr.add(self.stepTasks,'SOME NAME')
-		self.taskMgr.add(self.__update,"bullet-update")
+		self.taskMgr.add(self.__update2,"bullet-update")
 		self._deltaTimeAccumulator = 0;
 
 		self.tanks = []
 		self.isDead = False
 		self.levelData = {}
+
+
+		#This is all new, to run in non-realtime
+		globalClock.setDt(1.0/60.0)		
+		self.numFrames = 0
+		self.dynamics = [] 
+		self.gameData = [] #Will be huge eventually
+
+	def __update2(self, task):
+		'''
+		Task task: Time since last frame	
+		'''
+		try:
+			dt = globalClock.getDt();			
+			time = globalClock.getRealTime()
+			print time, dt, self.numFrames
+
+			if dt > .1:
+				return Task.cont
+			moveAmount = 50*dt;
+			changeY =  (inputState.isSet('foward')-inputState.isSet('backward'))*moveAmount
+			changeX = (inputState.isSet('right')-inputState.isSet('left'))*moveAmount;
+
+			stepSize = 1.0 / 60.0
+
+			#set up a fixed time constant step for more accurate physics.
+			#We need to test more with the vehicle class to see if it plays nice. 
+			self.__bulletWorld.doPhysics(stepSize)
+			print self.numFrames
+
+			for i in range(len(self.dynamics)):
+				dynamic = self.dynamics[i]
+				self.gameData[self.numFrames].append((dynamic.getPos(), dynamic.getHpr()))
+			print self.numFrames
+			base.cam.setPos(base.cam,changeX,changeY,0);	
+			hpr = base.cam.getHpr();
+			if base.mouseWatcherNode.hasMouse() and self.doMouseStuff:	
+				hpr.x = -100*base.mouseWatcherNode.getMouseX()
+				hpr.y = 100*base.mouseWatcherNode.getMouseY();
+
+			base.cam.setHpr(hpr);
+
+			self.numFrames += 1
+			print self.numFrames
+		except:
+			print "error tankworld.__update2	"
+
+		return task.cont
+
 	def __del__(self):
 		#self.shutdown()
 		#del self
@@ -185,8 +234,8 @@ class TankWorld(ShowBase):
 	def stepTasks(self, task):
 		try:
 			removeTasks = []
-			count =0
-			#print self.taskList[0]()
+			count =0	
+			#print self.taskMgr.getAllTasks()
 			for taskz in self.taskList:
 				ret = taskz[0](task) #call the death function
 				if(ret == task.done or ret == None):
@@ -205,3 +254,9 @@ class TankWorld(ShowBase):
 		self.levelData = level
 	def getLevelData(self):
 		return self.levelData
+
+	def registerDynamic(self, dynamic):
+		self.dynamics.append(dynamic)
+		self.gameData.append([])
+
+

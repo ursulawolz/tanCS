@@ -16,6 +16,7 @@ if len(sys.argv)==2:
 #t = xmlParse.createLevel(level)
 t = levels.MakeLevel.makeLevel(level)
 runFile(userfile,t)
+print "Wait, what?"
 t.run()
 
 sys.exit()
