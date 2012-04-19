@@ -147,7 +147,7 @@ class explorer_window(Gtk.Window):
 	def get_results(self,type_results,identifier):
 		temp_account=Account('','','','')
 		if type_results=="groups" and type(identifier)==type(temp_account):			
-			result1=Group("gId","aID","godId","Title1")
+			result1=Group("gId",["aID","aID2"],"godId","Title1")
 			result1.description="This is a Description"
 			result2=Group("gId","aID","godId","Title2")
 			result2.description="This is a Description"
@@ -160,8 +160,14 @@ class explorer_window(Gtk.Window):
 			pass
 		elif type_results=="accounts" and type(identifier)==type(Group()):
 			pass
+		elif type_results=="demo" and type(identifier)==type("string"):
+			result1=("Title1","This is where description information will go","This is other information")
+			result2=("Title2","This is where description information will go","This is other information")
+			results=[result1,result2]
+			return results
 		else:
-			print "Error in identifying types"
+			print "Error in identifying types",type(identifier),"with",type(''),"in get results"
+			print "type_results is: ",type_results
 
 	def what_display(self,result):
 		temp_group=Group('','','','')
@@ -171,12 +177,18 @@ class explorer_window(Gtk.Window):
 			title=result.title
 			comment=result.description
 			#other_info="Accounts are"+result.get_accounts()
-			other_info="Accounts are: "+result.accountIDs
+			other_info="Accounts are: "+str(result.accountIDs)
 			return [title,comment,other_info]
 		elif type(result)==type(Project):	
 			pass
+		elif type(result)==type(('','')):
+			print "result is: ",result
+			title=result[0]
+			comment=result[1]
+			other_info=result[2]
+			return [title,comment,other_info]
 		else:
-			print "Error in identifying types"			
+			print "Error in identifying types in display"			
 
 	def submit_login(self,widget,username,password,toplevel):
 		#check to see if the account is valid
@@ -256,8 +268,8 @@ class explorer_window(Gtk.Window):
 		outer_vbox.pack_start(comment,True,True,0)
 		#outer_vbox.pack_start(comment_padding,True,True,0)
 		outer_vbox.pack_start(other_info,True,True,0)
-		heading.pack_start(number,True,True,0)
-		heading.pack_start(title,True,True,0)
+		heading.pack_start(number,False,False,0)
+		heading.pack_start(title,False,False,0)
 		#comment_padding.add(comment_frame)
 		#comment_frame.add(comment)	
 
@@ -279,7 +291,8 @@ class explorer_window(Gtk.Window):
 		self.alert.set_text("My Groups")
 	def on_search_clicked(self,widget,something,toplevel):
 		print("Search clicked")
-		self.the_new_page=self.make_search_results("type_results","Identifier")
+		#self.the_new_page=self.make_search_results("type_results","Identifier")
+		self.the_new_page=self.search_input(toplevel)
 		self.create_new_page(toplevel,self.the_new_page)
 	def on_help_clicked(self,widget,something,toplevel):
 		print("Help clicked")
@@ -288,4 +301,37 @@ class explorer_window(Gtk.Window):
 	def on_nologin_clicked(self,widget,something,toplevel):
 		#print not(self.parent.user==None)
 		self.alert.set_text("You have not logged in yet!") 
+	def search_input(self,toplevel):
+		search_for=Gtk.Entry()
+		search_using=Gtk.Entry()
+		for_note=Gtk.Label("Search For:    ")
+		using_note=Gtk.Label("Search Using: ")
+		search_submit=Gtk.Button("Submit")
+
+		search_submit.connect("clicked",self.submit_search,search_for,search_using,toplevel)
+
+		for_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
+		using_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
+		
+		for_block.pack_start(for_note,True,True,0)
+		for_block.pack_start(search_for,True,True,0)
+		using_block.pack_start(using_note,True,True,0)
+		using_block.pack_start(search_using,True,True,0)
+		formattingbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=0)
+
+		formattingbox.pack_end(search_submit,False,False,0)
+		
+		total_block=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=10)
+		total_block.pack_start(for_block,True,True,0)
+		total_block.pack_start(using_block,False,False,0)
+		total_block.pack_start(formattingbox,False,False,0)
+		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=10)
+		self.return_box.pack_start(total_block,False,False,0)
+		return self.return_box
+	def submit_search(self,widget,search_for,search_using,toplevel):
+		search_for=search_for.get_text()
+		search_using=search_using.get_text()
+		print "search for is: ",search_for," search using is: ",search_using 
+		self.the_new_page=self.make_search_results(search_for,search_using)
+		self.create_new_page(toplevel,self.the_new_page)
 
