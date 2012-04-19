@@ -14,7 +14,7 @@ Frame Root {
        0.000000, 0.000000, 1.000000, 0.000000,
        1.595063, 0.003332, 2.137103, 1.000000;;
     }
-    Mesh { //Cylinder_014 Mesh
+    Mesh { //Cylinder_000 Mesh
       160;
        0.192117; 0.509621;-0.171982;,
       -0.017496; 0.551610;-0.147041;,
@@ -225,7 +225,7 @@ Frame Root {
       4;148;149;150;151;,
       4;152;153;154;155;,
       4;156;157;158;159;;
-      MeshNormals { //Cylinder_014 Normals
+      MeshNormals { //Cylinder_000 Normals
         160;
          0.275948; 0.809412;-0.518326;,
         -0.056948; 0.876095;-0.478713;,
@@ -436,19 +436,66 @@ Frame Root {
         4;148;149;150;151;,
         4;152;153;154;155;,
         4;156;157;158;159;;
-      } //End of Cylinder_014 Normals
-      MeshMaterialList { //Cylinder_014 Material List
+      } //End of Cylinder_000 Normals
+      MeshMaterialList { //Cylinder_000 Material List
         1;
-        1;
+        48;
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0;;
-        Material Default_Material {
-           0.800000; 0.800000; 0.800000; 0.800000;;
+        Material Material {
+           0.029873; 0.095417; 0.013746; 1.000000;;
            96.078431;
            0.500000; 0.500000; 0.500000;;
            0.000000; 0.000000; 0.000000;;
         }
-      } //End of Cylinder_014 Material List
-    } //End of Cylinder_014 Mesh
+      } //End of Cylinder_000 Material List
+    } //End of Cylinder_000 Mesh
   } //End of Cylinder_006
   Frame Cube_004 {
     FrameTransformMatrix {
@@ -457,7 +504,7 @@ Frame Root {
        0.000000, 0.000000, 1.000000, 0.000000,
        1.484454, 0.003332, 1.640452, 1.000000;;
     }
-    Mesh { //Cube_001 Mesh
+    Mesh { //Cube_000 Mesh
       88;
       -0.863669; 0.684714;-0.377049;,
       -0.863670;-0.684713;-0.377049;,
@@ -570,7 +617,7 @@ Frame Root {
       4;76;77;78;79;,
       4;80;81;82;83;,
       4;84;85;86;87;;
-      MeshNormals { //Cube_001 Normals
+      MeshNormals { //Cube_000 Normals
         88;
         -0.361095; 0.633931;-0.683889;,
         -0.361095;-0.633931;-0.683889;,
@@ -683,18 +730,39 @@ Frame Root {
         4;76;77;78;79;,
         4;80;81;82;83;,
         4;84;85;86;87;;
-      } //End of Cube_001 Normals
-      MeshMaterialList { //Cube_001 Material List
+      } //End of Cube_000 Normals
+      MeshMaterialList { //Cube_000 Material List
         1;
-        1;
+        22;
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0;;
-        Material Default_Material {
-           0.800000; 0.800000; 0.800000; 0.800000;;
+        Material Material {
+           0.029873; 0.095417; 0.013746; 1.000000;;
            96.078431;
            0.500000; 0.500000; 0.500000;;
            0.000000; 0.000000; 0.000000;;
         }
-      } //End of Cube_001 Material List
-    } //End of Cube_001 Mesh
+      } //End of Cube_000 Material List
+    } //End of Cube_000 Mesh
   } //End of Cube_004
 } //End of Root Frame

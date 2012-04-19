@@ -14,7 +14,7 @@ Frame Root {
        0.022182,-0.004054, 0.999746, 0.000000,
        0.913365,-0.006719, 1.735087, 1.000000;;
     }
-    Mesh { //Cylinder_014 Mesh
+    Mesh { //Cylinder_000 Mesh
       160;
       -1.241717;-0.103766; 0.074613;,
       -1.227769;-0.112316; 0.115268;,
@@ -225,7 +225,7 @@ Frame Root {
       4;148;149;150;151;,
       4;152;153;154;155;,
       4;156;157;158;159;;
-      MeshNormals { //Cylinder_014 Normals
+      MeshNormals { //Cylinder_000 Normals
         160;
          0.741264; 0.669485; 0.047670;,
          0.663045; 0.715842;-0.218787;,
@@ -436,18 +436,65 @@ Frame Root {
         4;148;149;150;151;,
         4;152;153;154;155;,
         4;156;157;158;159;;
-      } //End of Cylinder_014 Normals
-      MeshMaterialList { //Cylinder_014 Material List
+      } //End of Cylinder_000 Normals
+      MeshMaterialList { //Cylinder_000 Material List
         1;
-        1;
+        48;
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         0;;
-        Material Default_Material {
-           0.800000; 0.800000; 0.800000; 0.800000;;
+        Material Material_002 {
+           0.018919; 0.018919; 0.018919; 1.000000;;
            96.078431;
-           0.500000; 0.500000; 0.500000;;
+           0.000000; 0.000000; 0.000000;;
            0.000000; 0.000000; 0.000000;;
         }
-      } //End of Cylinder_014 Material List
-    } //End of Cylinder_014 Mesh
+      } //End of Cylinder_000 Material List
+    } //End of Cylinder_000 Mesh
   } //End of Cylinder_013
 } //End of Root Frame
