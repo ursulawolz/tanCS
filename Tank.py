@@ -164,9 +164,10 @@ class Tank(DynamicWorldObject):
                     found.append((np.getPos(render),
                         np.node().getName()))
                 elif result.hasHit():
-                    print "Tank.distanceScan: ",
-                    print np, result.getNode(), pFrom, pTo
-                    print "Neigh"
+                    #print "Tank.distanceScan: ",
+                    #print np, result.getNode(), pFrom, pTo
+                    #print "Neigh"
+                    x = 1
 
         return found
 

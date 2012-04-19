@@ -1,4 +1,5 @@
-tank.wait(5)
+
+tank.wait(3)
 
 while True:
     p = tank.get_pos()
@@ -18,7 +19,6 @@ while True:
                 print "GO",
                 tank.fire_at(b[0])
                 print "GO"
-    print "asdf"
 
 
 
