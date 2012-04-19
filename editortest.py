@@ -2,7 +2,7 @@ from gi.repository import Gtk, Gdk, GtkSource, GObject
 
 #----GUI TODOS----
 # Get user preference directory from OS and store settings file there
-# Fix Borrowing
+# Cement Borrows
 # New/Open/Save files
 
 
@@ -94,7 +94,6 @@ class Editor(Gtk.Window):
 		elif val==118:
 			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
 				self.paste_text()
-				return True
 
 	def check_colon(self,cursor):
 		#check if previous line ended in a colon
@@ -145,7 +144,6 @@ class Editor(Gtk.Window):
 		print "Hello World" #test func
 
 	def copy_text(self,widget=None):
-		#TODO: get URL of source? offer to add source to user?
 		print 'copying'
 
 	def cut_text(self,widget=None):
@@ -158,6 +156,7 @@ class Editor(Gtk.Window):
 			line1=isborrow[1].line_range[0]
 			line2=isborrow[1].line_range[1]
 			self.statusbar.push(1,'Lines '+str(line1+1)+' through '+str(line2+1)+' from file $FILE have been linked to this document.')
+			timeout=GObject.timeout_add(4000,self.clear_statusbar,1)
 		else:
 			dialog = ReferenceDialog(self,pasted)
 			response = dialog.run()
@@ -167,6 +166,10 @@ class Editor(Gtk.Window):
 					print 'Source cited:'+text
 					#TODO: create a new Borrow object
 			dialog.destroy()
+
+	def clear_statusbar(self,context):
+		self.statusbar.remove_all(context)
+		return False
 
 	def checkBorrow(self,text):
 		if self.borrows==[]:

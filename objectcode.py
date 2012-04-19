@@ -41,12 +41,6 @@ class Borrow:
         #line_offsets is a tuple of 2 offsets representing distance from start of line
         self.line_offsets = line_offsets
 
-    #It seems like this is a little hackish, but we need to know where the Borrow is linked to.
-    def link_borrow(self,projectlink,revisionlink,filelink):
-        self.projectlink=projectlink
-        self.revisionlink=revisionlink
-        self.filelink=filelink
-
     def get_text(self):
         #returns the borrowed text
         text=''
