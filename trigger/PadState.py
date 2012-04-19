@@ -70,7 +70,7 @@ class PadState(State):
 		#print (self.position+self.size/2-self.tracking_object.getPos()).length(),
 		#print ((self.size.getX()/2)**2+(self.size.getY()/2)**2)**.5*4
 		if (self.position+self.size/2-self.tracking_object.getPos()).length() < ((self.size.getX()/2)**2+(self.size.getY()/2)**2)**.5:
-			print "PAdState triggered"
+			#print "PAdState triggered"
 			self.triggered=True
 			self.setTexture('activated.png')
 
