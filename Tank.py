@@ -67,10 +67,10 @@ class Tank(DynamicWorldObject):
          
         # Chassis geometry
         np  = loader.loadModel('media/tankBody.x')
-
+        np.setHpr(90,0,0)
         np.reparentTo(self._nodePath)
         #np.setScale(self._tankSize*2)
-        np.setPos(-self._tankSize+Vec3(0, 0, 0))
+        np.setPos(-self._tankSize+Vec3(0, 0, 1.1))
        
         # Vehicle
         self.vehicle = BulletVehicle(bulletWorld, self._nodePath.node())
