@@ -16,7 +16,7 @@ class tanCS(object):
 		self.borrows=[]
 		
 		#in the process of creating default objects
-		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH')
+		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH',"default group")
 		#self.defaultrevision=Revision(0)
 		self.defaultproject=Project
 

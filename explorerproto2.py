@@ -1,5 +1,6 @@
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
+from objectcode import *
 
 ###------------------------Explorer Class--------------------------###
 class explorer_window(Gtk.Window):
@@ -108,9 +109,9 @@ class explorer_window(Gtk.Window):
 		return self.return_box
 
 	def make_mygroups(self,account):
-		self.label5=Gtk.Label("This is the MyGroups Page")
-		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-		self.return_box.pack_start(self.label5,True,True,0)
+		#self.label5=Gtk.Label("This is the MyGroups Page")
+		self.return_box=self.make_search_results("groups",self.parent.user)
+		#self.return_box.pack_start(self.label5,True,True,0)
 		return self.return_box
 
 	def make_login(self,toplevel):
@@ -143,12 +144,46 @@ class explorer_window(Gtk.Window):
 		self.return_box.add(self.total_block)
 		return self.return_box
 
+	def get_results(self,type_results,identifier):
+		temp_account=Account('','','','')
+		if type_results=="groups" and type(identifier)==type(temp_account):			
+			result1=Group("gId","aID","godId","Title1")
+			result1.description="This is a Description"
+			result2=Group("gId","aID","godId","Title2")
+			result2.description="This is a Description"
+			result3=Group("gId","aID","godId","Title3")
+			result3.description="This is a Description"
+			results=[result1,result2,result3]
+			print "working in get results"
+			return results
+		elif type_results=="projects" and type(identifier)==type(Group()):
+			pass
+		elif type_results=="accounts" and type(identifier)==type(Group()):
+			pass
+		else:
+			print "Error in identifying types"
+
+	def what_display(self,result):
+		temp_group=Group('','','','')
+		if type(result)==type(Account):
+			pass
+		elif type(result)==type(temp_group):
+			title=result.title
+			comment=result.description
+			#other_info="Accounts are"+result.get_accounts()
+			other_info="Accounts are: "+result.accountIDs
+			return [title,comment,other_info]
+		elif type(result)==type(Project):	
+			pass
+		else:
+			print "Error in identifying types"			
+
 	def submit_login(self,widget,username,password,toplevel):
 		#check to see if the account is valid
 		#Account=get_account(username.get_text(),password.get_text())
-		Account="Fake Account"
-		if not Account==None:
-			self.parent.user=Account
+		account=Account("account ID","Fake Account","1234","avatar")
+		if not account==None:
+			self.parent.user=account
 			self.alert.set_text("You have logged in!")
 
 			nav_options=[self.tohome,self.tomyaccount,self.tomygroups,self.tosearch,self.tohelp]
@@ -172,8 +207,8 @@ class explorer_window(Gtk.Window):
 	# for instance, look for all results of type group using identifier account. This would display all of account's groups
 	def make_search_results(self,type_results,identifier):
 		#ask for results from network
-		#get_results(type_results,identifier)
-		resultslist=["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b"]
+		resultslist=self.get_results(type_results,identifier)
+		print "working in make results"
 		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
 		#self.label4=Gtk.Label("This is the Search Result page")
 		#self.return_box.pack_start(self.label4,True,True,0)
@@ -184,7 +219,9 @@ class explorer_window(Gtk.Window):
 		while ypos<5 and number<=total:
 			xpos=1
 			while xpos<9 and number<=total:
-				search_box=self.make_search_box(number,"title","comment","otherinfo")
+				display_list=self.what_display(resultslist[number-1])
+				print display_list
+				search_box=self.make_search_box(number,display_list[0],display_list[1],display_list[2])
 				search_grid.attach(search_box,xpos,ypos,1,1)
 				xpos=xpos+1
 				number=number+1
@@ -197,9 +234,9 @@ class explorer_window(Gtk.Window):
 
 	def make_search_box(self,number,title,comment,other_info):
 		#Get rid of this stuff later
-		title="Title goes here"
-		comment="Comment goes here. This should be very long and take up ALL of the space"
-		other_info="Other info goes here"
+		#title="Title goes here"
+		#comment="Comment goes here. This should be very long and take up ALL of the space"
+		#other_info="Other info goes here"
 
 		outer_padding=Gtk.EventBox()
 		outer_frame=Gtk.Frame()
@@ -237,9 +274,9 @@ class explorer_window(Gtk.Window):
 		self.the_new_page=self.make_account("account")
 		self.create_new_page(toplevel,self.the_new_page)
 	def on_mygroups_clicked(self,widget,something,toplevel):
-		print("My groups clicked")
 		self.the_new_page=self.make_mygroups("account")
 		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("My Groups")
 	def on_search_clicked(self,widget,something,toplevel):
 		print("Search clicked")
 		self.the_new_page=self.make_search_results("type_results","Identifier")
