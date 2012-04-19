@@ -70,7 +70,7 @@ class Tank(DynamicWorldObject):
         np.setHpr(90,0,0)
         np.reparentTo(self._nodePath)
         #np.setScale(self._tankSize*2)
-        np.setPos(-self._tankSize+Vec3(0, 0, 1.1))
+        np.setPos(-self._tankSize+Vec3(1, 0, .5))
        
         # Vehicle
         self.vehicle = BulletVehicle(bulletWorld, self._nodePath.node())
