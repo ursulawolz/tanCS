@@ -8,7 +8,7 @@ from gi.repository import Gtk, Gdk, GtkSource, GObject
 
 class Editor(Gtk.Window):
 
-	def __init__(self,parent,project,revision,file):
+	def __init__(self,parent):
 		Gtk.Window.__init__(self,title='tanCS Editor')
 		
 		self.parent=parent
@@ -41,7 +41,7 @@ class Editor(Gtk.Window):
 
 		#set syntax highlighting to python
 		lang = GtkSource.LanguageManager.get_default().get_language('python')
-		self.sbuff.set_language(self.lang)
+		self.sbuff.set_language(lang)
 
 		#add sourceview to window and initialize properties
 		Gtk.ScrolledWindow.add(self.scrolledwindow,self.sview)
@@ -153,8 +153,11 @@ class Editor(Gtk.Window):
 
 	def paste_text(self,widget=None):
 		pasted = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
-		if self.isBorrow(pasted):
-			print self.parent.borrows[0].line_range
+		isborrow=self.checkBorrow(pasted)
+		if isborrow[0]:
+			line1=isborrow[1].line_range[0]
+			line2=isborrow[1].line_range[1]
+			self.statusbar.push(1,'Lines '+str(line1+1)+' through '+str(line2+1)+' from file $FILE have been linked to this document.')
 		else:
 			dialog = ReferenceDialog(self,pasted)
 			response = dialog.run()
@@ -165,12 +168,14 @@ class Editor(Gtk.Window):
 					#TODO: create a new Borrow object
 			dialog.destroy()
 
-	def isBorrow(self,text):
-		if not self.borrows==():
-			return False
+	def checkBorrow(self,text):
+		if self.borrows==[]:
+			return [False,-1]
 		else:
-			pass
-		return True
+			for item in self.parent.borrows:
+				if item.get_text()==text:
+					return [True,item]
+		return [False,-1]
 
 	def indent_block(self,widget):
 		print 'indenting block'

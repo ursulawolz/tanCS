@@ -31,31 +31,47 @@ class Account:
         self.group_list.remove( group )
 
 class Borrow:
-    def __init__(self, date_taken, projectID, revisionID, file_name, line_range, line_offsets, offsets):
+    def __init__(self, date_taken, projectID, revisionID, file_name, line_range, line_offsets):
         self.date_taken = date_taken
         self.projectID = projectID
         self.revisionID = revisionID
         self.file_name = file_name
-        #line_range is a tuple of 2 line numbers
+        #line_range is a tuple of 2 line numbers, or 2 of the same line number for single-line borrows
         self.line_range = line_range
         #line_offsets is a tuple of 2 offsets representing distance from start of line
         self.line_offsets = line_offsets
-        #offsets is a tuple of 2 offsets representing absolute distance from start of file
-        self.offsets=offsets
+
+    #It seems like this is a little hackish, but we need to know where the Borrow is linked to.
+    def link_borrow(self,projectlink,revisionlink,filelink):
+        self.projectlink=projectlink
+        self.revisionlink=revisionlink
+        self.filelink=filelink
 
     def get_text(self):
         #returns the borrowed text
-        codefile = open("sample.txt")
+        text=''
+        codefile = open("testingtk3.py")
+        count=0
         while 1:
-            line = self.codefile.readline()
+            line = codefile.readline()
             if not line:
                 break
-            if count==line_range[0]:
+            if count==self.line_range[0]:
                 break
+            count+=1
 
-        while True:
-            #char = 
-            pass
+        if count==self.line_range[1]:
+            text+=line[self.line_offsets[0]:self.line_offsets[1]]
+        else:
+            text+=line[self.line_offsets[0]:]
+            line = codefile.readline()
+            while (count+1)<self.line_range[1] and line:
+                count+=1
+                text+=line
+                line = codefile.readline()
+            text+=line[:self.line_offsets[1]]
+        return text
+
 
 
 class Project:
