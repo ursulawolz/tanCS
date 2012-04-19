@@ -10,6 +10,7 @@ class Blaster(Weapon):
 	def __init__(self, tank):
 
 		maxVel = 100  #Condition ??
+		maxVel = 50  #Condition ??
 		posDelta = Vec3(0,0,1) #Incorrect currently
 		barrelLength = 2 # Incorrect currently
 		self.canFire = True;

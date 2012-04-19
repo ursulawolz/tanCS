@@ -1,7 +1,7 @@
 print level_data
 x = 7
-tank.move(100)
-
+#tank.move(100)
+tank.move(30)
 while True:
     p = tank.get_pos()
     d = tank.distance_scan()

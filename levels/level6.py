@@ -36,7 +36,7 @@ makePadState(trigger, position=(x*6-4,1,0), tracking_name='tank',size=(5,5,1))
 makePadState(trigger, position=(1,1,0), tracking_name='tank',size=(5,5,3))
 makePadState(trigger, position=(x*6-4,x*4,0), tracking_name='tank',size=(5,5,1))
 makePadState(trigger, position=(x*2-4,x*4,0), tracking_name='tank',size=(5,5,1))
-makePadState(trigger, position=(x*2-4,7,0), tracking_name='tank',size=(6,5,1))
+makePadState(trigger, position=(x*2-4+1,7,0), tracking_name='tank',size=(6,5,1))
 makePadState(trigger, position=(x*4+1,7,0), tracking_name='tank',size=(6,4,1))
 
 makeCollisionState(trigger, position=(x*2+2,x*3,0), tracking_name='tank', size=(3,3,3))

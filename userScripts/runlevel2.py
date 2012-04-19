@@ -1,9 +1,9 @@
 
 
-tank = tankWorld.getUserTank()
-levelData = tankWorld.getLevelData()
+tank = tankWorld.getUserTank(0)
+level_data = tankWorld.getLevelData()
 
-def userFun(tank, levelData):
+def user_fun(tank, level_data):
     tank.move(20)
     yield()
     tank.left()
@@ -13,6 +13,5 @@ def userFun(tank, levelData):
     
     
 
-x = userFun(tank, levelData)
-tank.setGenerator(x)
-tank.runTasks()
+x = user_fun(tank, level_data)
+tank.set_generator(x)
