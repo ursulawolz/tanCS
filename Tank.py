@@ -121,8 +121,6 @@ class Tank(DynamicWorldObject):
 
     def moveWeapon(self, heading = 0, pitch = 0):
         rot = self.getHpr()
-        print "Tank.moveWeapon: ", rot
-        print rot[0] + heading, rot[1] + pitch
 
         self.setWeaponHp(rot[0] + heading, rot[1] + pitch)
 
@@ -141,8 +139,6 @@ class Tank(DynamicWorldObject):
         '''
         self.wait(.1)
         potentialNPs = self._tankWorld.render.getChildren()
-
-        print "Tank.distanceScan: ", 
 
         found = []
 
@@ -168,6 +164,7 @@ class Tank(DynamicWorldObject):
                     found.append((np.getPos(render),
                         np.node().getName()))
                 elif result.hasHit():
+                    print "Tank.distanceScan: ",
                     print np, result.getNode(), pFrom, pTo
                     print "Neigh"
 

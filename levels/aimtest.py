@@ -1,5 +1,5 @@
 makeFloor()
-tank = makeTank(position=(0,4,2), orientation=(90,0,0), name="tank")
+tank = makeTank(position=(40,4,2), orientation=(90,0,0), name="tank")
 makeBlaster(tank)
 levelData = {'test':34}
 turret = makeTurret(position=(0,0,0), orientation=(90,0,0), name='turret')

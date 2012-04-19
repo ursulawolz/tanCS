@@ -13,7 +13,6 @@ class Turret(CubeObject):
 
 	def fireTask(self, task):
 		pos = self._tankWorld.getUserTank().get_pos()
-		print "Turret.fireTask: ", pos
 		if self._weapon.aimAt(self._tankWorld.getUserTank().get_pos(), aimLow = True):
 			self._weapon.fire(1)
 		return task.again
