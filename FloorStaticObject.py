@@ -31,7 +31,7 @@ class FloorStaticObject(StaticWorldObject):
 		myMaterial.setAmbient(VBase4(0.5,.5,.5,1)) #Make this material blue
 		myMaterial.setDiffuse(VBase4(.5,.5,.5,1))
 		nn.setMaterial(myMaterial)
-		shape = BulletPlaneShape(Vec3(0, 0, 1), 1)
+		shape = BulletPlaneShape(Vec3(0, 0, 1), 0)
 
 		StaticWorldObject.__init__(self, world, attach, name, position, shape, orientation) ##Mass must be zero.
 

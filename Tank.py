@@ -66,10 +66,10 @@ class Tank(DynamicWorldObject):
         self._nodePath.node().setMass(800.0)
          
         # Chassis geometry
-        np  = loader.loadModel('box')
+        np  = loader.loadModel('media/tankBody.x')
 
         np.reparentTo(self._nodePath)
-        np.setScale(self._tankSize*2)
+        #np.setScale(self._tankSize*2)
         np.setPos(-self._tankSize+Vec3(0, 0, 0))
        
         # Vehicle
