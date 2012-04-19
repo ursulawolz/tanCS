@@ -15,7 +15,19 @@ class Blaster(Weapon):
 		barrelLength = 2 # Incorrect currently
 		self.canFire = True;
 		self.reloadTimer = .5;
+
+		#Graphics
+		self._np1  = loader.loadModel('media/tanktop.x')
+		self._np2  = loader.loadModel('media/turret.x')
+
 		Weapon.__init__(self, tank, posDelta, barrelLength, maxVel)
+
+		self._np1.reparentTo(self._nodePath)
+		self._np2.reparentTo(self._np1)
+
+		self._np1.setPos(Vec3(0,0,0))
+		self._np2.setPos(Vec3(0,0,0))
+
 	def setCanFire(self, task):
 		self.canFire = True
 	def getBulletName(self):
