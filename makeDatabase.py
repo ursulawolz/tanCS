@@ -61,28 +61,44 @@ def update(information , information_type , identifier , identifier_type, host,p
 
 
 	elif information_type == "tags" or information_type == "children_ids" or information_type == "borrow_ids" or information_type == "revisions" :
-		con.query("select %s from project_info where %s = %s" , (information_type , identifier_type, identifier))
-		current = con.store_result()
+		con.query("select " + information_type +  " from project_info where " + identifier_type + ' = ' + identifier)
+		results = con.store_result()
+		current = results.fetch_row()
+		current = str(current)
+		information = information.strip("'")
+		information = information.lstrip("'")
 		new_info = current + '$$$$' + information
 		cur.execute("update project_info set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
 
 
 	elif information_type == "group_projects":
-		con.query("select %s from group_info where %s = %s" , (information_type , identifier_type, identifier))
-		current = con.store_result()
-		new_info = current + '$$$$' + information
+		con.query("select " + information_type +  " from group_info where " + identifier_type + ' = ' + identifier)
+		results = con.store_result()
+		current = results.fetch_row()
+		current = str(current)
+		information = information.strip("'")
+		information = information.lstrip("'")
+		new_info = "'" + current + '$$$$' + information + "'"
 		cur.execute("update group_info set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 
 	elif information_type == "groups" :
-		con.query("select %s from account where %s = %s" , (information_type , identifier_type, identifier))
-		current = con.store_result()
+		con.query("select " + information_type + " from account where " + identifier_type + ' = ' + identifier)
+		results = con.store_result()
+		current = results.fetch_row()
+		current = str(current)
+		information = information.strip("'")
+		information = information.lstrip("'")
 		new_info = current + '$$$$' + information
 		cur.execute("update account set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 		cur.execute("update group_info set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
 
 	elif information_type == "account_ids":
-		con.query("select %s from group_info where %s = %s" , (information_type , identifier_type, identifier))
-		current = con.store_result()
+		con.query("select " + information_type +  " from group_info where " + identifier_type + ' = ' + identifier)
+		results = con.store_result()
+		current = results.fetch_row()
+		current = str(current)
+		information = information.strip("'")
+		information = information.lstrip("'")
 		new_info = current + '$$$$' + information
 		cur.execute("update group_info set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 		cur.execute("update account set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
@@ -137,7 +153,7 @@ def NewEntry(object_type, column_info, column_type, host,password):  #if a perso
 	elif object_type == "revision":
 		update(column_info[0], "revisions", column_info[2], "project_id" , host,password)
 		string = column_info[1]
-		list_of_files = string[3:].split('$$$')
+		list_of_files = string[3:].split('$$$$')
 		new_types = ['project_id', 'revision_number', 'file_name', 'file_content']
 		for i in list_of_files:
 			new_info = [column_info[2], column_info[0], i, column_info[4]]
@@ -165,7 +181,9 @@ def SearchAll(search_type, search_value, object_type, fist, last, host, password
 				string_of_stuff = string_of_stuff + search_type[i] + ' like "%'  + search_value[i] + '%" or '
 	
 	con.query(" select * from " + object_type + " where " + string_of_stuff + ' limit ' + fist+ ' ,' + last)
-	stuff = con.store_result() 
+	results = con.store_result() 
+	stuff = results.fetch_row()
+
 	return stuff
 
 
@@ -177,8 +195,11 @@ def SearchAll(search_type, search_value, object_type, fist, last, host, password
 
 # test
 makeTableStructure('localhost', 'olin' , 'jrivero', 'x8mafw63')
-meep = [123, 'FearBisquick', 'weee', 'NULL', 'groups and things']
-moop = ['account_id', 'username' , 'password', 'avatar', 'groups', 'creation_time' ]
-NewEntry('account', meep, moop, 'localhost', 'olin')
-SearchAll(['groups', 'account_id'] , ['and', 12], 'account', '0' , '1', 'localhost' , 'olin')
-update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')
+meep = [123, 456, 321, 345, 'mine', '1 - 10']
+moop = [ 'borrow_id', 'project_to_id', 'project_id', 'revision_id', 'file_name', 'line_range', 'creation_time']
+meeep = [236, 417, '127$$$$195', '127$$$$195', 285, '1$$$$3$$$$6', 1, 'tanCS']
+mooop = ['project_id', 'parent_id', 'children_ids', 'borrow_ids', 'group_id', 'revisions', 'locked', 'tags', 'creation_time']
+NewEntry('project_info', meeep, mooop, 'localhost', 'olin')
+NewEntry('borrow', meep, moop, 'localhost', 'olin')
+#print SearchAll(['groups', 'account_id'] , ['and', 12], 'account', '0' , '1', 'localhost' , 'olin')
+#update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')
