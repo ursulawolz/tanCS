@@ -32,9 +32,7 @@ class Weapon(object):
 		float heading
 		float pitch
 		'''
-		self._np1.setHpr(heading, 0, 0)
-		self._np2.setHpr(0,pitch,0)
-		#self._nodePath.setHpr(heading, pitch, 0)
+		self._nodePath.setHpr(heading, pitch, 0)
 
 	def setHp(self, heading, pitch):
 		'''Uses absolute hpr to aim the weapon in a direction
@@ -50,7 +48,7 @@ class Weapon(object):
 		Gets the direction that the turret
 		Returns Vec3 of direction
 		'''
-		return self._np2.getHpr(render) #LINE THAT WILL PROBABLY BREAK	
+		return self.getHpr()	
 
 	def getRelPos(self):
 		return self._nodePath.getPos()
@@ -62,10 +60,11 @@ class Weapon(object):
 		return self.tank
 
 	def setPitch(self,goal):
-		self.setHp(self.direction[0], goal)
+		hp = self.getHp()
+		self.setHp(hp[0], goal)
 
 	def getHpr(self):
-		return self._np2.getHpr(render) #LINE THAT WILL PROBABLY BREAK	
+		return self._nodePath.getHpr(render) #LINE THAT WILL PROBABLY BREAK	
 
 	def getHp(self):
 		hpr = self.getHpr()
@@ -73,7 +72,8 @@ class Weapon(object):
 		return hp
 
 	def setHeading(self,goal):
-		self.setHp(goal, self.direction[1])
+		hp = self.getHp()
+		self.setHp(goal, hp[1])
 
 	def aimAt(self, pointAim, amt = 1, aimLow = True):
 		pos = self.getAbsPos()

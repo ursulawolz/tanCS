@@ -3,9 +3,9 @@ sys.path.append("..")
 from Weapon import *
 from projectile.Blast import Blast
 
-class Blaster(Weapon):
+class TurretBlaster(Weapon):
 	'''
-	A blaster class
+	A blaster class for Turrets
 	'''
 	def __init__(self, tank):
 
@@ -16,24 +16,10 @@ class Blaster(Weapon):
 		self.canFire = True;
 		self.reloadTimer = .5;
 
-		#Graphics
-		self._np1  = loader.loadModel('media/tanktop.x')
-		self._np2  = loader.loadModel('media/turret.x')
-
 		Weapon.__init__(self, tank, posDelta, barrelLength, maxVel)
-
-		self._nodePath.setHpr(180,0,0)
-
-		self._np1.reparentTo(self._nodePath)
-		self._np2.reparentTo(self._np1)
-
-		self._np1.setPos(Vec3(0,0,0))
-		self._np1.setHpr(Vec3(90,0,0))
-		self._np2.setPos(Vec3(0,0,0))
 
 	def setCanFire(self, task):
 		self.canFire = True
-
 	def getBulletName(self):
 		return self.tank.getNodePath().getName() + ' blast'
 
@@ -46,13 +32,4 @@ class Blaster(Weapon):
 			x = Blast(self, amt * self.maxVel)
 			self._tankWorld.taskMgr.doMethodLater(self.reloadTimer, self.setCanFire, 'can fire reload')
 			return x
-		
-
-	def getHpr(self):
-		return self._np2.getHpr(render) - Vec3(180, 0,0) #LINE THAT WILL PROBABLY BREAK	
-
-
-	def setRelHp(self, heading, pitch):
-		self._np1.setHpr(heading, 0, 0)
-		self._np2.setHpr(0,pitch,0)
 		

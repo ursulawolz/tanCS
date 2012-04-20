@@ -3,7 +3,7 @@ tank = makeTank(position=(40,40,2), orientation=(90,0,0), name="tank")
 makeBlaster(tank)
 levelData = {'test':34}
 turret = makeTurret(position=(0,0,0), orientation=(90,0,0), name='turret')
-b= makeBlaster(turret)
+b= makeTurretBlaster(turret)
 b.maxVel = 60
 #makeCubeObject(size=(16,1,5), position=(0,15,0), name='wall1')
 

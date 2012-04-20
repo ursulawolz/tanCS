@@ -11,6 +11,7 @@ from trigger.Trigger import Trigger
 from FloorStaticObject import FloorStaticObject
 from Tank import Tank
 from weapon.Blaster import Blaster
+from weapon.TurretBlaster import TurretBlaster
 from UserTank import UserTank
 from Turret import Turret
 t = None #global cube object
@@ -57,6 +58,12 @@ def makeBlaster(obj):
 	b = Blaster(obj)
 	obj.setWeapon(b)
 	return b
+
+def makeTurretBlaster(obj):
+	b = TurretBlaster(obj)
+	obj.setWeapon(b)
+	return b
+
 def addLevelData(data):
 	t.setLevelData(data)
 
