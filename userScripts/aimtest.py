@@ -16,5 +16,5 @@ while True:
 
             if (distance < 50):
                 print "GO",
-                tank.fire_at(b[0] - Vec3(0,0,1))
+                tank.fire_at(b[0] - Vec3(0,0,-20))
                 print "GO"

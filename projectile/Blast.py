@@ -27,7 +27,7 @@ class Blast(Projectile):
 		self.name = weapon.getTank()._nodePath.node().getName() + ' blast'
 
 		pos = weapon.getAbsPos()
-		pos = Point3(pos[0], pos[1], pos[2])
+		pos = Point3(pos[0], pos[1], pos[2] + 1)
 
 		vel = direction * speed #LVecBase3f
 		vel = Vec3(vel[0], vel[1], vel[2])
