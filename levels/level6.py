@@ -4,7 +4,7 @@ x = random.randint(6,13)
 x = 5
 
 tank = makeTank(position=(3,3.5,2), orientation=(90,0,0), name="tank")
-makeFloor()
+makeFloor(size=(26,31))
 	
 h1 = x*5
 makeCubeObject(size=(x*6,1,3), position=(0,0,0), name="wall1")
