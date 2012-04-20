@@ -397,7 +397,7 @@ class Editor(Gtk.Window):
 		self.toolbar.show_all()
 
 	def on_destroy(self,window):
-		f=open(self.parent.defaultfile.file_name,'w')
+		f=open(self.parent.defaultfile.file_name,'wb')
 		f.write(self.parent.defaultfile.content)
 
 	def open_file(self,widget):

@@ -66,14 +66,11 @@ class TempWindow(Gtk.Window):
 		
 		vbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
 		#self.add(vbox)
-	
-		f=open("testingtk3.py")
-		
 
 		self.thecode=GtkSource.View()
 		self.thecodebuffer = GtkSource.Buffer()
 		self.thecode.set_buffer(self.thecodebuffer)
-		self.thecodebuffer.set_text(f.read())
+		self.thecodebuffer.set_text(self.parent.defaultfile.content)
 		self.thecode.set_show_line_numbers(True)
 		self.thecode.set_size_request(self.x-150,560)
 		self.thecodeframe=Gtk.Frame()
