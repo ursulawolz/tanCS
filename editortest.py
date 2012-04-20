@@ -45,8 +45,10 @@ class Editor(Gtk.Window):
 
 		#add sourceview to window and initialize properties
 		Gtk.ScrolledWindow.add(self.scrolledwindow,self.sview)
-		self.sbuff.set_text('Lorem ipsum dolor sit amet, \nconsectetur adipiscing elit. Sed et \nenim vitae augue dictum vehicula. Duis \nsit amet velit ipsum. Donec n\nibh leo, blandit et porttitor quis, aliquet sed est. Nam mollis pellentesque orci id pharetra. Curabitur eros arcu, mollis in ultricies nec, convallis a risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut pharetra leo quis risus volutpat porta. Praesent bibendum mi nec erat scelerisque vitae pellentesque massa eleifend. Aliquam aliquet venenatis odio id hendrerit. Nulla accumsan tincidunt mauris, nec mollis justo feugiat sit amet. Nullam quis sagittis neque. Integer dui augue, molestie vel semper at, iaculis sed metus. Mauris tempor nibh quis sem pellentesque vulputate. Nullam varius magna rhoncus lectus tempor at viverra tellus pretium.')
+		self.sbuff.set_text(self.parent.defaultfile.content)
 		self.sview.connect("key-press-event",self.on_key_press)
+		self.sbuff.connect("changed",self.on_text_changed)
+		self.connect("destroy",self.on_destroy)
 
 
 	def on_key_press(self,widget,data):
@@ -288,6 +290,13 @@ class Editor(Gtk.Window):
 				print 'comment'
 				self.sbuff.insert(itera,'#')
 
+	def create_save_point(self,widget):
+		dialog = Gtk.Dialog("My dialog",parent=self,flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+		label1=Gtk.Label('Create a new revision of your whole project?')
+		dialog.vbox.pack_start(label1,False,False,0)
+		label1.show()
+		response = dialog.run()
+		dialog.destroy()
 
 
 	def create_toolbar(self):
@@ -300,7 +309,7 @@ class Editor(Gtk.Window):
 		button_savepoint=Gtk.ToolButton.new_from_stock(Gtk.STOCK_SAVE)
 		self.toolbar.insert(button_savepoint, 1)
 		button_savepoint.set_tooltip_text('Save to New Revision')
-		#button_savepoint.connect("clicked", self.create_save_point)
+		button_savepoint.connect("clicked", self.create_save_point)
 
 		button_copy=Gtk.ToolButton.new_from_stock(Gtk.STOCK_COPY)
 		self.toolbar.insert(button_copy, 2)
@@ -370,6 +379,13 @@ class Editor(Gtk.Window):
 		button_level.connect("clicked",self.level_select)
 
 		self.toolbar.show_all()
+
+	def on_destroy(self,window):
+		f=open('testingtk3.py','w')
+		f.write(self.parent.defaultfile.content)
+
+	def on_text_changed(self,sbuff):
+		self.parent.defaultfile.content=sbuff.get_text(sbuff.get_start_iter(),sbuff.get_end_iter(),True)
 
 	def level_select(self, widget):
 		pass
