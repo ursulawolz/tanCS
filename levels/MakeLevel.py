@@ -21,8 +21,8 @@ def vec(val):
 def makeCubeObject(position=(0,0,0), size=(1,1,1), name='cubeobject', orientation=(0,0,0)):
 	return CubeObject(t, t.render, position=vec(position), orientation=vec(orientation), name=name, scale = vec(size))
 
-def makeFloor(position=(0,0,0), name='floor', orientation=(0,0,0)):	
-	return FloorStaticObject(t,t.render, position=vec(position), orientation=vec(orientation), name=name)
+def makeFloor(position=(0,0,0), name='floor', orientation=(0,0,0), size=(32, 32)):	
+	return FloorStaticObject(t,t.render, position=vec(position), orientation=vec(orientation), name=name, size=size)
 
 def makeTrigger(target = None, function=None, position=(0,0,0)):
 	global t
