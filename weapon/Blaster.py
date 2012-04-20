@@ -28,7 +28,7 @@ class Blaster(Weapon):
 		self._np2.reparentTo(self._np1)
 
 		self._np1.setPos(Vec3(0,0,0))
-		self._np1.setHpr(Vec3(90,0,0))
+		self._np1.setHpr(Vec3(-90,0,0))
 		self._np2.setPos(Vec3(0,0,0))
 
 	def setCanFire(self, task):

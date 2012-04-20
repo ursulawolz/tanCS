@@ -1,4 +1,4 @@
-tank.wait(10)
+tank.wait(3)
 
 while True:
     p = tank.get_pos()

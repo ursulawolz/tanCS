@@ -1,11 +1,9 @@
 x = level_data['x']
 tank.move(x)
-print 'pre left'
 tank.left()
-print 'post left'
 tank.fire()
 tank.right()
-tank.move(x)
+tank.move(x + 1)
 tank.left()
 tank.fire()
 tank.right()
