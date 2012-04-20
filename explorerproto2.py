@@ -91,9 +91,16 @@ class explorer_window(Gtk.Window):
 		toplevel.show_all()
 			
 	def make_homepage(self):
-		self.label1=Gtk.Label("This is the Homepage")
+		self.padding=Gtk.Label("\n")
+		self.label1=Gtk.Label("<span font_desc='Helvetica 20'>%s</span>" %"<b>Welcome to TanCS</b>")
+		self.label2=Gtk.Label("<span font_desc='Helvetica 12'>%s</span>" %"<b>Revision Contol, IDE, Community of Practice and Game all rolled into one</b>")
+		self.label1.set_use_markup(True)
+		self.label2.set_use_markup(True)
+		self.label2.set_line_wrap(True)
 		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+		self.return_box.pack_start(self.padding,True,True,0)
 		self.return_box.pack_start(self.label1,True,True,0)
+		self.return_box.pack_start(self.label2,True,True,0)
 		return self.return_box
 
 	def make_account(self,account):
@@ -281,10 +288,12 @@ class explorer_window(Gtk.Window):
 		print("Home clicked")
 		self.the_new_page=self.make_homepage()
 		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Homepage")
 	def on_account_clicked(self,widget,something,toplevel):
 		print("Account clicked")
 		self.the_new_page=self.make_account("account")
 		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Account Page")
 	def on_mygroups_clicked(self,widget,something,toplevel):
 		self.the_new_page=self.make_mygroups("account")
 		self.create_new_page(toplevel,self.the_new_page)
@@ -294,10 +303,12 @@ class explorer_window(Gtk.Window):
 		#self.the_new_page=self.make_search_results("type_results","Identifier")
 		self.the_new_page=self.search_input(toplevel)
 		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Search Parameters")
 	def on_help_clicked(self,widget,something,toplevel):
 		print("Help clicked")
 		self.the_new_page=self.make_help()
 		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Help Page")
 	def on_nologin_clicked(self,widget,something,toplevel):
 		#print not(self.parent.user==None)
 		self.alert.set_text("You have not logged in yet!") 
