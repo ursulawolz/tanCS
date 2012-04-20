@@ -1,4 +1,6 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
+from objectcode import *
+import tkFileDialog, Tkinter
 
 #----GUI TODOS----
 # Get user preference directory from OS and store settings file there
@@ -155,6 +157,15 @@ class Editor(Gtk.Window):
 		pasted = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
 		isborrow=self.checkBorrow(pasted)
 		if isborrow[0]:
+			#--------DEMO CODE ONLY-------
+			#This is just for show.
+			dialog = Gtk.Dialog("My dialog",parent=self,flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+			label1=Gtk.Label('Create new Borrow link?')
+			dialog.vbox.pack_start(label1,False,False,0)
+			label1.show()
+			response = dialog.run()
+			dialog.destroy()
+			#--------END DEMO CODE--------
 			line1=isborrow[1].line_range[0]
 			line2=isborrow[1].line_range[1]
 			self.statusbar.push(1,'Lines '+str(line1+1)+' through '+str(line2+1)+' from file $FILE have been linked to this document.')
@@ -378,11 +389,25 @@ class Editor(Gtk.Window):
 		self.toolbar.insert(button_level, 13)
 		button_level.connect("clicked",self.level_select)
 
+		button_open=Gtk.ToolButton.new_from_stock(Gtk.STOCK_OPEN)
+		self.toolbar.insert(button_open, 1)
+		button_open.set_tooltip_text('Open File')
+		button_open.connect("clicked", self.open_file)
+
 		self.toolbar.show_all()
 
 	def on_destroy(self,window):
-		f=open('testingtk3.py','w')
+		f=open(self.parent.defaultfile.file_name,'w')
 		f.write(self.parent.defaultfile.content)
+
+	def open_file(self,widget):
+		root=Tkinter.Tk()
+		filename = tkFileDialog.askopenfilename(parent=root,title='Choose a file',filetypes=[('python files','*.py')])
+		root.destroy()
+		f=open(filename)
+		newfile=File('newHASH', 0, filename, f.read())
+		self.parent.defaultfile=newfile
+		self.sbuff.set_text(self.parent.defaultfile.content)
 
 	def on_text_changed(self,sbuff):
 		self.parent.defaultfile.content=sbuff.get_text(sbuff.get_start_iter(),sbuff.get_end_iter(),True)

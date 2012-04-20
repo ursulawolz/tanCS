@@ -39,7 +39,7 @@ class tanCS(object):
 		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH',"default group")
 		self.defaultaccount=Account('userHASH', 'oranges', 'kiwi', 'explorer-icon.png')
 		f=open("testingtk3.py")
-		self.defaultfile=File('projectHASH', 0, 'testingtk3', f.read())
+		self.defaultfile=File('projectHASH', 0, 'testingtk3.py', f.read())
 		#self.default
 
 		#self.defaultrevision=Revision(0)

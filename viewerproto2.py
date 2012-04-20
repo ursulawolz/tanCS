@@ -302,7 +302,6 @@ class TempWindow(Gtk.Window):
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
-
 		#c is 99
 
 		val=data.keyval #get the pressed key
