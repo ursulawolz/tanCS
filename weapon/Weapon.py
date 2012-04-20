@@ -37,7 +37,7 @@ class Weapon(object):
 	def setHp(self, heading, pitch):
 		'''Uses absolute hpr to aim the weapon in a direction
 		'''
-		tankHpr = self.tank.getHpr()
+		#tankHpr = self.tank.getHpr()
 
 		deltaHpr = Vec3(heading, pitch, 0) - self.tank.getHpr()
 		self.setRelHp(deltaHpr[0], deltaHpr[1])
@@ -77,7 +77,7 @@ class Weapon(object):
 
 	def aimAt(self, pointAim, amt = 1, aimLow = True):
 		pos = self.getAbsPos()
-
+		
 		point = Point3(pointAim[0] - pos[0], pointAim[1] - pos[1], pointAim[2] - pos[2]) #Blast collides at 1.1?
 
 		angle1 = math.atan2(point[1], point[0])

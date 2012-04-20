@@ -8,5 +8,5 @@ tank = makeTank(position=(4,3.5+2+1,.6), orientation=(90,0,0), name="tank")
 b = makeBlaster(tank)
 
 trigger = makeTrigger(function=tankWorld.victory)
-makeCollisionState(trigger, position=(16,2.5+2,0), tracking_name=b.getBulletName(), size=(4,4,4))
+makeCollisionState(trigger, position=(16 - 2,2.5+1,0), tracking_name=b.getBulletName(), size=(4,4,4))
 

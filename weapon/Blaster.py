@@ -52,7 +52,7 @@ class Blaster(Weapon):
 		
 
 	def getHpr(self):
-		return self._nodePath.getHpr(render) - Vec3(-90, 0,0) #LINE THAT WILL PROBABLY BREAK	
+		return self._np2.getHpr(render) - Vec3(180, 0,0) #LINE THAT WILL PROBABLY BREAK	
 
 
 	def setRelHp(self, heading, pitch):
@@ -60,4 +60,4 @@ class Blaster(Weapon):
 		self._np2.setHpr(0,pitch,0)
 		
 	def getAbsPos(self):
-		return self._np1.getPos(render) + Vec3(0,0,1)
+		return self._nodePath.getPos(render) + Vec3(0,0,0)
