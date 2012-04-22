@@ -15,13 +15,15 @@ class Message(dict):
 
     def __init__(self):
         dict.__init__(self)
-        self.stream = bytearray(self.codec)
-        self.push = self.stream.extend
-        self.parse_status = u'ready'
+        self.stream = bytearray()
+        self.parse_status = 'ready'
     
     def pull(self, count=0):
         del self.stream[:count]
         return bytes(self.stream)
+
+    def push(self, iterable):
+        return self.stream.extend(iterable)
 
     def complete(self):
         return len(self.stream) == 0
@@ -29,7 +31,7 @@ class Message(dict):
     # Outgoing
 
     def compose(self):
-        del self.stream[:]
+        self.stream = bytearray()
         self.push(self.action.encode(self.codec))
         self.push(self.newline.encode(self.codec))
 
@@ -44,11 +46,12 @@ class Message(dict):
 
         map(write_pair,self.iteritems())
 
-        if hasattr(self,'payload'):
-            self.push(u'payload'.encode(self.codec))
-            self.push(bytes(self.payload))
-
         self.push(u'end'.encode(self.codec))
+        self.push(self.newline.encode(self.codec))
+
+        if hasattr(self,'payload'):
+            self.push(u'payload:'.encode(self.codec))
+            self.push(bytes(self.payload))
 
     def digest(self, algorithm, content=None, keyword=u'digest'):
         hash_object = hashlib.new(algorithm)
@@ -61,7 +64,18 @@ class Message(dict):
     # Incoming
 
     def parse(self):
-        pass
+        payload = False
+        action, self.stream = self.stream.split(self.newline.encode(self.codec), 1)
+        self.action = unicode(str(action), self.codec)
+        while True:
+            line, self.stream = self.stream.split(self.newline.encode(self.codec), 1)
+            line = unicode(str(line), self.codec)
+            if line == u'end':
+                break
+            keyword, value = line.split(self.delimiter, 1)
+            self[keyword] = value
+        if u'length' in self:
+            self.payload = self.stream.split(self.delimiter.encode(self.codec), 1)[1]
 
 
     def verify(self, keyword=u'digest'):
