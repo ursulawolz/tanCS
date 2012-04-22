@@ -414,8 +414,8 @@ class Tank(DynamicWorldObject):
             self._stop = True
         
         #emergency stop based on a long time.
-        if task.time > 5:
-            print "Tank.updateRotateLoc", "your rotate could not be completed, sorry"
+        if task.time > 3:
+            #print "Tank.updateRotateLoc", "your rotate could not be completed, sorry"
             return task.done
             
         return task.cont
