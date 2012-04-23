@@ -18,7 +18,4 @@ t = levels.MakeLevel.makeLevel(level)
 runFile(userfile,t)
 
 t.preCalc()
-print (t.gameData)
-t.displaySet()
-t.run()
 sys.exit()

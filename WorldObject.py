@@ -64,3 +64,9 @@ class WorldObject(object):
         elif angle > 360:
             angle -= 360
         return angle
+
+    def setPos(self, pos):
+        self._nodePath.setPos(pos)
+
+    def setHpr(self, hpr):
+        self._nodePath.setHpr(hpr)

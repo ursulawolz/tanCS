@@ -49,13 +49,60 @@ class TankWorld(ShowBase):
 		self.numFrames = 0
 		self.dynamics = [] 
 		self.gameData = [] #Will be huge eventually
+		self.debugTime = 0
 
+	def __display(self):
+		'''Must be called after preCalc. Sets the stage for the display of the performance'''
+		self.taskMgr.add(self.igLoop, 'igLoop')
+		self._displayTime = 0
+		print 'got here'
+		print self.taskMgr.getAllTasks()
+		self.taskMgr.removeTasksMatching('*tank*')
+		self.taskMgr.removeTasksMatching('*NAME*')
+		self.taskMgr.removeTasksMatching('*Name*')
+		self.taskMgr.removeTasksMatching('*collide*')
+		self.taskMgr.removeTasksMatching('*bullet*')
+		self.taskMgr.add(self._updatePositions, 'gameDataDisplay')
+		print self.taskMgr.getAllTasks()
+		self.frame = 0
+		self.startTime = globalClock.getRealTime()
+
+		while self.frame < len(self.gameData) - 1:
+			self.taskMgr.step()
+			globalClock.tick()
+
+
+
+	def _updatePositions(self, task):
+
+		self._displayTime = globalClock.getRealTime() - self.startTime
+		self.frame = int(60 * self._displayTime)
+		frameData = self.gameData[self.frame]
+		print 'oh hey?', self._displayTime, self.frame, len(self.gameData)
+
+
+		for i in range(len(self.dynamics)):
+			dynamic = self.dynamics[i]
+			dynData = frameData[i]
+			print dynamic.getPos()
+			dynamic.setPos(dynData[0])
+			dynamic.setHpr(dynData[1])
+
+		return task.cont
 
 	def preCalc(self):
-		while self.victoryState == 0:
+		if self.taskMgr.hasTaskNamed('igLoop'):
+			self.igLoop = self.taskMgr.getTasksNamed('igLoop')[0]
+
+		#Exits when win. lose, or more than 1 minute(s)
+		while self.victoryState == 0 and len(self.gameData) < 60 * 60:
+
 			self.taskMgr.remove('igLoop')
 			self.taskMgr.step()
 			globalClock.tick()
+
+
+		self.__display()
 
 	def __update2(self, task):
 		'''
@@ -83,6 +130,7 @@ class TankWorld(ShowBase):
 				self.gameData[numFrames].append([])
 				dynamic = self.dynamics[i]
 				self.gameData[numFrames][i] = ((dynamic.getPos(), dynamic.getHpr()))
+		
 			base.cam.setPos(base.cam,changeX,changeY,0);	
 			hpr = base.cam.getHpr();
 			if base.mouseWatcherNode.hasMouse() and self.doMouseStuff:	
@@ -91,6 +139,9 @@ class TankWorld(ShowBase):
 
 			base.cam.setHpr(hpr);
 
+			if len(self.gameData) % 60 == 0:
+				self.debugTime += 1
+				print self.debugTime
 
 		except:
 			print "error tankworld.__update2	"
