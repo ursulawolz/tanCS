@@ -37,7 +37,7 @@ class Weapon(object):
 	def setHp(self, heading, pitch):
 		'''Uses absolute hpr to aim the weapon in a direction
 		'''
-		tankHpr = self.tank.getHpr()
+		#tankHpr = self.tank.getHpr()
 
 		deltaHpr = Vec3(heading, pitch, 0) - self.tank.getHpr()
 		self.setRelHp(deltaHpr[0], deltaHpr[1])
@@ -48,7 +48,7 @@ class Weapon(object):
 		Gets the direction that the turret
 		Returns Vec3 of direction
 		'''
-		return self._nodePath.getHpr(render) #LINE THAT WILL PROBABLY BREAK	
+		return self.getHpr()	
 
 	def getRelPos(self):
 		return self._nodePath.getPos()
@@ -60,7 +60,8 @@ class Weapon(object):
 		return self.tank
 
 	def setPitch(self,goal):
-		self.setHp(self.direction[0], goal)
+		hp = self.getHp()
+		self.setHp(hp[0], goal)
 
 	def getHpr(self):
 		return self._nodePath.getHpr(render) #LINE THAT WILL PROBABLY BREAK	
@@ -71,11 +72,12 @@ class Weapon(object):
 		return hp
 
 	def setHeading(self,goal):
-		self.setHp(goal, self.direction[1])
+		hp = self.getHp()
+		self.setHp(goal, hp[1])
 
 	def aimAt(self, pointAim, amt = 1, aimLow = True):
 		pos = self.getAbsPos()
-
+		
 		point = Point3(pointAim[0] - pos[0], pointAim[1] - pos[1], pointAim[2] - pos[2]) #Blast collides at 1.1?
 
 		angle1 = math.atan2(point[1], point[0])
@@ -87,11 +89,9 @@ class Weapon(object):
 		tanks = self.tank
 		gravity = self.tank._tankWorld.getPhysics().getGravity() #Vector
 		g = abs(gravity[2])	
-		print "Weapon.aimAt: ", v**4
 		discriminant = v**4 - g * (g * x**2 + 2 * y * v**2)
 
 		if discriminant < 0:
-			print "Weapon.aimAt: ", discriminant
 			return False
 		if x == 0:
 			return False

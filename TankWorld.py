@@ -5,7 +5,7 @@ How do we move the Tank? Set Velocity directly, apply accel/braking forces, what
 
 """
 import sys, os
-from panda3d.core import Vec3, Point3, BitMask32, Spotlight, AmbientLight
+from panda3d.core import Vec3, Point3, BitMask32, Spotlight, AmbientLight, VBase4
 from pandac.PandaModules import PandaNode
 from direct.showbase.ShowBase import ShowBase
 from panda3d.bullet import BulletRigidBodyNode, BulletBoxShape, BulletWorld, BulletCapsuleShape, BulletDebugNode
@@ -73,8 +73,7 @@ class TankWorld(ShowBase):
 		while self.frame < len(self.gameData) - 1:
 			self.taskMgr.step()
 			globalClock.tick()
-
-		self._displayTime = globalClock.getRealTime()
+			self._displayTime = globalClock.getRealTime()
 
 
 		#Pause for two seconds at end: Probably launch victory/defeat screen here
@@ -225,6 +224,7 @@ class TankWorld(ShowBase):
 		#pdb.set_trace()
 		self.exitfunc()
 		self.destroy()
+		sys.exit()
 		#sys.exit()
 
 	def __update(self, task):
@@ -301,8 +301,12 @@ class TankWorld(ShowBase):
 		print "YOU HAVE WON THE GAME"
 		#pdb.set_trace()
 		self.victoryState = 1
+
+#		from direct.gui.OnscreenText import OnscreenText
+#		textObject = OnscreenText(text = 'Victory',
+#			pos = (0, 0), scale = 0.3, bg=VBase4(.6,.6,.6,.1), fg=VBase4(0,0,0,95))
 		self.taskMgr.remove('bullet-update')
-		self.taskMgr.doMethodLater(2, self.close, 'Task Name')
+		self.taskMgr.doMethodLater(2, self.close, 'close task name')
 
 	def lose(self):
 		'''

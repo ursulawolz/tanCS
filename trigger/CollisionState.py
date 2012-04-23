@@ -49,7 +49,7 @@ class CollisionState(State, CubeObject):
 
 	def handleCollision(self, collide, taskName):
 
-		print 'CollisionState self name:::',self.tracking_name,'other:::',collide.getNode0().getName(),'final:::',collide.getNode1().getName()
+		#print 'CollisionState self name:::',self.tracking_name,'other:::',collide.getNode0().getName(),'final:::',collide.getNode1().getName()
 		
 		if collide.getNode0().getName() == self.tracking_name or collide.getNode1().getName()== self.tracking_name:
 			self.triggered=True

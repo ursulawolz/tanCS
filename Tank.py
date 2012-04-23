@@ -63,11 +63,11 @@ class Tank(DynamicWorldObject):
         self._nodePath.node().setMass(800.0)
          
         # Chassis geometry
-        np  = loader.loadModel('box')
-
+        np  = loader.loadModel('media/tankBody.x')
+        np.setHpr(90,0,0)
         np.reparentTo(self._nodePath)
-        np.setScale(self._tankSize*2)
-        np.setPos(-self._tankSize+Vec3(0, 0, 0))
+        #np.setScale(self._tankSize*2)
+        np.setPos(-self._tankSize+Vec3(1, 0, .5))
        
         # Vehicle
         self.vehicle = BulletVehicle(bulletWorld, self._nodePath.node())
@@ -118,8 +118,6 @@ class Tank(DynamicWorldObject):
 
     def moveWeapon(self, heading = 0, pitch = 0):
         rot = self.getHpr()
-        print "Tank.moveWeapon: ", rot
-        print rot[0] + heading, rot[1] + pitch
 
         self.setWeaponHp(rot[0] + heading, rot[1] + pitch)
 
@@ -163,8 +161,10 @@ class Tank(DynamicWorldObject):
                     found.append((np.getPos(render),
                         np.node().getName()))
                 elif result.hasHit():
-                    print np, result.getNode(), pFrom, pTo
-                    print "Tank.distanceScan: Neigh"
+                    #print "Tank.distanceScan: ",
+                    #print np, result.getNode(), pFrom, pTo
+                    #print "Neigh"
+                    x = 1                    
 
         return found
 
@@ -412,8 +412,8 @@ class Tank(DynamicWorldObject):
             self._stop = True
         
         #emergency stop based on a long time.
-        if task.time > 5:
-            print "Tank.updateRotateLoc", "your rotate could not be completed, sorry"
+        if task.time > 3:
+            #print "Tank.updateRotateLoc", "your rotate could not be completed, sorry"
             return task.done
             
         return task.cont

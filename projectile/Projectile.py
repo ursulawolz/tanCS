@@ -30,7 +30,7 @@ class Projectile(DynamicWorldObject):
 		#self._tankWorld.doMethodLater(1, self.startCollide, 'turn collide on') #attempt to make collisions turn on able. 
 		#Something odd with collide masks
 		
-		self._nodePath.node().setCcdMotionThreshold(1e-7)
+		self._nodePath.node().setCcdMotionThreshold(1e-6)
 		self._nodePath.node().setCcdSweptSphereRadius(0.40)
 		
 	def getDamage(self):

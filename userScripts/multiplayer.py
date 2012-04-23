@@ -1,8 +1,16 @@
+import random
+
 tank.move(4)
-for l in range(30):
-	tank.move(3)
-	tank.left()
-	tank.fire()
+while 1:
+    for l in range(2):
+        tank.move(random.randint(0,10))
+        tank.rotate(random.randint(0,180))
+        tank.fire()
+    for l in range(2):
+        tank.move(-random.randint(0,10))
+        tank.rotate(random.randint(0,180))
+        tank.fire()
+
 
 
 #bad way to solve this

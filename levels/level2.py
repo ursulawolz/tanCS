@@ -1,7 +1,7 @@
 
 
-tank = makeTank(position=(3,3.5,2), orientation=(90,0,0), name="tank")
-makeFloor()
+tank = makeTank(position=(3,3.5,.6), orientation=(90,0,0), name="tank")
+makeFloor(size=(27,27))
 	
 makeCubeObject(size=(26,1,3), position=(0,0,0), name="wall1")
 makeCubeObject(size=(20,1,3), position=(0,6,0), name="wall1")

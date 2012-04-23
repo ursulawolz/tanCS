@@ -27,13 +27,13 @@ class Blast(Projectile):
 		self.name = weapon.getTank()._nodePath.node().getName() + ' blast'
 
 		pos = weapon.getAbsPos()
-		pos = Point3(pos[0], pos[1], pos[2])
+		pos = Point3(pos[0], pos[1], pos[2] + 1)
 
 		vel = direction * speed #LVecBase3f
 		vel = Vec3(vel[0], vel[1], vel[2])
 
-		np  = loader.loadModel('smiley')
-		np.setScale(Vec3(.5,.5,.5))
+		np  = loader.loadModel('media/bullet.x')
+		np.setScale(Vec3(1.5,1.5,1.5))
 		Projectile.__init__(self, weapon, pos, self.name, shape, vel, mass, damage)
 		self._collisionCounter = 0
 

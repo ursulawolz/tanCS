@@ -1,6 +1,4 @@
-print level_data
-x = 7
-tank.move(100)
+tank.wait(3)
 
 while True:
     p = tank.get_pos()
@@ -16,11 +14,7 @@ while True:
                 total += (b[0][i] - p[i])**2
             distance = math.sqrt(total)
 
-            if (b[0][2] > 3 and distance < 50):
+            if (distance < 50):
                 print "GO",
-                tank.fire_at(b[0])
+                tank.fire_at(b[0] - Vec3(0,0,.5))
                 print "GO"
-    print "asdf"
-
-
-
