@@ -32,6 +32,7 @@ class Projectile(DynamicWorldObject):
 		
 		self._nodePath.node().setCcdMotionThreshold(1e-7)
 		self._nodePath.node().setCcdSweptSphereRadius(0.40)
+		
 	def getDamage(self):
 		return self._damage
 	
@@ -40,12 +41,13 @@ class Projectile(DynamicWorldObject):
 			self._nodePath.node().addShape(self.shape)
 			#self._nodePath.setCollideMask(BitMask32.allOn())
 		return task.done
+
 	def deleteAfter(self, task = None):
 		if not self._nodePath.is_empty():
 			x = self._nodePath.node()
 
 			self._tankWorld.removeRigidBody(x)
-			self._nodePath.detachNode()
+			#self._nodePath.detachNode()
 
 
 

@@ -36,7 +36,7 @@ class TankWorld(ShowBase):
 
 		#This creates a task named update and runs every frame
 		taskMgr.add(self.stepTasks,'SOME NAME')
-		self.taskMgr.add(self.__update2,"bullet-update")
+		self.taskMgr.add(self.__update,"bullet-update")
 		self._deltaTimeAccumulator = 0;
 
 		self.tanks = []
@@ -65,9 +65,6 @@ class TankWorld(ShowBase):
 		self.taskMgr.add(self._updatePositions, 'gameDataDisplay')
 		print self.taskMgr.getAllTasks()
 		
-		for i in self.dynamics:
-			i.reAttach()
-
 		self.frame = 0
 		self.startTime = globalClock.getRealTime()
 
@@ -108,22 +105,27 @@ class TankWorld(ShowBase):
 
 		self._displayTime = globalClock.getRealTime() - self.startTime
 		self.frame = int(60 * self._displayTime)
-		frameData = self.gameData[self.frame]
-		print 'TankWorld._updatePositions: ', self._displayTime, self.frame, len(self.gameData)
+		if self.frame < len(self.gameData) - 1:
+			frameData = self.gameData[self.frame]
 
-		for i in range(len(frameData)):
-			dynamic = self.dynamics[i]
-			dynData = frameData[i]
-			if (len(dynData) == 6):
-				print dynamic, dynData
-				dynamic.setPos(Point3(dynData[0], dynData[1], dynData[2]))
-				dynamic.setHpr(Point3(dynData[3], dynData[4], dynData[5]))
+			print 'TankWorld._updatePositions: ', self._displayTime, self.frame, len(self.gameData)
+
+			for i in range(len(frameData)):
+				dynamic = self.dynamics[i]
+				dynData = frameData[i]
+				if (len(dynData) == 6):
+					print dynamic, dynData
+					dynamic.setPos(Point3(dynData[0], dynData[1], dynData[2]))
+					dynamic.setHpr(Point3(dynData[3], dynData[4], dynData[5]))
 
 		return task.cont
 
 	def preCalc(self):
 		if self.taskMgr.hasTaskNamed('igLoop'):
 			self.igLoop = self.taskMgr.getTasksNamed('igLoop')[0]
+
+		self.taskMgr.removeTasksMatching('*bullet*')
+		self.taskMgr.add(self.__update2,"bullet-update")
 
 		#Exits when win. lose, or more than 1 minute(s)
 		while self.victoryState == 0 and len(self.gameData) < 60 * 60:

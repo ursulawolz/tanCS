@@ -32,13 +32,7 @@ class WorldObject(object):
         
         self._nodePath.node().addShape(shape,self._transformState)
         self._tankWorld.attachRigidBody(self._nodePath.node())
-        self._node = self._nodePath.node()
         
-        #self._nodePath.setCollideMask(BitMask32.allOn())
-    def reAttach(self):
-        if not self._nodePath.node() == self._node:
-            self._nodePath.attachNewNode(self._node)
-
     def getVel(self):
         return self._nodePath.node().getLinearVelocity()
     def getName(self):
