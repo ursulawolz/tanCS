@@ -41,6 +41,7 @@ class TankWorld(ShowBase):
 		self.tanks = []
 		self.isDead = False
 		self.levelData = {}
+		self.victoryState = 0 # 1 = win, 2 = lose
 
 
 		#This is all new, to run in non-realtime
@@ -49,15 +50,21 @@ class TankWorld(ShowBase):
 		self.dynamics = [] 
 		self.gameData = [] #Will be huge eventually
 
+
+	def preCalc(self):
+		while self.victoryState == 0:
+			self.taskMgr.remove('igLoop')
+			self.taskMgr.step()
+			globalClock.tick()
+
 	def __update2(self, task):
 		'''
 		Task task: Time since last frame	
 		'''
+
+
 		try:
 			dt = globalClock.getDt();			
-			time = globalClock.getRealTime()
-			print time, dt, self.numFrames
-
 			if dt > .1:
 				return Task.cont
 			moveAmount = 50*dt;
@@ -65,16 +72,17 @@ class TankWorld(ShowBase):
 			changeX = (inputState.isSet('right')-inputState.isSet('left'))*moveAmount;
 
 			stepSize = 1.0 / 60.0
-
 			#set up a fixed time constant step for more accurate physics.
 			#We need to test more with the vehicle class to see if it plays nice. 
 			self.__bulletWorld.doPhysics(stepSize)
-			print self.numFrames
+
+			self.gameData.append([])
+			numFrames = len(self.gameData) - 1
 
 			for i in range(len(self.dynamics)):
+				self.gameData[numFrames].append([])
 				dynamic = self.dynamics[i]
-				self.gameData[self.numFrames].append((dynamic.getPos(), dynamic.getHpr()))
-			print self.numFrames
+				self.gameData[numFrames][i] = ((dynamic.getPos(), dynamic.getHpr()))
 			base.cam.setPos(base.cam,changeX,changeY,0);	
 			hpr = base.cam.getHpr();
 			if base.mouseWatcherNode.hasMouse() and self.doMouseStuff:	
@@ -83,8 +91,7 @@ class TankWorld(ShowBase):
 
 			base.cam.setHpr(hpr);
 
-			self.numFrames += 1
-			print self.numFrames
+
 		except:
 			print "error tankworld.__update2	"
 
@@ -215,6 +222,7 @@ class TankWorld(ShowBase):
 		'''
 		print "YOU HAVE WON THE GAME"
 		#pdb.set_trace()
+		self.victoryState = 1
 		self.taskMgr.remove('bullet-update')
 		self.taskMgr.doMethodLater(2, self.close, 'Task Name')
 
@@ -223,6 +231,7 @@ class TankWorld(ShowBase):
 			Called when a loss condition has been met
 		'''
 		print "YOU HAVE LOST THE GAME"
+		self.victoryState = 2
 		sys.exit()
 
 
@@ -252,11 +261,12 @@ class TankWorld(ShowBase):
 
 	def setLevelData(self,level):
 		self.levelData = level
+
 	def getLevelData(self):
 		return self.levelData
 
 	def registerDynamic(self, dynamic):
 		self.dynamics.append(dynamic)
-		self.gameData.append([])
+		
 
 

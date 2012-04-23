@@ -16,7 +16,9 @@ if len(sys.argv)==2:
 #t = xmlParse.createLevel(level)
 t = levels.MakeLevel.makeLevel(level)
 runFile(userfile,t)
-print "Wait, what?"
-t.run()
 
+t.preCalc()
+print (t.gameData)
+t.displaySet()
+t.run()
 sys.exit()
