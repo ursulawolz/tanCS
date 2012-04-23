@@ -52,11 +52,6 @@ class Tank(DynamicWorldObject):
 
         self.movementPoint = Point3(10,10,0)
 
-
-
-        #register tank
-        self._tankWorld.registerDynamic(self)
-
         print "Tank.__init__: " + name
         
         # Set up the 
@@ -366,7 +361,8 @@ class Tank(DynamicWorldObject):
         '''
         Tasks called to wait
         '''
-        dt = globalClock.getDt()
+        dt = 1.0/60.0
+        print "Tank.updateWait: ", dt
         self._taskTimer -= dt
 
         if self._taskTimer < 0: 

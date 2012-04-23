@@ -13,6 +13,10 @@ class DynamicWorldObject(WorldObject):
 		WorldObject.__init__(self, world, attach, name, position, shape, orientation, velocity, mass)
 		TaskList.setCollision(self, self._tankWorld)
 
+		#register dynamic
+		self._tankWorld.registerDynamic(self)
+
+
 
 	def handleCollision(self, contact, task):
 		'''Must remove task, as specified in TaskList.setCollision'''

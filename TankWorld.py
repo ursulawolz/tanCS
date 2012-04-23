@@ -13,6 +13,7 @@ from direct.interval.IntervalGlobal import *
 from direct.showbase.InputStateGlobal import inputState
 from direct.task import Task
 import math
+from array import array
 import pdb
 
 from Tank import Tank
@@ -55,8 +56,7 @@ class TankWorld(ShowBase):
 		'''Must be called after preCalc. Sets the stage for the display of the performance'''
 		self.taskMgr.add(self.igLoop, 'igLoop')
 		self._displayTime = 0
-		print 'got here'
-		print self.taskMgr.getAllTasks()
+		print "TankWorld.__dusplay: ", self.taskMgr.getAllTasks()
 		self.taskMgr.removeTasksMatching('*tank*')
 		self.taskMgr.removeTasksMatching('*NAME*')
 		self.taskMgr.removeTasksMatching('*Name*')
@@ -64,29 +64,60 @@ class TankWorld(ShowBase):
 		self.taskMgr.removeTasksMatching('*bullet*')
 		self.taskMgr.add(self._updatePositions, 'gameDataDisplay')
 		print self.taskMgr.getAllTasks()
+		
+		for i in self.dynamics:
+			i.reAttach()
+
 		self.frame = 0
 		self.startTime = globalClock.getRealTime()
+
+
 
 		while self.frame < len(self.gameData) - 1:
 			self.taskMgr.step()
 			globalClock.tick()
 
+		self._displayTime = globalClock.getRealTime()
+
+
+		#Pause for two seconds at end: Probably launch victory/defeat screen here
+		while globalClock.getRealTime() < self._displayTime + 2:
+			x = 1
+
 
 
 	def _updatePositions(self, task):
 
+		try:
+			dt = 1.0/60			
+			if dt > .1:
+				return Task.cont
+			moveAmount = 50*dt;
+			changeY =  (inputState.isSet('foward')-inputState.isSet('backward'))*moveAmount
+			changeX = (inputState.isSet('right')-inputState.isSet('left'))*moveAmount;
+			
+			base.cam.setPos(base.cam,changeX,changeY,0);	
+			hpr = base.cam.getHpr();
+			if base.mouseWatcherNode.hasMouse() and self.doMouseStuff:	
+				hpr.x = -100*base.mouseWatcherNode.getMouseX()
+				hpr.y = 100*base.mouseWatcherNode.getMouseY();
+
+			base.cam.setHpr(hpr);
+		except:
+			print "error in TankWorld._updatePositions"
+
 		self._displayTime = globalClock.getRealTime() - self.startTime
 		self.frame = int(60 * self._displayTime)
 		frameData = self.gameData[self.frame]
-		print 'oh hey?', self._displayTime, self.frame, len(self.gameData)
+		print 'TankWorld._updatePositions: ', self._displayTime, self.frame, len(self.gameData)
 
-
-		for i in range(len(self.dynamics)):
+		for i in range(len(frameData)):
 			dynamic = self.dynamics[i]
 			dynData = frameData[i]
-			print dynamic.getPos()
-			dynamic.setPos(dynData[0])
-			dynamic.setHpr(dynData[1])
+			if (len(dynData) == 6):
+				print dynamic, dynData
+				dynamic.setPos(Point3(dynData[0], dynData[1], dynData[2]))
+				dynamic.setHpr(Point3(dynData[3], dynData[4], dynData[5]))
 
 		return task.cont
 
@@ -110,41 +141,35 @@ class TankWorld(ShowBase):
 		'''
 
 
-		try:
-			dt = globalClock.getDt();			
-			if dt > .1:
-				return Task.cont
-			moveAmount = 50*dt;
-			changeY =  (inputState.isSet('foward')-inputState.isSet('backward'))*moveAmount
-			changeX = (inputState.isSet('right')-inputState.isSet('left'))*moveAmount;
+		#try:
 
-			stepSize = 1.0 / 60.0
-			#set up a fixed time constant step for more accurate physics.
-			#We need to test more with the vehicle class to see if it plays nice. 
-			self.__bulletWorld.doPhysics(stepSize)
 
-			self.gameData.append([])
-			numFrames = len(self.gameData) - 1
+		stepSize = 1.0 / 60.0
 
-			for i in range(len(self.dynamics)):
-				self.gameData[numFrames].append([])
-				dynamic = self.dynamics[i]
-				self.gameData[numFrames][i] = ((dynamic.getPos(), dynamic.getHpr()))
+		#set up a fixed time constant step for more accurate physics.
 		
-			base.cam.setPos(base.cam,changeX,changeY,0);	
-			hpr = base.cam.getHpr();
-			if base.mouseWatcherNode.hasMouse() and self.doMouseStuff:	
-				hpr.x = -100*base.mouseWatcherNode.getMouseX()
-				hpr.y = 100*base.mouseWatcherNode.getMouseY();
+		self.__bulletWorld.doPhysics(stepSize)
 
-			base.cam.setHpr(hpr);
+		self.gameData.append([])
+		numFrames = len(self.gameData) - 1
 
-			if len(self.gameData) % 60 == 0:
-				self.debugTime += 1
-				print self.debugTime
+		for i in range(len(self.dynamics)):
+			self.gameData[numFrames].append(array('f'))
+			dynamic = self.dynamics[i]
+			if not dynamic._nodePath.is_empty():
+				pos = dynamic.getPos()
+				hpr = dynamic.getHpr()
+				self.gameData[numFrames][i].extend(pos)
+				self.gameData[numFrames][i].extend(hpr)
+	
 
-		except:
-			print "error tankworld.__update2	"
+
+		if len(self.gameData) % 60 == 0:
+			self.debugTime += 1
+			print self.debugTime
+
+		#except:
+		#	print "error tankworld.__update2	"
 
 		return task.cont
 
