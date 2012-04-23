@@ -63,43 +63,60 @@ def update(information , information_type , identifier , identifier_type, host,p
 	elif information_type == "tags" or information_type == "children_ids" or information_type == "borrow_ids" or information_type == "revisions" :
 		con.query("select " + information_type +  " from project_info where " + identifier_type + ' = ' + identifier)
 		results = con.store_result()
-		current = results.fetch_row()
-		current = str(current)
-		information = information.strip("'")
-		information = information.lstrip("'")
-		new_info = current + '$$$$' + information
-		cur.execute("update project_info set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
+		current = results.fetch_row(0,1)
+		if len(current) == 0:
+			new_info = information
+		else:
+			current = current[0]
+			current = current[information_type]
+			current = str(current)
+			information = information.strip("'")
+			information = information.lstrip("'")
+			new_info = "'" + current + '$$$$' + information + "'"
+		cur.execute("update project_info set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 
 
 	elif information_type == "group_projects":
 		con.query("select " + information_type +  " from group_info where " + identifier_type + ' = ' + identifier)
 		results = con.store_result()
-		current = results.fetch_row()
-		current = str(current)
-		information = information.strip("'")
-		information = information.lstrip("'")
-		new_info = "'" + current + '$$$$' + information + "'"
+		current = results.fetch_row(0,1)
+		if len(current) == 0:
+			new_info = information
+		else:
+			current = current[0]
+			current = current[information_type]
+			information = information.strip("'")
+			information = information.lstrip("'")
+			new_info = "'" + current + '$$$$' + information + "'"
 		cur.execute("update group_info set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 
 	elif information_type == "groups" :
 		con.query("select " + information_type + " from account where " + identifier_type + ' = ' + identifier)
 		results = con.store_result()
-		current = results.fetch_row()
-		current = str(current)
-		information = information.strip("'")
-		information = information.lstrip("'")
-		new_info = current + '$$$$' + information
+		current = results.fetch_row(0,1)
+		if len(current) == 0:
+			new_info = information
+		else:
+			current = current[0]
+			current = current[information_type]
+			information = information.strip("'")
+			information = information.lstrip("'")
+			new_info = "'" + current + '$$$$' + information + "'"
 		cur.execute("update account set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 		cur.execute("update group_info set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
 
 	elif information_type == "account_ids":
 		con.query("select " + information_type +  " from group_info where " + identifier_type + ' = ' + identifier)
 		results = con.store_result()
-		current = results.fetch_row()
-		current = str(current)
-		information = information.strip("'")
-		information = information.lstrip("'")
-		new_info = current + '$$$$' + information
+		current = results.fetch_row(0,1)
+		if len(current) == 0:
+			new_info = information
+		else:
+			current = current[0]
+			current = current[information_type]
+			information = information.strip("'")
+			information = information.lstrip("'")
+			new_info = "'" + current + '$$$$' + information + "'"
 		cur.execute("update group_info set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 		cur.execute("update account set " + information_type + " = " + information + " where " + identifier_type + " = " + identifier)
 
@@ -137,7 +154,7 @@ def NewEntry(object_type, column_info, column_type, host,password):  #if a perso
 
 
 	if object_type == "borrow":
-		update(column_info[0], "borrow_ids", column_info[2], "project_id", host,password )
+		update(column_info[0], "borrow_ids", column_info[1], "project_id", host,password )
 
 	elif object_type == "project_info":
 		update(column_info[0], "group_projects", column_info[4], "group_id" , host,password)
@@ -188,6 +205,21 @@ def SearchAll(search_type, search_value, object_type, fist, last, host, password
 
 
 
+def tests():
+	import MySQLdb as mdb 
+	import sys
+	host = 'localhost'
+	password = 'olin'
+	con = None
+	con = mdb.connect(host, 'root', password)
+	cur = con.cursor()
+	cur.execute("use oogadaBoogada")
+	con.query('select borrow_ids from project_info where project_id = 236')
+	results = con.store_result() 
+	stuff = results.fetch_row(0,1)
+	stuff = stuff[0]
+	stuff = stuff['borrow_ids']
+	return 
 
 
 
@@ -195,11 +227,13 @@ def SearchAll(search_type, search_value, object_type, fist, last, host, password
 
 # test
 makeTableStructure('localhost', 'olin' , 'jrivero', 'x8mafw63')
-meep = [123, 456, 321, 345, 'mine', '1 - 10']
+meep = [123, 236, 321, 345, 'mine', '1 - 10']
 moop = [ 'borrow_id', 'project_to_id', 'project_id', 'revision_id', 'file_name', 'line_range', 'creation_time']
 meeep = [236, 417, '127$$$$195', '127$$$$195', 285, '1$$$$3$$$$6', 1, 'tanCS']
 mooop = ['project_id', 'parent_id', 'children_ids', 'borrow_ids', 'group_id', 'revisions', 'locked', 'tags', 'creation_time']
 NewEntry('project_info', meeep, mooop, 'localhost', 'olin')
 NewEntry('borrow', meep, moop, 'localhost', 'olin')
-#print SearchAll(['groups', 'account_id'] , ['and', 12], 'account', '0' , '1', 'localhost' , 'olin')
+NewEntry()
+#print tests()
+#print SearchAll(['project_id', 'borrow_ids'] , [36, 27], 'project_info', '0' , '1', 'localhost' , 'olin')
 #update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')
