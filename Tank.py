@@ -140,7 +140,7 @@ class Tank(DynamicWorldObject):
         found = []
 
         for np in potentialNPs:
-            if type(np.node()) == BulletRigidBodyNode and np != self:
+            if type(np.node()) == BulletRigidBodyNode and np != self and not np.isHidden():
                 
                 pFrom = np.getPos(render) 
                 #Fix for cubeObjects (z = 0). They collide with the floor
