@@ -1,7 +1,6 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
 from objectcode import *
 import tkFileDialog, Tkinter
-
 #----GUI TODOS----
 # Get user preference directory from OS and store settings file there
 # Cement Borrows
@@ -65,6 +64,7 @@ class Editor(Gtk.Window):
 		#x is 120
 		#Ctrl is 65507
 		val=data.keyval #get the pressed key
+		print val
 		cursor=self.sbuff.get_iter_at_mark(self.sbuff.get_insert()) #get iter at cursor position
 		back=self.sbuff.get_iter_at_offset(cursor.get_offset()-1) #get iter at cursor position-1
 		if val==65289: #tab key ####TODO: what if user selects text

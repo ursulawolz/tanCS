@@ -69,19 +69,23 @@ class Borrow:
 
 
 class Project:
-    def __init__(self, projID, parentID, groupID, borrows):
+    def __init__(self, projID, parentID, groupID, borrows=set(),revisions=[]):
         self.projID = projID
         self.parentID = parentID
         self.groupID = groupID
 
         self.children = set()
-        self.borrows = borrows
-
-        ## Revisions is an ordered list of revision objects
-        self.revisions = []
+        self.borrows = borrows ##set of borrows
+        self.revisions = revisions ##set of revisions
 
         self.locked = 0
         self.tags = set()
+
+        if revisions==[]:
+            self.head=Revision(self,0)
+            self.add_revision(head)
+        else:
+            self.head=revisions[-1]
 
     def add_child(self, child):
         self.children.add( child )
@@ -95,9 +99,9 @@ class Project:
     def remove_borrow(self, lender):
         self.borrows.remove( lender )
 
-    def add_revision(self, revision_text, revision_datetime):
+    def add_revision(self):
         nextIndex = len(revisions) + 1
-        self.revisions[nextIndex] = [revision_text, revision_datetime]
+        self.revisions[nextIndex] = self.head
 
     def lock_proj(self):
         self.locked = 1
@@ -125,14 +129,14 @@ class File:
 class Group:
     ## Object which defines a user-group.
 
-    def __init__(self, groupID, accountIDs, godID,title):
+    def __init__(self,groupID,godID,title,description,accountIDs=set(),projIDs=set()):
 		# groupID is the group's unique hash ID.
 		# projIDs and accountIDs are sets of project and account hashes.
 		# godID is the account hash of the group god.
 		self.title=title
 		self.description=""
 		self.groupID = groupID
-		self.projIDs = set()
+		self.projIDs = projIDs
 		self.accountIDs = accountIDs
 		self.godID = godID
 
@@ -173,3 +177,21 @@ class Comment:
         ## To be called when a user deletes their comment.
         ## To be implemented.
         pass
+
+class Revision:
+
+    def __init__(self,project,revision_number,files=[]):
+        self.project=project
+        self.revision_number=revision_number
+        self.files=files
+
+class Head(Revision):
+
+    def __init__(self,project=None,revision_number=None,files=[],prevrev=None):
+        if not (prevrev is None):
+            Revision.__init__(self,prevrev.project,prevrev.revision_number,prevrev.files)
+        else:
+            Revision.__init__(self,project,revision_number,files)
+
+    def add_file(self,newfile):
+        self.files.append(newfile)
