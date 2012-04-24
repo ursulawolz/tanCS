@@ -69,7 +69,7 @@ class Borrow:
 
 
 class Project:
-    def __init__(self, projID, parentID, groupID, borrows=set(),revisions=[]):
+    def __init__(self, projID, parentID, groupID, borrows=set(),revisions=[],head=None):
         self.projID = projID
         self.parentID = parentID
         self.groupID = groupID
@@ -81,11 +81,10 @@ class Project:
         self.locked = 0
         self.tags = set()
 
-        if revisions==[]:
-            self.head=Revision(self,0)
-            self.add_revision(head)
+        if head is None:
+            self.head=Head(self,len(revisions))
         else:
-            self.head=revisions[-1]
+            self.head=head
 
     def add_child(self, child):
         self.children.add( child )
