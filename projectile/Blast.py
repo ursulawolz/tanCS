@@ -9,8 +9,7 @@ class Blast(Projectile):
 
 	'''Class Blast - Dynamic World Object fired by Blaster'''
 
-	def __init__(self, weapon, speed):
-		
+	def __init__(self, weapon, speed):		
 
 		#Parameters to be set
 		

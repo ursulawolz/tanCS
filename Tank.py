@@ -362,7 +362,7 @@ class Tank(DynamicWorldObject):
         Tasks called to wait
         '''
         dt = 1.0/60.0
-        print "Tank.updateWait: ", dt
+        #print "Tank.updateWait: ", dt
         self._taskTimer -= dt
 
         if self._taskTimer < 0: 
@@ -562,4 +562,4 @@ class Tank(DynamicWorldObject):
 
         x = self._weapon.fire(amt)        
         self.wait(.1)
-        return x;
+        return x

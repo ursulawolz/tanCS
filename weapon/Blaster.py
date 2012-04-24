@@ -36,6 +36,7 @@ class Blaster(Weapon):
 
 	def setCanFire(self, task):
 		self.canFire = True
+		return task.done
 
 	def getBulletName(self):
 		return self.tank.getNodePath().getName() + ' blast'
@@ -47,7 +48,7 @@ class Blaster(Weapon):
 		if self.canFire == True:
 			self.canFire = False
 			x = Blast(self, amt * self.maxVel)
-			self._tankWorld.taskMgr.doMethodLater(self.reloadTimer, self.setCanFire, 'can fire reload')
+			self._tankWorld.doMethodLater(self.reloadTimer, self.setCanFire, 'can fire reload')
 			return x
 		
 

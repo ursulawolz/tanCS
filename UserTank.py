@@ -19,9 +19,9 @@ class UserTank:
     def apply_thrusters(self, right = 1, left = 1):
         '''Applies forces to the tank in order to move it.
         @param right, left: Given from -1 to 1'''
-        if not(type(right) == 'int') or not(type(right) == 'float'):
+        if not(type(right) == type(1) or type(right) == type(1.0)):
             raise TypeError('Power on right in apply_thrusters() must be a number')
-        if not(type(left) == 'int') or not(type(left) == 'float'):
+        if not(type(left) == type(1) or type(left) == type(1.0)):
             raise TypeError('Power on left in apply_thrusters() must be a number')
 
         if abs(right) > 1:
@@ -34,7 +34,7 @@ class UserTank:
     def apply_brakes(self, amt = 1):
         '''Applies braking force to all wheels 
         @param amt: between 0 and 1'''
-        if not(type(amt) == 'int') or not(type(distance) == 'float'):
+        if not(type(amt) == type(1) or type(distance) == type(1.0)):
             raise TypeError('Amt in apply_brakes() must be a number')
         
         if (amt < 0 or amt > 1):
@@ -45,27 +45,28 @@ class UserTank:
 
     def move(self, distance = 20):
         '''Moves the tank the given distance. Forward is positive'''
-        if not(type(distance) == 'int') or not(type(distance) == 'float'):
+        if not (type(distance) == type(1) or type(distance) == type(1.0)):
+            print type(distance)
             raise TypeError('Distance in move() must be a number')
 
         self.__tank.move(distance)
 
     def backward(self, distance = 20):
         '''Moves the specified number of units backward'''
-        if not(type(distance) == 'int') or not(type(distance) == 'float'):
+        if not(type(distance) == type(1) or type(distance) == type(1.0)):
             raise TypeError('Distance in backward() must be a number')
 
-        if distance <=0:
+        if distance < 0:
             raise ValueError("Distance must be positive for forward and backward")
         else:
             self.move(-1*distance)
     
     def forward(self, distance = 20):
         '''Moves the specified number of units forward'''
-        if not(type(distance) == 'int') or not(type(distance) == 'float'):
+        if not(type(distance) == type(1) or type(distance) == type(1.0)):
             raise TypeError('Distance in forward() must be a number')
 
-        if (dist <=0):
+        if (dist < 0):
             raise ValueError("Distance must be positive for forward and backward")
         else:
             self.move(distance)
@@ -74,7 +75,7 @@ class UserTank:
 
     def rotate(self, angle = 90):
         '''Rotates the tank the specified number of degrees. Counter-clockwise (left) is positive'''
-        if not(type(angle) == 'int') or not(type(angle) == 'float'):
+        if not(type(angle) == type(1) or type(angle) == type(1.0)):
             raise TypeError('Angle in rotate() must be a number')
 
         
@@ -84,14 +85,14 @@ class UserTank:
 
     def turn_to(self, new_heading = 0):
         '''Turn so that you have the given heading value'''
-        if not(type(new_heading) == 'int') or not(type(new_heading) == 'float'):
+        if not(type(new_heading) == type(1) or type(new_heading) == type(1.0)):
             raise TypeError('new_heading in turn_to() must be a number')
         
         self.rotate(newH - self._nodePath.getH())
 
     def left(self, angle = 90):
         '''Turns the specified number of degrees left'''
-        if not(type(angle) == 'int') or not(type(angle) == 'float'):
+        if not(type(angle) == type(1) or type(angle) == type(1.0)):
             raise TypeError('Angle in left() must be a number')
         
         if angle < 0:
@@ -101,7 +102,7 @@ class UserTank:
 
     def right(self, angle = 90):
         '''Turns the specified number of degrees right'''
-        if not(type(angle) == 'int') or not(type(angle) == 'float'):
+        if not(type(angle) == type(1) or type(angle) == type(1.0)):
             raise TypeError('Angle in right() must be a number')
 
         if angle < 0:
@@ -118,7 +119,7 @@ class UserTank:
         except:
             raise TypeError('Point in face() must be callable')
 
-        if not len(x) == 3:
+        if not len(point) == 3:
             raise ValueError('Point in face() must include 3 elements')
 
         if type(point) == tuple or type(point) == list:
@@ -135,7 +136,7 @@ class UserTank:
         except:
             raise TypeError('Point in face_rel() must be callable')
 
-        if not len(x) == 3:
+        if not len(point) == 3:
             raise ValueError('Point in face_rel() must include 3 elements')
 
         if type(pointRel) == tuple or type(pointRel) == list:
@@ -202,7 +203,7 @@ class UserTank:
     def fire(self, power = 1):
         '''Fires a projectile of a type specified by the tank's weapon
         @param power: 0 to 1, how much of the maximum velocity will be given to the projectile'''
-        if not(type(power) == 'int') or not(type(power) == 'float'):
+        if not(type(power) == type(1) or type(power) == type(1.0)):
             raise TypeError('Power in fire() must be a number')
 
 
@@ -223,13 +224,13 @@ class UserTank:
         except:
             raise TypeError('Point in aim_at() must be callable')
 
-        if not len(x) == 3:
+        if not len(point) == 3:
             raise ValueError('Point in aim_at() must include 3 elements')
 
-        if not(type(power) == 'int') or not(type(power) == 'float'):
+        if not(type(power) == type(1) or type(power) == type(1.0)):
             raise TypeError('Power in aim_at() must be a number')
 
-        if not type(aim_low) == 'bool':
+        if not type(aim_low) == type(True):
             raise TypeError('aim_low in aim_at() must be a bool (True or False)')
 
         if (power < 0 or power > 1):
@@ -247,13 +248,13 @@ class UserTank:
         except:
             raise TypeError('Point in fire_at() must be callable')
 
-        if not len(x) == 3:
+        if not len(point) == 3:
             raise ValueError('Point in fire_at() must include 3 elements')
 
-        if not type(aim_low) == 'bool':
+        if not type(aim_low) == type(True):
             raise TypeError('aim_low in fire_at() must be a bool (True or False)')
 
-        if not(type(power) == 'int') or not(type(power) == 'float'):
+        if not(type(power) == type(1) or type(power) == type(1.0)):
             raise TypeError('Power in fire_at() must be a number')
 
         if (power < 0 or power > 1):
@@ -268,10 +269,10 @@ class UserTank:
         '''Moves the weapon of the tank to the sepcified heading and pitch values
         This happens instantaneously'''
 
-        if not(type(heading) == 'int') or not(type(heading) == 'float'):
+        if not(type(heading) == type(1) or type(heading) == type(1.0)):
             raise TypeError('Power in fire_at() must be a number')
 
-        if not(type(pitch) == 'int') or not(type(pitch) == 'float'):
+        if not(type(pitch) == type(1) or type(pitch) == type(1.0)):
             raise TypeError('Power in fire_at() must be a number')
 
         self.__tank.setWeaponHp(heading, pitch)

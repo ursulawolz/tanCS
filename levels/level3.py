@@ -42,11 +42,11 @@ makeCubeObject(size=(r1-r2,1,3),position=(posx[0]+r1-(r1-r2),r1,0), name='wall3'
 tank = makeTank(position=(posx[0]+r1-5,r1+3,2), orientation=(180,0,0), name='tank')
 
 #makeCubeObject(size=(5,7,5),position=(1,0,0),name='testobject')
-def nothing():
-    print  "win"
+#def nothing():
+#    print  "win"
 
 makeBlaster(tank)
-trigger = makeTrigger(function=nothing)
-makeCollisionState(trigger, position=(posx[0]+r1-5,r1-3,0), tracking_object=tank)
+#trigger = makeTrigger(function=nothing)
+#   makeCollisionState(trigger, position=(posx[0]+r1-5,r1-3,0), tracking_object=tank)
 
 #makePositionTrigger(target = tank, position=(posx[0]+r1-5,r1-3,0))

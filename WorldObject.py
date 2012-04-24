@@ -32,7 +32,13 @@ class WorldObject(object):
         
         self._nodePath.node().addShape(shape,self._transformState)
         self._tankWorld.attachRigidBody(self._nodePath.node())
-        
+    
+    def hide(self):
+        self._nodePath.hide()
+
+    def show(self):
+        self._nodePath.show()    
+
     def getVel(self):
         return self._nodePath.node().getLinearVelocity()
     def getName(self):

@@ -17,5 +17,5 @@ if len(sys.argv)==2:
 t = levels.MakeLevel.makeLevel(level)
 runFile(userfile,t)
 
-t.run()
+t.preCalc()
 sys.exit()
