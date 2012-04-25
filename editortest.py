@@ -148,7 +148,9 @@ class Editor(Gtk.Window):
 		print "Hello World" #test func
 
 	def copy_text(self,widget=None):
-		print 'copying'
+		select=self.sbuff.get_selection_bounds()
+		if not select==():
+			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.sbuff.get_text(select[0],select[1],True),-1)
 
 	def cut_text(self,widget=None):
 		print 'cutting'

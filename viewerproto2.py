@@ -1,8 +1,8 @@
 ###------------------------------Inclusions--------------------------------###
-from gi.repository import Gtk,GObject,GtkSource
+from gi.repository import Gtk,GObject,GtkSource,Clutter,GtkClutter
 from gi.repository import Gdk
 from objectcode import Account,Comment,Borrow
-import datetime
+import datetime, sys
 #from mainproto2 import on_window_mode_changed
 ###-------------------------------Main Functions---------------------------###
 
@@ -30,6 +30,8 @@ def change_window(widget,new_window_name,parent_window,top_parent):
 class TempWindow(Gtk.Window):
 	def __init__(self,parent):
 		Gtk.Window.__init__(self,title="Entry Demo")
+		GtkClutter.init([])
+		Clutter.init(sys.argv)
 
 		self.fake_user=Account("Random Hash","The instigator","Password","Avatar")
 		
@@ -48,22 +50,44 @@ class TempWindow(Gtk.Window):
 
 		#self.image=Gtk.Image()
 		#self.image=Gtk.set_from_image("side.jpg")
-		imagebox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=50)
+		imagebox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
 		self.image2=Gtk.Image.new_from_file("side.jpg")
 		self.image=Gtk.Image.new_from_file("sideb.jpg")
 		
-		imagebox.pack_start(self.image,False,False,0)
-		imagebox.pack_start(self.image2,False,False,0)
+		#imagebox.pack_start(self.image,False,False,0)
+		#imagebox.pack_start(self.image2,False,False,0)
+
+		
+		embed = GtkClutter.Embed()
+		embed.grab_focus()
+		imagebox.pack_start(embed,True,True,0)
+
+		stage = embed.get_stage()		# Get the Stage
+		stage.set_size(40, 20)	# Size of the stage
+		stage.set_title("The application title")		# Stage's title
+		colorBlack = Clutter.Color.new(255,255,255,255)
+		stage.set_color(colorBlack)
+		stage.set_reactive(True)
+
+		green = Clutter.Color.new(0,0,255,255) # red,green,blue,alpha
+		intext = Clutter.Text.new_full("Sans 20", "Hello! This\nis where the\ndynamic\nrevision map\nwill go.\nPlease do\nnot panic\nwhile we\nrenovate.", green)
+	
+		Clutter.Container.add_actor(stage, intext)
+		intext.set_position(5,5)
+
+		stage.show_all()		# We show everything
 
 		imageframe=Gtk.Frame()
 		imageframe.add(imagebox)
+		imageframe.set_size_request(200,20)
 
 		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		self.toplevel.set_size_request(self.x,self.y)
 		self.add(self.toplevel)
 		#self.toplevel.pack_start(menubar,False,False,0)
 		self.toplevel.pack_start(imageframe,True,True,0)
-		
+
+
 		vbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
 		#self.add(vbox)
 
@@ -146,9 +170,10 @@ class TempWindow(Gtk.Window):
 
 		hbox2.pack_start(commentscroll,True,True,0)
 		hbox2.pack_start(vbox3,False,False,0)
-		
+
 		vbox.pack_start(frame,False,False,0)
 		vbox.pack_start(hbox2,False,False,0)
+		#vbox.pack_start(embed,True,True,0)
 
 		self.toplevel.pack_start(vbox,False,False,0)
 		#Gtk.UIManager()
@@ -306,7 +331,7 @@ class TempWindow(Gtk.Window):
 			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
 				self.copy_text()
 
-	def copy_text(self):
+	def copy_text(self,widget=None):
 		date=datetime.date.today()
 		select=self.thecodebuffer.get_selection_bounds()
 		if select==():
@@ -324,6 +349,7 @@ class TempWindow(Gtk.Window):
 			else:
 				self.copy=Borrow(date,'self.project.projID','self.revision','self.file.file_name',(line1,line2),(lineoffset1,lineoffset2))
 			self.parent.borrows.append(self.copy)
+			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.thecodebuffer.get_text(select[0],select[1],True),-1)
 
 	def get_lines_from_block(self,select):
 		#takes in a tuple with the selection bounds
