@@ -379,7 +379,7 @@ class TempWindow(Gtk.Window):
 		print 'Would you like a spoon instead?'
 		pass
 
-###-----------------------------ADDITIONAL WINDOWS-------------------------###
+###-------------------------ADDITIONAL WINDOWS-----------------------###
 class LineCommentDialog(Gtk.Dialog):
 	def __init__(self, parent):
 		Gtk.Dialog.__init__(self,"Submit Line Comment",parent,0)
