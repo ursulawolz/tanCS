@@ -89,7 +89,9 @@ class explorer_window(Gtk.Window):
 		self.current_page=the_new_page
 		toplevel.pack_start(self.current_page,False,False,0)
 		toplevel.show_all()
-			
+
+###------------------------Make-Functions------------------------###	
+		
 	def make_homepage(self):
 		self.padding=Gtk.Label("\n")
 		self.label1=Gtk.Label("<span font_desc='Helvetica 20'>%s</span>" %"<b>Welcome to TanCS</b>")
@@ -104,10 +106,40 @@ class explorer_window(Gtk.Window):
 		return self.return_box
 
 	def make_account(self,account):
-		self.label2=Gtk.Label("This is the Account Page")
-		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-		self.return_box.pack_start(self.label2,True,True,0)
-		return self.return_box
+		self.return_box2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+		info_block=Gtk.Table(4,4,True)
+
+		user_title=Gtk.Label("Username: ")
+		pass_title=Gtk.Label("Password: ")
+		avatar_title=Gtk.Label("Avatar: ")
+		username_label=Gtk.Label(account.username)
+		password_label=Gtk.Label(account.password)
+		avatar_label=Gtk.Label(account.avatar)
+		user_button=Gtk.Button("Change")
+		pass_button=Gtk.Button("Change")
+		avatar_button=Gtk.Button("Change")
+
+		info_block.attach(user_title,0,1,0,1)
+		info_block.attach(pass_title,0,1,1,2)
+		info_block.attach(avatar_title,0,1,2,3)
+		info_block.attach(username_label,0,3,0,1)
+		info_block.attach(password_label,0,3,1,2)
+		info_block.attach(avatar_label,0,3,2,4)
+		info_block.attach(user_button,3,4,0,1)
+		info_block.attach(pass_button,3,4,1,2)
+		info_block.attach(avatar_button,3,4,2,3)
+		
+		group_title=Gtk.Label("Groups: ")
+		temp=self.make_search_results("demo","")
+		project_title=Gtk.Label("Projects: ")
+		temp2=self.make_search_results("demo","")
+		
+		self.return_box2.pack_start(info_block,True,True,0)
+		self.return_box2.pack_start(group_title,True,True,0)
+		self.return_box2.pack_start(temp,True,True,0)
+		self.return_box2.pack_start(project_title,True,True,0)
+		self.return_box2.pack_start(temp2,True,True,0)
+		return self.return_box2
 
 	def make_help(self):
 		self.label3=Gtk.Label("This is the Help Page")
@@ -121,6 +153,7 @@ class explorer_window(Gtk.Window):
 		#self.return_box.pack_start(self.label5,True,True,0)
 		return self.return_box
 
+###----------------------------Login-Functions----------------------###
 	def make_login(self,toplevel):
 		self.username_entry=Gtk.Entry()
 		self.password_entry=Gtk.Entry()
@@ -151,52 +184,6 @@ class explorer_window(Gtk.Window):
 		self.return_box.add(self.total_block)
 		return self.return_box
 
-	def get_results(self,type_results,identifier):
-		temp_account=Account('','','','')
-		if type_results=="groups" and type(identifier)==type(temp_account):			
-			result1=Group("gId",["aID","aID2"],"godId","Title1")
-			result1.description="This is a Description"
-			result2=Group("gId","aID","godId","Title2")
-			result2.description="This is a Description"
-			result3=Group("gId","aID","godId","Title3")
-			result3.description="This is a Description"
-			results=[result1,result2,result3]
-			print "working in get results"
-			return results
-		elif type_results=="projects" and type(identifier)==type(Group()):
-			pass
-		elif type_results=="accounts" and type(identifier)==type(Group()):
-			pass
-		elif type_results=="demo" and type(identifier)==type("string"):
-			result1=("Title1","This is where description information will go","This is other information")
-			result2=("Title2","This is where description information will go","This is other information")
-			results=[result1,result2]
-			return results
-		else:
-			print "Error in identifying types",type(identifier),"with",type(''),"in get results"
-			print "type_results is: ",type_results
-
-	def what_display(self,result):
-		temp_group=Group('','','','')
-		if type(result)==type(Account):
-			pass
-		elif type(result)==type(temp_group):
-			title=result.title
-			comment=result.description
-			#other_info="Accounts are"+result.get_accounts()
-			other_info="Accounts are: "+str(result.accountIDs)
-			return [title,comment,other_info]
-		elif type(result)==type(Project):	
-			pass
-		elif type(result)==type(('','')):
-			print "result is: ",result
-			title=result[0]
-			comment=result[1]
-			other_info=result[2]
-			return [title,comment,other_info]
-		else:
-			print "Error in identifying types in display"			
-
 	def submit_login(self,widget,username,password,toplevel):
 		#check to see if the account is valid
 		#Account=get_account(username.get_text(),password.get_text())
@@ -218,9 +205,11 @@ class explorer_window(Gtk.Window):
 			self.tohelp.connect("button_press_event",self.on_help_clicked,self.toplevel)
 			#print self.parent.user
 			self.on_home_clicked("widget","something",toplevel)
-
 		else:
 			self.alert.set_text("Your login information is invalid")
+
+
+###-------------------------Search-Functions-----------------------###
 		
 	# look for all results of type 'type_results' using 'identifier'
 	# for instance, look for all results of type group using identifier account. This would display all of account's groups
@@ -283,35 +272,7 @@ class explorer_window(Gtk.Window):
 		outer_padding.set_border_width(6)
 		#comment_padding.set_border_width(3)
 		return outer_padding
-	
-	def on_home_clicked(self,widget,something,toplevel):
-		print("Home clicked")
-		self.the_new_page=self.make_homepage()
-		self.create_new_page(toplevel,self.the_new_page)
-		self.alert.set_text("Homepage")
-	def on_account_clicked(self,widget,something,toplevel):
-		print("Account clicked")
-		self.the_new_page=self.make_account("account")
-		self.create_new_page(toplevel,self.the_new_page)
-		self.alert.set_text("Account Page")
-	def on_mygroups_clicked(self,widget,something,toplevel):
-		self.the_new_page=self.make_mygroups("account")
-		self.create_new_page(toplevel,self.the_new_page)
-		self.alert.set_text("My Groups")
-	def on_search_clicked(self,widget,something,toplevel):
-		print("Search clicked")
-		#self.the_new_page=self.make_search_results("type_results","Identifier")
-		self.the_new_page=self.search_input(toplevel)
-		self.create_new_page(toplevel,self.the_new_page)
-		self.alert.set_text("Search Parameters")
-	def on_help_clicked(self,widget,something,toplevel):
-		print("Help clicked")
-		self.the_new_page=self.make_help()
-		self.create_new_page(toplevel,self.the_new_page)
-		self.alert.set_text("Help Page")
-	def on_nologin_clicked(self,widget,something,toplevel):
-		#print not(self.parent.user==None)
-		self.alert.set_text("You have not logged in yet!") 
+
 	def search_input(self,toplevel):
 		search_for=Gtk.Entry()
 		search_using=Gtk.Entry()
@@ -339,10 +300,96 @@ class explorer_window(Gtk.Window):
 		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=10)
 		self.return_box.pack_start(total_block,False,False,0)
 		return self.return_box
+
 	def submit_search(self,widget,search_for,search_using,toplevel):
 		search_for=search_for.get_text()
 		search_using=search_using.get_text()
 		print "search for is: ",search_for," search using is: ",search_using 
 		self.the_new_page=self.make_search_results(search_for,search_using)
 		self.create_new_page(toplevel,self.the_new_page)
+
+	def what_display(self,result):
+		temp_group=Group('','','','')
+		if type(result)==type(Account):
+			pass
+		elif type(result)==type(temp_group):
+			title=result.title
+			comment=result.description
+			#other_info="Accounts are"+result.get_accounts()
+			other_info="Accounts are: "+str(result.accountIDs)
+			return [title,comment,other_info]
+		elif type(result)==type(Project):	
+			pass
+		elif type(result)==type(('','')):
+			print "result is: ",result
+			title=result[0]
+			comment=result[1]
+			other_info=result[2]
+			return [title,comment,other_info]
+		else:
+			print "Error in identifying types in display"	
+
+###--------------------------Quicknav-Functions----------------------###
+	
+	def on_home_clicked(self,widget,something,toplevel):
+		print("Home clicked")
+		self.the_new_page=self.make_homepage()
+		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Homepage")
+
+	def on_account_clicked(self,widget,something,toplevel):
+		print("Account clicked")
+		self.the_new_page=self.make_account(self.parent.user)
+		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Account Page")
+
+	def on_mygroups_clicked(self,widget,something,toplevel):
+		self.the_new_page=self.make_mygroups("account")
+		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("My Groups")
+
+	def on_search_clicked(self,widget,something,toplevel):
+		print("Search clicked")
+		#self.the_new_page=self.make_search_results("type_results","Identifier")
+		self.the_new_page=self.search_input(toplevel)
+		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Search Parameters")
+
+	def on_help_clicked(self,widget,something,toplevel):
+		print("Help clicked")
+		self.the_new_page=self.make_help()
+		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Help Page")
+
+	def on_nologin_clicked(self,widget,something,toplevel):
+		#print not(self.parent.user==None)
+		self.alert.set_text("You have not logged in yet!") 
+
+	###-------------------------Other-Functions-----------------------###
+	def get_results(self,type_results,identifier):
+		temp_account=Account('','','','')
+		if type_results=="groups" and type(identifier)==type(temp_account):			
+			result1=Group("gId",["aID","aID2"],"godId","Title1")
+			result1.description="This is a Description"
+			result2=Group("gId","aID","godId","Title2")
+			result2.description="This is a Description"
+			result3=Group("gId","aID","godId","Title3")
+			result3.description="This is a Description"
+			results=[result1,result2,result3]
+			print "working in get results"
+			return results
+		elif type_results=="projects" and type(identifier)==type(Group()):
+			pass
+		elif type_results=="accounts" and type(identifier)==type(Group()):
+			pass
+		elif type_results=="demo" and type(identifier)==type("string"):
+			result1=("Title1","This is where description information will go","This is other information")
+			result2=("Title2","This is where description information will go","This is other information")
+			results=[result1,result2]
+			return results
+		else:
+			print "Error in identifying types",type(identifier),"with",type(''),"in get results"
+			print "type_results is: ",type_results		
+
+
 
