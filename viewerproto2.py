@@ -71,7 +71,8 @@ class TempWindow(Gtk.Window):
 
 		green = Clutter.Color.new(0,0,255,255) # red,green,blue,alpha
 		intext = Clutter.Text.new_full("Sans 20", "Hello! This\nis where the\ndynamic\nrevision map\nwill go.\nPlease do\nnot panic\nwhile we\nrenovate.", green)
-	
+		stage.connect("button-press-event", self.success)
+
 		Clutter.Container.add_actor(stage, intext)
 		intext.set_position(5,5)
 
@@ -186,6 +187,10 @@ class TempWindow(Gtk.Window):
 		new_comment=Comment(text,time,"Hash","Which_file",self.fake_user)
 		print(account+" says: '"+text+"' about this file")
 		return
+
+	def success(self,widget):
+		print 'success'
+
 
 # Just to make it clear for later, there is a label, which is the text of the comment. It is placed within an event box for border reasons. 
 # Then frames are created. The event boxes are added to the frames. The account name associated with the comment is then made as a label for bold reasons. 
