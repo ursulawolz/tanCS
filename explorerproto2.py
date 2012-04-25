@@ -112,19 +112,25 @@ class explorer_window(Gtk.Window):
 		user_title=Gtk.Label("Username: ")
 		pass_title=Gtk.Label("Password: ")
 		avatar_title=Gtk.Label("Avatar: ")
-		username_label=Gtk.Label(account.username)
-		password_label=Gtk.Label(account.password)
-		avatar_label=Gtk.Label(account.avatar)
+		self.username_label=Gtk.Entry()
+		self.username_label.set_text(account.username)
+		self.password_label=Gtk.Entry()
+		self.password_label.set_text(account.password)
+		self.avatar_label=Gtk.Label(account.avatar)
 		user_button=Gtk.Button("Change")
 		pass_button=Gtk.Button("Change")
 		avatar_button=Gtk.Button("Change")
 
+		user_button.connect("clicked",self.on_change_pressed,"usr")
+		pass_button.connect("clicked",self.on_change_pressed,"pass")
+		avatar_button.connect("clicked",self.on_change_pressed,"avatar")
+
 		info_block.attach(user_title,0,1,0,1)
 		info_block.attach(pass_title,0,1,1,2)
 		info_block.attach(avatar_title,0,1,2,3)
-		info_block.attach(username_label,0,3,0,1)
-		info_block.attach(password_label,0,3,1,2)
-		info_block.attach(avatar_label,0,3,2,4)
+		info_block.attach(self.username_label,1,3,0,1)
+		info_block.attach(self.password_label,1,3,1,2)
+		info_block.attach(self.avatar_label,1,3,2,4)
 		info_block.attach(user_button,3,4,0,1)
 		info_block.attach(pass_button,3,4,1,2)
 		info_block.attach(avatar_button,3,4,2,3)
@@ -134,12 +140,23 @@ class explorer_window(Gtk.Window):
 		project_title=Gtk.Label("Projects: ")
 		temp2=self.make_search_results("demo","")
 		
-		self.return_box2.pack_start(info_block,True,True,0)
+		self.return_box2.pack_start(info_block,False,False,0)
 		self.return_box2.pack_start(group_title,True,True,0)
 		self.return_box2.pack_start(temp,True,True,0)
 		self.return_box2.pack_start(project_title,True,True,0)
 		self.return_box2.pack_start(temp2,True,True,0)
 		return self.return_box2
+
+	def on_change_pressed(self,widget,which):
+		if which=="usr":
+			#change_username(self.parent.user.userID,new_username)
+			print "username changed from '"+self.parent.user.username+"' to '"+self.username_label.get_text()+"'" 
+		elif which=="pass":
+			#change_password(self.parent.user.userID,new_password)
+			print "password changed from '"+self.parent.user.password+"' to '"+self.password_label.get_text()+"'"
+		elif which=="avatar":
+			#change_avatar(self.parent.user.userID,new_avatar)
+			print "avatar changed from '"+self.parent.user.avatar+"' to 'stuff'" 
 
 	def make_help(self):
 		self.label3=Gtk.Label("This is the Help Page")
