@@ -106,6 +106,54 @@ class explorer_window(Gtk.Window):
 		self.return_box.pack_start(self.label2,True,True,0)
 		return self.return_box
 
+	def make_help(self):
+		self.label3=Gtk.Label("This is the Help Page")
+		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+		self.return_box.pack_start(self.label3,True,True,0)
+		return self.return_box
+
+	def make_mygroups(self,account):
+		#self.label5=Gtk.Label("This is the MyGroups Page")
+		self.return_box=self.make_search_results("groups",self.parent.user)
+		#self.return_box.pack_start(self.label5,True,True,0)
+		return self.return_box
+
+	def make_display_group(self,group):
+		self.return_box2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=20)
+
+		title=Gtk.Label('<b>'+group.title+'</b>')
+		title.set_use_markup(True)
+		description_title=Gtk.Label("Description: ")
+		admin_title=Gtk.Label("Admin: ")
+		account_title=Gtk.Label("Accounts: ")
+		project_title=Gtk.Label("Projects: ")
+
+		description=Gtk.Label(group.description)
+		print group.description
+		admin=Gtk.Label(self.get_results("accounts","FakeID").username)
+		accounts=self.make_search_results("demo","")
+		projects=self.make_search_results("demo","")
+		new_project_button=Gtk.Button("Create New Project")
+		join_group_button=Gtk.Button("Join This Group")
+
+		admin_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=20)
+		description_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=20)
+		admin_block.pack_start(admin_title,False,False,0)
+		admin_block.pack_start(admin,False,False,0)
+		description_block.pack_start(description_title,False,False,0)
+		description_block.pack_start(description,False,False,0)
+
+		self.return_box2.pack_start(title,False,False,0)
+		self.return_box2.pack_start(description_block,False,False,0)
+		self.return_box2.pack_start(admin_block,False,False,0)
+		self.return_box2.pack_start(account_title,False,False,0)
+		self.return_box2.pack_start(accounts,False,False,0)
+		self.return_box2.pack_start(join_group_button,False,False,0)
+		self.return_box2.pack_start(project_title,False,False,0)
+		self.return_box2.pack_start(projects,False,False,0)
+		self.return_box2.pack_start(new_project_button,False,False,0)		
+		return self.return_box2
+###---------------------------Account-Functions---------------------###
 	def make_account(self,account):
 		self.return_box2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
 		info_block=Gtk.Table(4,4,True)
@@ -165,19 +213,6 @@ class explorer_window(Gtk.Window):
 			print "avatar changed from '"+self.parent.user.avatar+"' to "+f.name+"'" 
 			self.parent.user.avatar=f.name
 			realwidget.set_from_file(self.parent.user.avatar)
-
-
-	def make_help(self):
-		self.label3=Gtk.Label("This is the Help Page")
-		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-		self.return_box.pack_start(self.label3,True,True,0)
-		return self.return_box
-
-	def make_mygroups(self,account):
-		#self.label5=Gtk.Label("This is the MyGroups Page")
-		self.return_box=self.make_search_results("groups",self.parent.user)
-		#self.return_box.pack_start(self.label5,True,True,0)
-		return self.return_box
 
 ###----------------------------Login-Functions----------------------###
 	def make_login(self,toplevel):
@@ -242,7 +277,7 @@ class explorer_window(Gtk.Window):
 	def make_search_results(self,type_results,identifier):
 		#ask for results from network
 		resultslist=self.get_results(type_results,identifier)
-		print "working in make results"
+		#print "working in make results"
 		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
 		#self.label4=Gtk.Label("This is the Search Result page")
 		#self.return_box.pack_start(self.label4,True,True,0)
@@ -254,14 +289,14 @@ class explorer_window(Gtk.Window):
 			xpos=1
 			while xpos<9 and number<=total:
 				display_list=self.what_display(resultslist[number-1])
-				print display_list
+				#print display_list
 				search_box=self.make_search_box(number,display_list[0],display_list[1],display_list[2])
 				search_grid.attach(search_box,xpos,ypos,1,1)
 				xpos=xpos+1
 				number=number+1
-				print "number: "+str(number)
-				print "xpos: "+str(xpos)
-				print "ypos: "+str(ypos)
+				#print "number: "+str(number)
+				#print "xpos: "+str(xpos)
+				#print "ypos: "+str(ypos)
 			ypos=ypos+1
 		self.return_box.pack_start(search_grid,True,True,0)
 		return self.return_box
@@ -347,7 +382,7 @@ class explorer_window(Gtk.Window):
 		elif type(result)==type(Project):	
 			pass
 		elif type(result)==type(('','')):
-			print "result is: ",result
+			#print "result is: ",result
 			title=result[0]
 			comment=result[1]
 			other_info=result[2]
@@ -383,7 +418,9 @@ class explorer_window(Gtk.Window):
 
 	def on_help_clicked(self,widget,something,toplevel):
 		print("Help clicked")
-		self.the_new_page=self.make_help()
+		#self.the_new_page=self.make_help()
+		temp=Group("GroupID","GodID","This is the title","This is the description",'a','a')
+		self.the_new_page=self.make_display_group(temp)
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Help Page")
 
@@ -393,7 +430,8 @@ class explorer_window(Gtk.Window):
 
 	###-------------------------Other-Functions-----------------------###
 	def get_results(self,type_results,identifier):
-		temp_account=Account('','','','')
+		temp_account=Account("Fake ID","Fake Username",'','')
+		temp_group=Group('','','','','')
 		if type_results=="groups" and type(identifier)==type(temp_account):			
 			result1=Group("gId",["aID","aID2"],"godId","Title1")
 			result1.description="This is a Description"
@@ -406,8 +444,11 @@ class explorer_window(Gtk.Window):
 			return results
 		elif type_results=="projects" and type(identifier)==type(Group()):
 			pass
-		elif type_results=="accounts" and type(identifier)==type(Group()):
+		elif type_results=="accounts" and type(identifier)==type(temp_group):
 			pass
+		elif type_results=="accounts" and type(identifier)==type(""):
+			result=temp_account
+			return result
 		elif type_results=="demo" and type(identifier)==type("string"):
 			result1=("Title1","This is where description information will go","This is other information")
 			result2=("Title2","This is where description information will go","This is other information")

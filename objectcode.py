@@ -128,12 +128,12 @@ class File:
 class Group:
     ## Object which defines a user-group.
 
-    def __init__(self,groupID,godID,title,description,accountIDs=set(),projIDs=set()):
+    def __init__(self,groupID,godID,title,description="",accountIDs=set(),projIDs=set()):
 		# groupID is the group's unique hash ID.
 		# projIDs and accountIDs are sets of project and account hashes.
 		# godID is the account hash of the group god.
 		self.title=title
-		self.description=""
+		self.description=description
 		self.groupID = groupID
 		self.projIDs = projIDs
 		self.accountIDs = accountIDs
