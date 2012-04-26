@@ -1,5 +1,6 @@
 ###------------------------------Inclusions--------------------------------###
-from gi.repository import Gtk,GObject,GtkSource,Clutter,GtkClutter
+from gi.repository import GtkClutter
+from gi.repository import Gtk,GObject,GtkSource,Clutter
 from gi.repository import Gdk
 from objectcode import Account,Comment,Borrow
 import datetime, sys
@@ -30,8 +31,8 @@ def change_window(widget,new_window_name,parent_window,top_parent):
 class TempWindow(Gtk.Window):
 	def __init__(self,parent):
 		Gtk.Window.__init__(self,title="Entry Demo")
-		GtkClutter.init([])
-		Clutter.init(sys.argv)
+		
+		#Clutter.init(sys.argv)
 
 		self.fake_user=Account("Random Hash","The instigator","Password","Avatar")
 		
@@ -58,12 +59,13 @@ class TempWindow(Gtk.Window):
 		#imagebox.pack_start(self.image2,False,False,0)
 
 		
-		embed = GtkClutter.Embed()
-		embed.grab_focus()
-		imagebox.pack_start(embed,True,True,0)
+		self.embed = GtkClutter.Embed()
+		self.embed.grab_focus()
+		self.embed.connect("enter-notify-event",self.enter_clutter)
+		#self.embed.connect("button-press-event",self.stageclicked)
+		imagebox.pack_start(self.embed,True,True,0)
 
-		stage = embed.get_stage()		# Get the Stage
-		stage.set_size(40, 20)	# Size of the stage
+		stage = self.embed.get_stage()		# Get the Stage
 		stage.set_title("The application title")		# Stage's title
 		colorBlack = Clutter.Color.new(255,255,255,255)
 		stage.set_color(colorBlack)
@@ -71,16 +73,27 @@ class TempWindow(Gtk.Window):
 
 		green = Clutter.Color.new(0,0,255,255) # red,green,blue,alpha
 		intext = Clutter.Text.new_full("Sans 20", "Hello! This\nis where the\ndynamic\nrevision map\nwill go.\nPlease do\nnot panic\nwhile we\nrenovate.", green)
-		stage.connect("button-press-event", self.success)
+		intext.set_reactive(True)
 
+		self.rect=Clutter.Rectangle()
+		self.rect.set_color(green)
+		self.rect.set_reactive(True)
 		Clutter.Container.add_actor(stage, intext)
 		intext.set_position(5,5)
 
-		stage.show_all()		# We show everything
+		Clutter.Container.add_actor(stage, self.rect)
+		self.rect.set_position(5,400)
+		self.rect.set_size(50,50)
+		#self.rect.set_size(50,50)
+		self.rect.connect('button-press-event',self.stageclicked)
+		self.rectrot=0
+		GObject.timeout_add(10,self.clutterupdate)
+
+		stage.show_all()	# We show everything
 
 		imageframe=Gtk.Frame()
 		imageframe.add(imagebox)
-		imageframe.set_size_request(200,20)
+		self.embed.set_size_request(200,800)
 
 		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		self.toplevel.set_size_request(self.x,self.y)
@@ -188,9 +201,23 @@ class TempWindow(Gtk.Window):
 		print(account+" says: '"+text+"' about this file")
 		return
 
-	def success(self,widget):
+	def success(self,widget,data=-1):
 		print 'success'
 
+	def enter_clutter(self,widget,data=-1):
+		self.embed.grab_focus()
+
+	def stageclicked(self,widget,event=-1,data=-1):
+		#print "Stage clicked at (%f, %f)" % (event.x, event.y)
+		print widget
+		print event
+		print data
+		return True # Stop further handling of this event
+
+	def clutterupdate(self,data=-1):
+		self.rect.set_rotation(Clutter.RotateAxis.X_AXIS, self.rectrot, 0, 25, 0)
+		self.rectrot+=5
+		return True
 
 # Just to make it clear for later, there is a label, which is the text of the comment. It is placed within an event box for border reasons. 
 # Then frames are created. The event boxes are added to the frames. The account name associated with the comment is then made as a label for bold reasons. 

@@ -1,4 +1,6 @@
 ###------------------------------Inclusions--------------------------------###
+from gi.repository import GtkClutter
+GtkClutter.init([])
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 import viewerproto2 as viewer
@@ -46,6 +48,7 @@ class tanCS(object):
 		win.connect("delete-event",Gtk.main_quit)
 		win.show_all()
 
+		#GObject.MainLoop().run()
 		Gtk.main()
 
 ###---------------------------MAIN SWITCH----------------------------###
