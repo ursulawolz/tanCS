@@ -1,6 +1,7 @@
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 from objectcode import *
+import tkFileDialog, Tkinter
 
 ###------------------------Explorer Class--------------------------###
 class explorer_window(Gtk.Window):
@@ -116,14 +117,15 @@ class explorer_window(Gtk.Window):
 		self.username_label.set_text(account.username)
 		self.password_label=Gtk.Entry()
 		self.password_label.set_text(account.password)
-		self.avatar_label=Gtk.Label(account.avatar)
+		self.avatar_label=Gtk.Image()
+		self.avatar_label.set_from_file(account.avatar)
 		user_button=Gtk.Button("Change")
 		pass_button=Gtk.Button("Change")
 		avatar_button=Gtk.Button("Change")
 
 		user_button.connect("clicked",self.on_change_pressed,"usr")
 		pass_button.connect("clicked",self.on_change_pressed,"pass")
-		avatar_button.connect("clicked",self.on_change_pressed,"avatar")
+		avatar_button.connect("clicked",self.on_change_pressed,"avatar",self.avatar_label)
 
 		info_block.attach(user_title,0,1,0,1)
 		info_block.attach(pass_title,0,1,1,2)
@@ -147,7 +149,7 @@ class explorer_window(Gtk.Window):
 		self.return_box2.pack_start(temp2,True,True,0)
 		return self.return_box2
 
-	def on_change_pressed(self,widget,which):
+	def on_change_pressed(self,widget,which,realwidget=None):
 		if which=="usr":
 			#change_username(self.parent.user.userID,new_username)
 			print "username changed from '"+self.parent.user.username+"' to '"+self.username_label.get_text()+"'" 
@@ -155,8 +157,15 @@ class explorer_window(Gtk.Window):
 			#change_password(self.parent.user.userID,new_password)
 			print "password changed from '"+self.parent.user.password+"' to '"+self.password_label.get_text()+"'"
 		elif which=="avatar":
+			root=Tkinter.Tk()
+			filename = tkFileDialog.askopenfilename(parent=root,title='Choose a file',filetypes=[('JPEG','*.jpg'),('Bitmap','*.bmp'),('PNG','*.png'),('GIF','*.gif')])
+			root.destroy()
+			f=open(filename)
 			#change_avatar(self.parent.user.userID,new_avatar)
-			print "avatar changed from '"+self.parent.user.avatar+"' to 'stuff'" 
+			print "avatar changed from '"+self.parent.user.avatar+"' to "+f.name+"'" 
+			self.parent.user.avatar=f.name
+			realwidget.set_from_file(self.parent.user.avatar)
+
 
 	def make_help(self):
 		self.label3=Gtk.Label("This is the Help Page")
@@ -204,7 +213,7 @@ class explorer_window(Gtk.Window):
 	def submit_login(self,widget,username,password,toplevel):
 		#check to see if the account is valid
 		#Account=get_account(username.get_text(),password.get_text())
-		account=Account("account ID","Fake Account","1234","avatar")
+		account=Account("account ID","Fake Account","1234","fork-icon.png")
 		if not account==None:
 			self.parent.user=account
 			self.alert.set_text("You have logged in!")
