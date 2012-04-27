@@ -62,14 +62,18 @@ class TempWindow(Gtk.Window):
 		self.embed = GtkClutter.Embed()
 		self.embed.grab_focus()
 		self.embed.connect("enter-notify-event",self.enter_clutter)
+		'''
+		clutterscroll=Gtk.ScrolledWindow()
+		clutterscroll.add_with_viewport(self.embed)
+		clutterscroll.set_size_request(200,800)'''
 		#self.embed.connect("button-press-event",self.stageclicked)
-		imagebox.pack_start(self.embed,True,True,0)
+		imagebox.pack_start(embed,True,True,0)
 
 		self.render_clutter()
 
 		imageframe=Gtk.Frame()
 		imageframe.add(imagebox)
-		self.embed.set_size_request(200,800)
+		self.embed.set_size_request(200,2000)
 
 		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		self.toplevel.set_size_request(self.x,self.y)
@@ -186,8 +190,6 @@ class TempWindow(Gtk.Window):
 		self.stage.set_color(white)
 		self.stage.set_reactive(True)
 
-		
-
 		intext = Clutter.Text.new_full("Sans 20", "Hello! This\nis where the\ndynamic\nrevision map\nwill go.\nPlease do\nnot panic\nwhile we\nrenovate.", blue)
 		intext.set_reactive(True)
 		Clutter.Container.add_actor(self.stage, intext)
@@ -197,7 +199,7 @@ class TempWindow(Gtk.Window):
 		self.rect.set_color(blue)
 		self.rect.set_reactive(True)
 		Clutter.Container.add_actor(self.stage, self.rect)
-		self.rect.set_position(40,300)
+		self.rect.set_position(40,1200)
 		self.rect.set_size(50,50)
 		
 
@@ -225,7 +227,7 @@ class TempWindow(Gtk.Window):
 		label2.set_position(100,620)
 
 
-		self.stage.connect('button-press-event',self.stageclicked)
+		#self.stage.connect('button-press-event',self.stageclicked)
 		self.rectrot=0
 		GObject.timeout_add(10,self.clutterupdate)
 
@@ -239,9 +241,10 @@ class TempWindow(Gtk.Window):
 
 	def stageclicked(self,widget,event=-1,data=-1):
 		#print "Stage clicked at (%f, %f)" % (event.x, event.y)
+		'''
 		circle=Clutter.Texture.new_from_file("explorer-icon.png");
 		Clutter.Container.add_actor(self.stage, circle)
-		circle.set_position(event.get_coords()[0],event.get_coords()[1])
+		circle.set_position(event.get_coords()[0],event.get_coords()[1])'''
 		return True # Stop further handling of this event
 
 	def clutterupdate(self,data=-1):
