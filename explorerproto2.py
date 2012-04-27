@@ -131,8 +131,9 @@ class explorer_window(Gtk.Window):
 		description=Gtk.Label(group.description)
 		print group.description
 		admin=Gtk.Label(self.get_results("accounts","FakeID").username)
-		accounts=self.make_search_results("demo","")
-		projects=self.make_search_results("demo","")
+		temp_group=Group('','','','','','')
+		accounts=self.make_search_results("accounts",temp_group)
+		projects=self.make_search_results("projects",temp_group)
 		new_project_button=Gtk.Button("Create New Project")
 		join_group_button=Gtk.Button("Join This Group")
 
@@ -186,9 +187,10 @@ class explorer_window(Gtk.Window):
 		info_block.attach(avatar_button,3,4,2,3)
 		
 		group_title=Gtk.Label("Groups: ")
-		temp=self.make_search_results("demo","")
+		temp=self.make_search_results("groups",self.parent.user)
 		project_title=Gtk.Label("Projects: ")
-		temp2=self.make_search_results("demo","")
+		#temp2=self.make_search_results("demo",'')
+		temp2=self.make_search_results("projects",self.parent.user)
 		
 		self.return_box2.pack_start(info_block,False,False,0)
 		self.return_box2.pack_start(group_title,True,True,0)
@@ -289,7 +291,6 @@ class explorer_window(Gtk.Window):
 			xpos=1
 			while xpos<9 and number<=total:
 				display_list=self.what_display(resultslist[number-1])
-				#print display_list
 				search_box=self.make_search_box(number,display_list[0],display_list[1],display_list[2])
 				search_grid.attach(search_box,xpos,ypos,1,1)
 				xpos=xpos+1
@@ -371,16 +372,26 @@ class explorer_window(Gtk.Window):
 
 	def what_display(self,result):
 		temp_group=Group('','','','')
-		if type(result)==type(Account):
-			pass
+		temp_project=Project('','','','','','','','')
+		temp_account=Account('','','','')
+		print result
+		if type(result)==type(temp_account):
+			title=result.username
+			comment=result.avatar
+			other_info="Nothing"
+			return [title,comment,other_info]
 		elif type(result)==type(temp_group):
 			title=result.title
 			comment=result.description
 			#other_info="Accounts are"+result.get_accounts()
 			other_info="Accounts are: "+str(result.accountIDs)
 			return [title,comment,other_info]
-		elif type(result)==type(Project):	
-			pass
+		elif type(result)==type(temp_project):
+			print "project"	
+			title=result.title
+			comment=result.description
+			other_info="Current Revision is: "+result.revisions
+			return [title,comment,other_info]
 		elif type(result)==type(('','')):
 			#print "result is: ",result
 			title=result[0]
@@ -442,10 +453,22 @@ class explorer_window(Gtk.Window):
 			results=[result1,result2,result3]
 			print "working in get results"
 			return results
-		elif type_results=="projects" and type(identifier)==type(Group()):
-			pass
+		elif type_results=="projects" and type(identifier)==type(temp_account):
+			result1=Project("This is a title","This is a description",'','','','','1.0','')
+			result2=Project("This is a title","This is a description",'','','','','3.2','')
+			result3=Project("This is a title","This is a description",'','','','','9.7','')
+			result4=Project("This is a title","This is a description",'','','','','1.2','')
+			results=[result1,result2,result3,result4]
+			return results
+			
+		elif type_results=="projects" and type(identifier)==type(temp_group):
+			result1=Project("This is a title","This is a description",'','','','','2.0','')
+			result2=Project("This is a title","This is a description",'','','','','4.2','')
+			result3=Project("This is a title","This is a description",'','','','','8.7','')
+			results=[result1,result2,result3]
+			return results
 		elif type_results=="accounts" and type(identifier)==type(temp_group):
-			pass
+			return [temp_account,temp_account,temp_account]
 		elif type_results=="accounts" and type(identifier)==type(""):
 			result=temp_account
 			return result
