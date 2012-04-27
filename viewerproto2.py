@@ -65,31 +65,7 @@ class TempWindow(Gtk.Window):
 		#self.embed.connect("button-press-event",self.stageclicked)
 		imagebox.pack_start(self.embed,True,True,0)
 
-		stage = self.embed.get_stage()		# Get the Stage
-		stage.set_title("The application title")		# Stage's title
-		colorBlack = Clutter.Color.new(255,255,255,255)
-		stage.set_color(colorBlack)
-		stage.set_reactive(True)
-
-		green = Clutter.Color.new(0,0,255,255) # red,green,blue,alpha
-		intext = Clutter.Text.new_full("Sans 20", "Hello! This\nis where the\ndynamic\nrevision map\nwill go.\nPlease do\nnot panic\nwhile we\nrenovate.", green)
-		intext.set_reactive(True)
-
-		self.rect=Clutter.Rectangle()
-		self.rect.set_color(green)
-		self.rect.set_reactive(True)
-		Clutter.Container.add_actor(stage, intext)
-		intext.set_position(5,5)
-
-		Clutter.Container.add_actor(stage, self.rect)
-		self.rect.set_position(5,400)
-		self.rect.set_size(50,50)
-		#self.rect.set_size(50,50)
-		self.rect.connect('button-press-event',self.stageclicked)
-		self.rectrot=0
-		GObject.timeout_add(10,self.clutterupdate)
-
-		stage.show_all()	# We show everything
+		self.render_clutter()
 
 		imageframe=Gtk.Frame()
 		imageframe.add(imagebox)
@@ -201,6 +177,60 @@ class TempWindow(Gtk.Window):
 		print(account+" says: '"+text+"' about this file")
 		return
 
+	def render_clutter(self):
+		self.stage = self.embed.get_stage()		# Get the Stage
+		self.stage.set_title("The application title")		# Stage's title
+		white = Clutter.Color.new(255,255,255,255)
+		black=Clutter.Color.new(0,0,0,255)
+		blue = Clutter.Color.new(0,0,255,255) # red,green,blue,alpha
+		self.stage.set_color(white)
+		self.stage.set_reactive(True)
+
+		
+
+		intext = Clutter.Text.new_full("Sans 20", "Hello! This\nis where the\ndynamic\nrevision map\nwill go.\nPlease do\nnot panic\nwhile we\nrenovate.", blue)
+		intext.set_reactive(True)
+		Clutter.Container.add_actor(self.stage, intext)
+		intext.set_position(5,5)
+
+		self.rect=Clutter.Rectangle()
+		self.rect.set_color(blue)
+		self.rect.set_reactive(True)
+		Clutter.Container.add_actor(self.stage, self.rect)
+		self.rect.set_position(40,300)
+		self.rect.set_size(50,50)
+		
+
+		circle=Clutter.Texture.new_from_file("circle.png");
+		Clutter.Container.add_actor(self.stage, circle)
+		circle.set_position(50,450)
+		circle.set_size(100,100)
+		circle.set_reactive(True)
+		#circle.connect('button-press-event',lambda x,y:self.success())
+
+		label1=Clutter.Text.new_full("Serif 20","Rev 1",black)
+		Clutter.Container.add_actor(self.stage,label1)
+		label1.set_anchor_point(label1.get_size()[0]/2.0,label1.get_size()[1]/2.0)
+		label1.set_position(100,500)
+
+		circle2=Clutter.Texture.new_from_file("circle.png");
+		Clutter.Container.add_actor(self.stage, circle2)
+		circle2.set_position(50,570)
+		circle2.set_size(100,100)
+		circle2.set_reactive(True)
+
+		label2=Clutter.Text.new_full("Serif 20","Rev 2",black)
+		Clutter.Container.add_actor(self.stage,label2)
+		label2.set_anchor_point(label2.get_size()[0]/2.0,label2.get_size()[1]/2.0)
+		label2.set_position(100,620)
+
+
+		self.stage.connect('button-press-event',self.stageclicked)
+		self.rectrot=0
+		GObject.timeout_add(10,self.clutterupdate)
+
+		self.stage.show_all()	# We show everything
+
 	def success(self,widget,data=-1):
 		print 'success'
 
@@ -209,14 +239,14 @@ class TempWindow(Gtk.Window):
 
 	def stageclicked(self,widget,event=-1,data=-1):
 		#print "Stage clicked at (%f, %f)" % (event.x, event.y)
-		print widget
-		print event
-		print data
+		circle=Clutter.Texture.new_from_file("explorer-icon.png");
+		Clutter.Container.add_actor(self.stage, circle)
+		circle.set_position(event.get_coords()[0],event.get_coords()[1])
 		return True # Stop further handling of this event
 
 	def clutterupdate(self,data=-1):
 		self.rect.set_rotation(Clutter.RotateAxis.X_AXIS, self.rectrot, 0, 25, 0)
-		self.rectrot+=5
+		self.rectrot+=5 
 		return True
 
 # Just to make it clear for later, there is a label, which is the text of the comment. It is placed within an event box for border reasons. 
