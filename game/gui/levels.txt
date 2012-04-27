@@ -1,0 +1,36 @@
+World1
+level1@ Fight to the death@ Introductory level about things.
+level2@ Another cool level name@ Another level about all the thinsg
+level3@ Final cool level name@ A final levela bout fixing all the tings.
+level4@ Another cool level name@ Do all the level stuff 
+level5@ Fight to the death@ Introductory level about things.
+level6@ Another cool level name@ Another level about all the thinsg
+level7@ Final cool level name@ A final levela bout fixing all the tings.
+level8@ Another cool level name@ Do all the level stuff 
+World2
+level1@ Fight to the death@ Introductory level about things.
+level2@ Another cool level name@ Another level about all the thinsg
+level3@ Final cool level name@ A final levela bout fixing all the tings.
+level4@ Another cool level name@ Do all the level stuff 
+level5@ Fight to the death@ Introductory level about things.
+level6@ Another cool level name@ Another level about all the thinsg
+level7@ Final cool level name@ A final levela bout fixing all the tings.
+level8@ Another cool level name@ Do all the level stuff 
+World3
+level1@ Fight to the death@ Introductory level about things.
+level2@ Another cool level name@ Another level about all the thinsg
+level3@ Final cool level name@ A final levela bout fixing all the tings.
+level4@ Another cool level name@ Do all the level stuff 
+level5@ Fight to the death@ Introductory level about things.
+level6@ Another cool level name@ Another level about all the thinsg
+level7@ Final cool level name@ A final levela bout fixing all the tings.
+level8@ Another cool level name@ Do all the level stuff 
+World4
+level1@ Fight to the death@ Introductory level about things.
+level2@ Another cool level name@ Another level about all the thinsg
+level3@ Final cool level name@ A final levela bout fixing all the tings.
+level4@ Another cool level name@ Do all the level stuff 
+level5@ Fight to the death@ Introductory level about things.
+level6@ Another cool level name@ Another level about all the thinsg
+level7@ Final cool level name@ A final levela bout fixing all the tings.
+level8@ Another cool level name@ Do all the level stuff 
