@@ -1,6 +1,6 @@
 ### Definitions for the various objects necessary for Community of Practice.
 
-class Account:
+class Account(object):
     ## Object for an individual user's account.
 
     def __init__(self, accountID, username, password, avatar):
@@ -68,51 +68,53 @@ class Borrow:
 
 
 
-class Project:
-    def __init__(self, projID, parentID, groupID, borrows=set(),revisions=[],head=None):
-        self.projID = projID
-        self.parentID = parentID
-        self.groupID = groupID
+class Project(object):
+	def __init__(self,title,description, projID, parentID, groupID, borrows=set(),revisions=[],head=None):
+		self.title=title
+		self.description=description
+		self.projID = projID
+		self.parentID = parentID
+		self.groupID = groupID
 
-        self.children = set()
-        self.borrows = borrows ##set of borrows
-        self.revisions = revisions ##set of revisions
+		self.children = set()
+		self.borrows = borrows ##set of borrows
+		self.revisions = revisions ##set of revisions
 
-        self.locked = 0
-        self.tags = set()
+		self.locked = 0
+		self.tags = set()
 
-        if head is None:
-            self.head=Head(self,len(revisions))
-        else:
-            self.head=head
+		if head is None:
+			self.head=Head(self,len(revisions))
+		else:
+			self.head=head
 
-    def add_child(self, child):
-        self.children.add( child )
+		def add_child(self, child):
+			self.children.add( child )
 
-    def remove_child(self, child):
-        self.children.remove( child )
+		def remove_child(self, child):
+			self.children.remove( child )
 
-    def add_borrow(self, lender):
-        self.borrows.add( lender )
+		def add_borrow(self, lender):
+			self.borrows.add( lender )
 
-    def remove_borrow(self, lender):
-        self.borrows.remove( lender )
+		def remove_borrow(self, lender):
+			self.borrows.remove( lender )
 
-    def add_revision(self):
-        nextIndex = len(revisions) + 1
-        self.revisions[nextIndex] = self.head
+		def add_revision(self):
+			nextIndex = len(revisions) + 1
+			self.revisions[nextIndex] = self.head
 
-    def lock_proj(self):
-        self.locked = 1
-    
-    def unlock_proj(self):
-        self.locked = 0
+		def lock_proj(self):
+			self.locked = 1
 
-    def add_tag(self, new_tag):
-        self.tags.add( new_tag )
+		def unlock_proj(self):
+			self.locked = 0
 
-    def remove_tag(self, tag):
-        self.tags.remove( tag )
+		def add_tag(self, new_tag):
+			self.tags.add( new_tag )
+
+		def remove_tag(self, tag):
+			self.tags.remove( tag )
 
 
 class File:
@@ -125,7 +127,7 @@ class File:
         self.content = content
 
 
-class Group:
+class Group(object):
     ## Object which defines a user-group.
 
     def __init__(self,groupID,godID,title,description="",accountIDs=set(),projIDs=set()):
