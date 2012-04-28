@@ -67,7 +67,7 @@ class TempWindow(Gtk.Window):
 		clutterscroll.add_with_viewport(self.embed)
 		clutterscroll.set_size_request(200,800)'''
 		#self.embed.connect("button-press-event",self.stageclicked)
-		imagebox.pack_start(embed,True,True,0)
+		imagebox.pack_start(self.embed,True,True,0)
 
 		self.render_clutter()
 

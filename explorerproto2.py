@@ -291,7 +291,7 @@ class explorer_window(Gtk.Window):
 			xpos=1
 			while xpos<9 and number<=total:
 				display_list=self.what_display(resultslist[number-1])
-				search_box=self.make_search_box(number,display_list[0],display_list[1],display_list[2])
+				search_box=self.make_search_box(number,display_list[0],display_list[1],display_list[2],resultslist[number-1])
 				search_grid.attach(search_box,xpos,ypos,1,1)
 				xpos=xpos+1
 				number=number+1
@@ -302,11 +302,14 @@ class explorer_window(Gtk.Window):
 		self.return_box.pack_start(search_grid,True,True,0)
 		return self.return_box
 
-	def make_search_box(self,number,title,comment,other_info):
+	def make_search_box(self,number,title,comment,other_info,result):
 		#Get rid of this stuff later
 		#title="Title goes here"
 		#comment="Comment goes here. This should be very long and take up ALL of the space"
 		#other_info="Other info goes here"
+		temp_group=Group('','','','')
+		temp_project=Project('','','','','','','','')
+		temp_account=Account('','','','')
 
 		outer_padding=Gtk.EventBox()
 		outer_frame=Gtk.Frame()
@@ -319,6 +322,10 @@ class explorer_window(Gtk.Window):
 		comment=Gtk.Label(comment)
 		comment.set_line_wrap(True)
 		other_info=Gtk.Label(other_info)
+
+		if type(result)==type(temp_group):
+			outer_padding.connect("button_press_event",self.on_group_display_clicked,self.toplevel,result)
+		
 		
 		outer_padding.add(outer_frame)
 		outer_frame.add(outer_vbox)
@@ -374,7 +381,7 @@ class explorer_window(Gtk.Window):
 		temp_group=Group('','','','')
 		temp_project=Project('','','','','','','','')
 		temp_account=Account('','','','')
-		print result
+		#print result
 		if type(result)==type(temp_account):
 			title=result.username
 			comment=result.avatar
@@ -438,6 +445,11 @@ class explorer_window(Gtk.Window):
 	def on_nologin_clicked(self,widget,something,toplevel):
 		#print not(self.parent.user==None)
 		self.alert.set_text("You have not logged in yet!") 
+
+	def on_group_display_clicked(self,widget,something,toplevel,group):
+		self.the_new_page=self.make_display_group(group)
+		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Group Display Page")
 
 	###-------------------------Other-Functions-----------------------###
 	def get_results(self,type_results,identifier):
