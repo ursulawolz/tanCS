@@ -1,5 +1,5 @@
 tank.wait(3)
-
+   
 while True:
     p = tank.get_pos()
     d = tank.distance_scan()

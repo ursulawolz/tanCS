@@ -361,14 +361,20 @@ class Tank(DynamicWorldObject):
         '''
         Tasks called to wait
         '''
-        dt = 1.0/60.0
-        #print "Tank.updateWait: ", dt
-        self._taskTimer -= dt
+        try:
+            if self._tankWorld.isRealTime():
+                dt = globalClock.getDt()
+            else:
+                dt = 1.0/60.0
+            #print "Tank.updateWait: ", dt
+            self._taskTimer -= dt
 
-        if self._taskTimer < 0: 
-            return task.done
-        return task.cont
+            if self._taskTimer < 0: 
+                return task.done
 
+            return task.cont
+        except:
+            print "error, tank.wait"
 
     def updateRotateLoc(self, task):
         heading = self.fixAngle(self._nodePath.getH())
@@ -468,7 +474,7 @@ class Tank(DynamicWorldObject):
     def nextTask(self,task):
         self._nodePath.node().setActive(True)
         self.onTask += 1
-        if(self._tankWorld.isDead):
+        if(self._tankWorld.isDead or self._tankWorld.isOver):
             return
         #if self.onTask >= len(self.taskList):
         #   return
@@ -489,7 +495,7 @@ class Tank(DynamicWorldObject):
                 self.nextTask(task)
 
         except StopIteration:
-            pass
+            print 'Tank.nextTask error'
         #self.taskList[self.onTask][0](self.taskList[self.onTask][1])
     
     def runTasks(self):

@@ -8,7 +8,10 @@ class Turret(CubeObject):
 		#StaticWorldObject.__init__(self, world, attach, name, position, shape, orientation)
 		CubeObject.__init__(self, world, attach, name, position, scale = Vec3(2,2,2), texture='test.png' )
 		self._tankWorld = world
-		world.taskMgr.doMethodLater(3,self.fireTask, 'fire task')
+		try:
+			world.doMethodAfterStart(3,self.fireTask, 'fire task')
+		except:
+			print 'turretError'
 		self.orientation = orientation
 
 	def fireTask(self, task):
@@ -16,7 +19,9 @@ class Turret(CubeObject):
 		pos = self._tankWorld.getUserTank().get_pos()
 		if self._weapon.aimAt(self._tankWorld.getUserTank().get_pos(), aimLow = True):
 			self._weapon.fire(1)
-		return task.again
+
+		self._tankWorld.doMethodLater(3, self.fireTask, 'fire task')
+		return task.done
 	
 
 	def setWeapon(self, weapon):

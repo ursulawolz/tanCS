@@ -58,7 +58,7 @@ class Projectile(DynamicWorldObject):
 			#print "Projectile.handleCollision:(pos) ", self.getPos(), 'obj 1', collide.getNode0().getName(), 'obj 2', collide.getNode1().getName()
 
 			self._tankWorld.taskMgr.remove(taskName)
-			self._tankWorld.taskMgr.doMethodLater(.01, self.deleteAfter, 'deleteAfter')
+			self._tankWorld.doMethodLater(.01, self.deleteAfter, 'deleteAfter')
 
 		else:
 			print "Projectile.handleCollision Failed to have _nodepath"
