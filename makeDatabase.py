@@ -14,12 +14,12 @@ def makeTableStructure(host , password , username, personalpassword) :
 	cur.execute("grant usage on *.* to " + username + " identified by '" + personalpassword + "' ;")
 	cur.execute("grant all privileges on oogadaBoogada.* to " + username + ";")
 	cur.execute("create table account(account_id int, username tinytext, password tinytext, avatar blob, groups text, creation_time datetime);")
-	cur.execute("create table borrow( borrow_id int, project_to_id smallint, project_id smallint, revision_id smallint, file_name tinytext, line_range tinytext, creation_time datetime);")
+	cur.execute("create table borrow( borrow_id int, project_to_id smallint, project_id smallint, revision_id smallint, file_name tinytext, line_range tinytext, line_offset tinytext, creation_time datetime);")
 	cur.execute("create table comment(all_of_the_text longtext, account_posting_id smallint, project_id smallint, revision_number smallint, file_name tinytext, line_number tinyint, creation_time datetime);")
 	cur.execute("create table file_info( project_id smallint, revision_number smallint, file_name tinytext, file_content blob, creation_time datetime);")
 	cur.execute("create table group_info( group_id smallint, group_projects text, account_ids text, god_id int, creation_time datetime);")
-	cur.execute("create table project_info( project_id smallint, parent_id smallint, children_ids text, borrow_ids text, group_id smallint, revisions text, locked tinyint, tags text, creation_time datetime);")
-	cur.execute("create table revision( revision_number tinyint, filenames text, project_id smallint, creation_time datetime);")
+	cur.execute("create table project_info( project_id smallint, parent_id smallint, children_ids text, borrow_ids text, group_id smallint, revisions text, locked tinyint, tags text, head tinyint, creation_time datetime);")
+	cur.execute("create table revision( revision_number tinyint, filenames text, project_id smallint, head tinyint, creation_time datetime);")
 	
 
 
@@ -169,6 +169,8 @@ def NewEntry(object_type, column_info, column_type, host,password):  #if a perso
 
 	elif object_type == "revision":
 		update(column_info[0], "revisions", column_info[2], "project_id" , host,password)
+		if column_info[0] != 1:
+			update(0, "head", column_info[0]-1, "revision_number")
 		string = column_info[1]
 		list_of_files = string[3:].split('$$$$')
 		new_types = ['project_id', 'revision_number', 'file_name', 'file_content']
@@ -202,24 +204,7 @@ def SearchAll(search_type, search_value, object_type, fist, last, host, password
 	stuff = results.fetch_row()
 
 	return stuff
-
-
-
-def tests():
-	import MySQLdb as mdb 
-	import sys
-	host = 'localhost'
-	password = 'olin'
-	con = None
-	con = mdb.connect(host, 'root', password)
-	cur = con.cursor()
-	cur.execute("use oogadaBoogada")
-	con.query('select borrow_ids from project_info where project_id = 236')
-	results = con.store_result() 
-	stuff = results.fetch_row(0,1)
-	stuff = stuff[0]
-	stuff = stuff['borrow_ids']
-	return 
+ 
 
 
 
@@ -233,7 +218,6 @@ meeep = [236, 417, '127$$$$195', '127$$$$195', 285, '1$$$$3$$$$6', 1, 'tanCS']
 mooop = ['project_id', 'parent_id', 'children_ids', 'borrow_ids', 'group_id', 'revisions', 'locked', 'tags', 'creation_time']
 NewEntry('project_info', meeep, mooop, 'localhost', 'olin')
 NewEntry('borrow', meep, moop, 'localhost', 'olin')
-NewEntry()
-#print tests()
-#print SearchAll(['project_id', 'borrow_ids'] , [36, 27], 'project_info', '0' , '1', 'localhost' , 'olin')
-#update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')
+print SearchAll(['project_id', 'borrow_ids'] , [36, 27], 'project_info', '0' , '1', 'localhost' , 'olin')
+update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')
+
