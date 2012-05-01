@@ -204,20 +204,4 @@ def SearchAll(search_type, search_value, object_type, fist, last, host, password
 	stuff = results.fetch_row()
 
 	return stuff
- 
-
-
-
-
-
-# test
-makeTableStructure('localhost', 'olin' , 'jrivero', 'x8mafw63')
-meep = [123, 236, 321, 345, 'mine', '1 - 10']
-moop = [ 'borrow_id', 'project_to_id', 'project_id', 'revision_id', 'file_name', 'line_range', 'creation_time']
-meeep = [236, 417, '127$$$$195', '127$$$$195', 285, '1$$$$3$$$$6', 1, 'tanCS']
-mooop = ['project_id', 'parent_id', 'children_ids', 'borrow_ids', 'group_id', 'revisions', 'locked', 'tags', 'creation_time']
-NewEntry('project_info', meeep, mooop, 'localhost', 'olin')
-NewEntry('borrow', meep, moop, 'localhost', 'olin')
-print SearchAll(['project_id', 'borrow_ids'] , [36, 27], 'project_info', '0' , '1', 'localhost' , 'olin')
-update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')
 
