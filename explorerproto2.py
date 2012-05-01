@@ -112,6 +112,28 @@ class explorer_window(Gtk.Window):
 		self.return_box.pack_start(self.label3,True,True,0)
 		return self.return_box
 
+	def make_display_project(self,project):
+		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=20)
+		title=Gtk.Label('<b>'+project.title+'</b>')
+		title.set_use_markup(True)
+		description_title=Gtk.Label("Description: ")
+		
+		description=Gtk.Label(project.description)
+		description_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=20)
+		description_block.pack_start(description_title,False,False,0)
+		description_block.pack_start(description,False,False,0)
+		to_revision_map=Gtk.Button("View Revision Map")
+		back_to_group=Gtk.Button("Return to Group Page")
+		self.return_box.pack_start(title,False,False,0)
+		self.return_box.pack_start(description_block,False,False,0)
+		self.return_box.pack_start(to_revision_map,False,False,0)
+		self.return_box.pack_start(back_to_group,False,False,0)
+		return self.return_box
+		
+		
+
+###-------------------------Group-Methods--------------------------###
+
 	def make_mygroups(self,account):
 		#self.label5=Gtk.Label("This is the MyGroups Page")
 		self.return_box=self.make_search_results("groups",self.parent.user)
@@ -129,7 +151,6 @@ class explorer_window(Gtk.Window):
 		project_title=Gtk.Label("Projects: ")
 
 		description=Gtk.Label(group.description)
-		print group.description
 		admin=Gtk.Label(self.get_results("accounts","FakeID").username)
 		temp_group=Group('','','','','','')
 		accounts=self.make_search_results("accounts",temp_group)
@@ -154,6 +175,7 @@ class explorer_window(Gtk.Window):
 		self.return_box2.pack_start(projects,False,False,0)
 		self.return_box2.pack_start(new_project_button,False,False,0)		
 		return self.return_box2
+
 ###---------------------------Account-Functions---------------------###
 	def make_account(self,account):
 		self.return_box2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
@@ -325,7 +347,9 @@ class explorer_window(Gtk.Window):
 
 		if type(result)==type(temp_group):
 			outer_padding.connect("button_press_event",self.on_group_display_clicked,self.toplevel,result)
-		
+
+		if type(result)==type(temp_project):
+			outer_padding.connect("button_press_event",self.on_project_display_clicked,self.toplevel,result)
 		
 		outer_padding.add(outer_frame)
 		outer_frame.add(outer_vbox)
@@ -450,6 +474,10 @@ class explorer_window(Gtk.Window):
 		self.the_new_page=self.make_display_group(group)
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Group Display Page")
+	def on_project_display_clicked(self,widget,something,toplevel,project):
+		self.the_new_page=self.make_display_project(project)
+		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Project Display Page")
 
 	###-------------------------Other-Functions-----------------------###
 	def get_results(self,type_results,identifier):
