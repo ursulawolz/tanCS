@@ -6,6 +6,11 @@ import tkFileDialog, Tkinter
 # Cement Borrows
 # New/Open/Save files
 
+#-----DEREK TODOS-----
+# Add borrow "to" attributes
+# Finish Clutter work
+# 
+
 
 class Editor(Gtk.Window):
 

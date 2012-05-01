@@ -100,7 +100,7 @@ class Project(object):
 		def remove_borrow(self, lender):
 			self.borrows.remove( lender )
 
-		def add_revision(self):
+		def create_revision(self):
 			nextIndex = len(revisions) + 1
 			self.revisions[nextIndex] = self.head
 
@@ -181,7 +181,7 @@ class Comment:
 
 class Revision:
 
-    def __init__(self,project,revision_number,files=[]):
+    def __init__(self,revision_number,project=None, files=[]):
         self.project=project
         self.revision_number=revision_number
         self.files=files

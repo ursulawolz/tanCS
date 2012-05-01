@@ -67,13 +67,13 @@ class TempWindow(Gtk.Window):
 		clutterscroll.add_with_viewport(self.embed)
 		clutterscroll.set_size_request(200,800)'''
 		#self.embed.connect("button-press-event",self.stageclicked)
-		imagebox.pack_start(embed,True,True,0)
+		imagebox.pack_start(self.embed,True,True,0)
 
 		self.render_clutter()
 
 		imageframe=Gtk.Frame()
 		imageframe.add(imagebox)
-		self.embed.set_size_request(200,2000)
+		self.embed.set_size_request(200,800)
 
 		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		self.toplevel.set_size_request(self.x,self.y)
@@ -184,6 +184,7 @@ class TempWindow(Gtk.Window):
 	def render_clutter(self):
 		self.stage = self.embed.get_stage()		# Get the Stage
 		self.stage.set_title("The application title")		# Stage's title
+		self.stage.connect("motion-event",self.mouse_moved)
 		white = Clutter.Color.new(255,255,255,255)
 		black=Clutter.Color.new(0,0,0,255)
 		blue = Clutter.Color.new(0,0,255,255) # red,green,blue,alpha
@@ -239,8 +240,18 @@ class TempWindow(Gtk.Window):
 	def enter_clutter(self,widget,data=-1):
 		self.embed.grab_focus()
 
+	def mouse_moved(self,widget,event):
+		miny=100
+		maxy=self.embed.get_allocation().height-100
+		curr_y=event.get_coords()[1]
+		#print maxy
+		if curr_y<miny:
+			print 'too low'
+		if curr_y>maxy:
+			print 'too high'
+
 	def stageclicked(self,widget,event=-1,data=-1):
-		#print "Stage clicked at (%f, %f)" % (event.x, event.y)
+		#print "Stage clicked at (%f, %f)" % (event.get_coords()[0],event.get_coords()[1])
 		'''
 		circle=Clutter.Texture.new_from_file("explorer-icon.png");
 		Clutter.Container.add_actor(self.stage, circle)
