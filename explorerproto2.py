@@ -1,7 +1,6 @@
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 from objectcode import *
-import tkFileDialog, Tkinter
 
 ###------------------------Explorer Class--------------------------###
 class explorer_window(Gtk.Window):
@@ -229,14 +228,23 @@ class explorer_window(Gtk.Window):
 			#change_password(self.parent.user.userID,new_password)
 			print "password changed from '"+self.parent.user.password+"' to '"+self.password_label.get_text()+"'"
 		elif which=="avatar":
-			root=Tkinter.Tk()
-			filename = tkFileDialog.askopenfilename(parent=root,title='Choose a file',filetypes=[('JPEG','*.jpg'),('Bitmap','*.bmp'),('PNG','*.png'),('GIF','*.gif')])
-			root.destroy()
-			f=open(filename)
-			#change_avatar(self.parent.user.userID,new_avatar)
-			print "avatar changed from '"+self.parent.user.avatar+"' to "+f.name+"'" 
-			self.parent.user.avatar=f.name
-			realwidget.set_from_file(self.parent.user.avatar)
+			dialog=Gtk.FileChooserDialog('Choose a file',self,Gtk.FileChooserAction.OPEN,(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL,Gtk.STOCK_OK,Gtk.ResponseType.ACCEPT))
+			filter_img = Gtk.FileFilter()
+			filter_img.set_name("Image files")
+			filter_img.add_mime_type("image/jpeg")
+			filter_img.add_mime_type("image/bmp")
+			filter_img.add_mime_type("image/png")
+			filter_img.add_mime_type("image/gif")
+			dialog.add_filter(filter_img)
+			response=dialog.run()
+			if response==Gtk.ResponseType.ACCEPT:
+				filename=dialog.get_filename()
+				f=open(filename)
+				#change_avatar(self.parent.user.userID,new_avatar)
+				print "avatar changed from '"+self.parent.user.avatar+"' to "+f.name+"'" 
+				self.parent.user.avatar=f.name
+				realwidget.set_from_file(self.parent.user.avatar)
+			dialog.destroy()
 
 ###----------------------------Login-Functions----------------------###
 	def make_login(self,toplevel):

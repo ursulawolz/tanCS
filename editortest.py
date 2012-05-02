@@ -1,6 +1,5 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
 from objectcode import *
-import tkFileDialog, Tkinter
 #----GUI TODOS----
 # Get user preference directory from OS and store settings file there
 # Cement Borrows
@@ -408,13 +407,19 @@ class Editor(Gtk.Window):
 		f.write(self.parent.defaultfile.content)
 
 	def open_file(self,widget):
-		root=Tkinter.Tk()
-		filename = tkFileDialog.askopenfilename(parent=root,title='Choose a file',filetypes=[('python files','*.py')])
-		root.destroy()
-		f=open(filename)
-		newfile=File('newHASH', 0, filename, f.read())
-		self.parent.defaultfile=newfile
-		self.sbuff.set_text(self.parent.defaultfile.content)
+		dialog=Gtk.FileChooserDialog('Open File',self,Gtk.FileChooserAction.OPEN,(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL,Gtk.STOCK_OK,Gtk.ResponseType.ACCEPT))
+		filter_py = Gtk.FileFilter()
+		filter_py.set_name("Python files")
+		filter_py.add_mime_type("text/x-python")
+		dialog.add_filter(filter_py)
+		response=dialog.run()
+		if response==Gtk.ResponseType.ACCEPT:
+			filename=dialog.get_filename()
+			f=open(filename)
+			newfile=File('newHASH', 0, filename, f.read())
+			self.parent.defaultfile=newfile
+			self.sbuff.set_text(self.parent.defaultfile.content)
+		dialog.destroy()
 
 	def on_text_changed(self,sbuff):
 		self.parent.defaultfile.content=sbuff.get_text(sbuff.get_start_iter(),sbuff.get_end_iter(),True)
