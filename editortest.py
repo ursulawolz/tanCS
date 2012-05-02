@@ -1,11 +1,23 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
+from objectcode import *
+#----GUI TODOS----
+# Get user preference directory from OS and store settings file there
+# Cement Borrows
+# New/Open/Save files
+
+#-----DEREK TODOS-----
+# Add borrow "to" attributes
+# Finish Clutter work
+# 
+
 
 class Editor(Gtk.Window):
 
-	def __init__(self,on_window_mode_changed):
+	def __init__(self,parent):
 		Gtk.Window.__init__(self,title='tanCS Editor')
 		
-		self.on_window_mode_changed=on_window_mode_changed
+		self.parent=parent
+		self.on_window_mode_changed=parent.on_window_mode_changed
 
 		#structure rewrite
 		self.set_default_size(800,500)
@@ -20,6 +32,8 @@ class Editor(Gtk.Window):
 		#toolbar
 		self.create_toolbar()
 
+		self.borrows=()
+
 		self.vbox_top.pack_start(self.toolbar,False,True,0)
 		self.vbox_top.pack_start(self.scrolledwindow,True,True,0)
 		self.vbox_top.pack_start(self.statusbar,False,True,0)
@@ -28,16 +42,19 @@ class Editor(Gtk.Window):
 		self.sbuff = GtkSource.Buffer()
 		self.sview = GtkSource.View()
 		self.sview.set_buffer(self.sbuff)
+		self.sview.set_show_line_numbers(True)
 
 		#set syntax highlighting to python
-		self.lang = GtkSource.LanguageManager.get_default().get_language('python')
-		self.sbuff.set_language(self.lang)
+		lang = GtkSource.LanguageManager.get_default().get_language('python')
+		self.sbuff.set_language(lang)
 
 		#add sourceview to window and initialize properties
 		Gtk.ScrolledWindow.add(self.scrolledwindow,self.sview)
-		self.sbuff.set_text('Lorem ipsum dolor sit amet, \nconsectetur adipiscing elit. Sed et \nenim vitae augue dictum vehicula. Duis \nsit amet velit ipsum. Donec n\nibh leo, blandit et porttitor quis, aliquet sed est. Nam mollis pellentesque orci id pharetra. Curabitur eros arcu, mollis in ultricies nec, convallis a risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut pharetra leo quis risus volutpat porta. Praesent bibendum mi nec erat scelerisque vitae pellentesque massa eleifend. Aliquam aliquet venenatis odio id hendrerit. Nulla accumsan tincidunt mauris, nec mollis justo feugiat sit amet. Nullam quis sagittis neque. Integer dui augue, molestie vel semper at, iaculis sed metus. Mauris tempor nibh quis sem pellentesque vulputate. Nullam varius magna rhoncus lectus tempor at viverra tellus pretium.')
-		self.sview.show()
+		self.sbuff.set_text(self.parent.defaultfile.content)
 		self.sview.connect("key-press-event",self.on_key_press)
+		self.sbuff.connect("changed",self.on_text_changed)
+		self.connect("destroy",self.on_destroy)
+
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
@@ -134,15 +151,53 @@ class Editor(Gtk.Window):
 	def on_button_clicked(self,widget):
 		print "Hello World" #test func
 
-	def copy_text(self,widget):
-		#TODO: get URL of source? offer to add source to user?
-		print 'copying'
+	def copy_text(self,widget=None):
+		select=self.sbuff.get_selection_bounds()
+		if not select==():
+			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.sbuff.get_text(select[0],select[1],True),-1)
 
-	def cut_text(self,widget):
+	def cut_text(self,widget=None):
 		print 'cutting'
 
-	def paste_text(self,widget):
-		print 'pasting'
+	def paste_text(self,widget=None):
+		pasted = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
+		isborrow=self.checkBorrow(pasted)
+		if isborrow[0]:
+			#--------DEMO CODE ONLY-------
+			#This is just for show.
+			dialog = Gtk.Dialog("My dialog",parent=self,flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+			label1=Gtk.Label('Create new Borrow link?')
+			dialog.vbox.pack_start(label1,False,False,0)
+			label1.show()
+			response = dialog.run()
+			dialog.destroy()
+			#--------END DEMO CODE--------
+			line1=isborrow[1].line_range[0]
+			line2=isborrow[1].line_range[1]
+			self.statusbar.push(1,'Lines '+str(line1+1)+' through '+str(line2+1)+' from file $FILE have been linked to this document.')
+			timeout=GObject.timeout_add(4000,self.clear_statusbar,1)
+		else:
+			dialog = ReferenceDialog(self,pasted)
+			response = dialog.run()
+			if response==Gtk.ResponseType.OK:
+				text=dialog.reference.get_text()
+				if not text.strip()==None:
+					print 'Source cited:'+text
+					#TODO: create a new Borrow object
+			dialog.destroy()
+
+	def clear_statusbar(self,context):
+		self.statusbar.remove_all(context)
+		return False
+
+	def checkBorrow(self,text):
+		if self.borrows==[]:
+			return [False,-1]
+		else:
+			for item in self.parent.borrows:
+				if item.get_text()==text:
+					return [True,item]
+		return [False,-1]
 
 	def indent_block(self,widget):
 		print 'indenting block'
@@ -252,65 +307,158 @@ class Editor(Gtk.Window):
 				print 'comment'
 				self.sbuff.insert(itera,'#')
 
+	def create_save_point(self,widget):
+		dialog = Gtk.Dialog("My dialog",parent=self,flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+		label1=Gtk.Label('Create a new revision of your whole project?')
+		dialog.vbox.pack_start(label1,False,False,0)
+		label1.show()
+		response = dialog.run()
+		dialog.destroy()
 
 
 	def create_toolbar(self):
 		self.toolbar=Gtk.Toolbar()
 		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
 		self.toolbar.insert(button_new, 0)
+		button_new.set_tooltip_text('New File')
 		#button_new.connect("clicked", self.create_new)
 
 		button_savepoint=Gtk.ToolButton.new_from_stock(Gtk.STOCK_SAVE)
 		self.toolbar.insert(button_savepoint, 1)
-		#button_savepoint.connect("clicked", self.create_save_point)
+		button_savepoint.set_tooltip_text('Save to New Revision')
+		button_savepoint.connect("clicked", self.create_save_point)
 
 		button_copy=Gtk.ToolButton.new_from_stock(Gtk.STOCK_COPY)
 		self.toolbar.insert(button_copy, 2)
+		button_copy.set_tooltip_text('Copy')
 		button_copy.connect("clicked", self.copy_text)
 
 		button_cut=Gtk.ToolButton.new_from_stock(Gtk.STOCK_CUT)
 		self.toolbar.insert(button_cut, 3)
+		button_cut.set_tooltip_text('Cut')
 		button_cut.connect("clicked", self.cut_text)
 
 		button_paste=Gtk.ToolButton.new_from_stock(Gtk.STOCK_PASTE)
 		self.toolbar.insert(button_paste, 4)
+		button_paste.set_tooltip_text('Paste')
 		button_paste.connect("clicked", self.paste_text)
 
 		comment_icon=Gtk.Image.new_from_file('comment-icon.png')
 		button_comment=Gtk.ToolButton()
 		button_comment.set_icon_widget(comment_icon)
+		button_comment.set_tooltip_text('Toggle comment on code block')
 		self.toolbar.insert(button_comment, 5)
 		button_comment.connect("clicked", self.comment_block)
 
 		button_indent=Gtk.ToolButton.new_from_stock(Gtk.STOCK_INDENT)
 		self.toolbar.insert(button_indent, 6)
+		button_indent.set_tooltip_text('Indent code block')
 		button_indent.connect("clicked", self.indent_block)
 
 		button_unindent=Gtk.ToolButton.new_from_stock(Gtk.STOCK_UNINDENT)
 		self.toolbar.insert(button_unindent, 7)
+		button_unindent.set_tooltip_text('Unindent code block')
 		button_unindent.connect("clicked", self.unindent_block)
+		button_unindent.set_label('hello')
+
+		sep=Gtk.SeparatorToolItem()
+		self.toolbar.insert(sep,8)
 		
 		viewer_icon=Gtk.Image.new_from_file('viewer-icon.png')
 		button_viewer=Gtk.ToolButton()
 		button_viewer.set_icon_widget(viewer_icon)
-		self.toolbar.insert(button_viewer, 8)
-		button_viewer.connect("clicked", change_window,"Viewer",self,self.on_window_mode_changed)
+		button_viewer.set_tooltip_text('Switch to Viewer')
+		self.toolbar.insert(button_viewer, 9)
+		button_viewer.connect("clicked", change_window,"Viewer",self,self.parent)
 
 		explorer_icon=Gtk.Image.new_from_file('explorer-icon.png')
 		button_explorer=Gtk.ToolButton()
 		button_explorer.set_icon_widget(explorer_icon)
-		self.toolbar.insert(button_explorer, 9)
-		button_explorer.connect("clicked",change_window,"Explorer",self,self.on_window_mode_changed)
+		button_explorer.set_tooltip_text('Switch to Explorer')
+		self.toolbar.insert(button_explorer, 10)
+		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent)
+
+		sep2=Gtk.SeparatorToolItem()
+		self.toolbar.insert(sep2,11)
+
+		run_icon=Gtk.Image.new_from_file('run-icon.png')
+		button_run=Gtk.ToolButton()
+		button_run.set_icon_widget(run_icon)
+		button_run.set_tooltip_text('Run Program')
+		self.toolbar.insert(button_run, 12)
+		button_run.connect("clicked",self.run_file)
+
+		level_icon=Gtk.Image.new_from_file('level-icon.png')
+		button_level=Gtk.ToolButton()
+		button_level.set_icon_widget(level_icon)
+		button_level.set_tooltip_text('Level Select')
+		self.toolbar.insert(button_level, 13)
+		button_level.connect("clicked",self.level_select)
+
+		button_open=Gtk.ToolButton.new_from_stock(Gtk.STOCK_OPEN)
+		self.toolbar.insert(button_open, 1)
+		button_open.set_tooltip_text('Open File')
+		button_open.connect("clicked", self.open_file)
 
 		self.toolbar.show_all()
 
-def change_window(widget,new_window_name,parent_window,on_window_mode_changed):
-	on_window_mode_changed(new_window_name,parent_window)
+	def on_destroy(self,window):
+		f=open(self.parent.defaultfile.file_name,'wb')
+		f.write(self.parent.defaultfile.content)
+
+	def open_file(self,widget):
+		dialog=Gtk.FileChooserDialog('Open File',self,Gtk.FileChooserAction.OPEN,(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL,Gtk.STOCK_OK,Gtk.ResponseType.ACCEPT))
+		filter_py = Gtk.FileFilter()
+		filter_py.set_name("Python files")
+		filter_py.add_mime_type("text/x-python")
+		dialog.add_filter(filter_py)
+		response=dialog.run()
+		if response==Gtk.ResponseType.ACCEPT:
+			filename=dialog.get_filename()
+			f=open(filename)
+			newfile=File('newHASH', 0, filename, f.read())
+			self.parent.defaultfile=newfile
+			self.sbuff.set_text(self.parent.defaultfile.content)
+		dialog.destroy()
+
+	def on_text_changed(self,sbuff):
+		self.parent.defaultfile.content=sbuff.get_text(sbuff.get_start_iter(),sbuff.get_end_iter(),True)
+
+	def level_select(self, widget):
+		pass
+
+	def run_file(self,widget):
+		pass
+
+def change_window(widget,new_window_name,parent_window,top_parent):
+	top_parent.on_window_mode_changed(new_window_name,parent_window)
+
+
+class ReferenceDialog(Gtk.Dialog):
+	def __init__(self,parent,text):
+		#Gtk.Dialog.__init__(self, "Search", parent,Gtk.DialogFlags.MODAL, buttons=(Gtk.STOCK_FIND, Gtk.ResponseType.OK,Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
+
+		Gtk.Dialog.__init__(self, flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, title="My Dialog", parent=parent, buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK))
+		
+		self.text=text
+		length=len(self.text)
+		if length>80:
+			self.text=self.text[:40]+'......'+self.text[length-40:]
+		self.label1=Gtk.Label('You\'re copying the following into your project:\n')
+		self.label2=Gtk.Label('"'+self.text+'"')
+		self.label3=Gtk.Label('\nPlease cite your source by entering it in the box below.\n\n')
+		self.reference=Gtk.Entry()
+		box=self.get_content_area()
+		box.add(self.label1)
+		box.add(self.label2)
+		box.add(self.label3)
+		box.add(self.reference)
+
+		self.show_all()
 
 '''
 #initiate window
-win = Editor(-1,-1)
+win = Editor(-1)
 win.connect("delete-event",Gtk.main_quit)
 win.show_all()
 Gtk.main()'''
-
