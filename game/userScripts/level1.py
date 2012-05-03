@@ -1,3 +1,1 @@
-print level_data
-
-tank.move(30)
+tank.move(40)

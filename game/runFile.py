@@ -60,7 +60,12 @@ tank.set_generator(x)'''
 	tabClause = '    '
 
 	script = open(filename, 'rb')
+	print "Your file name is ASDFASDF" ,filename
+	#text = script.read();
+	#print "Your file name is BEFORE" ,text
+
 	lines = script.readlines()
+	print lines
 	userFunc = getFunctionNames(lines)
 	#Check for illegal strings in file
 	for line in lines:
@@ -114,7 +119,10 @@ tank.set_generator(x)'''
 	
 	filenamestr = filename.split('/')
 	
-	filename = filenamestr[0]+'/run' +filenamestr[1]
+	filename = '/'.join(filenamestr[0:-1])+'/run' +filenamestr[-1]
+
+	print "Your file name EDITED THJE FINEALLLL is ASDFASDF" ,filename
+	
 	f = open(filename, 'w')
 	f.close()
 

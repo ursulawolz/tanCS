@@ -1,7 +1,10 @@
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 from objectcode import *
-import tkFileDialog, Tkinter
+try:
+	import tkFileDialog, Tkinter
+except:
+	pass
 
 ###------------------------Explorer Class--------------------------###
 class explorer_window(Gtk.Window):

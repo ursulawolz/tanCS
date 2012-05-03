@@ -44,7 +44,7 @@ class Borrow:
     def get_text(self):
         #returns the borrowed text
         text=''
-        codefile = open("testingtk3.py")
+        codefile = open("../game/userScripts/level1.py")
         count=0
         while 1:
             line = codefile.readline()

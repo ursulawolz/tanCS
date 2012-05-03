@@ -11,14 +11,21 @@ import os
 import platform
 import subprocess
 
+import pdb
+
 class tanCS(object):
 
 	def __init__(self):
+
+
+
+
 		self.user=None
 		self.borrows=[]
 		
 		#Checks whether user preference files already exist; if not, creates them.
 		self.USERPATH=os.path.expanduser('~')
+
 		osname=platform.system()
 		if osname=='Linux':
 			self.USERPATH+='/.tanCS'
@@ -37,8 +44,13 @@ class tanCS(object):
 		#in the process of creating default objects
 		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH',"default group")
 		self.defaultaccount=Account('userHASH', 'oranges', 'kiwi', 'explorer-icon.png')
-		f=open("testingtk3.py")
-		self.defaultfile=File('projectHASH', 0, 'testingtk3.py', f.read())
+
+		f=open("../game/userScripts/level1.py")
+
+		self.defaultfile=File('projectHASH', 0, "../game/userScripts/level1.py", f.read())
+		f.close()
+		#self.defaultfile.close()
+
 		#self.default
 
 		#self.defaultrevision=Revision(0)
@@ -67,6 +79,4 @@ class tanCS(object):
 			window.connect("delete-event",Gtk.main_quit)
 			window.show_all()
 
-###---------------------------------MAIN-------------------------------###
-	
-a=tanCS()
+

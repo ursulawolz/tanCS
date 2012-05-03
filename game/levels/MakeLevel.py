@@ -73,7 +73,7 @@ def makeLevel(fileName, tankWorld= None):
 		tankWorld = TankWorld()
 		tankWorld.getPhysics().setGravity(Vec3(0,0,-9.81))
 	t = tankWorld
-	execfile('levels/'+fileName+'.py')
+	execfile('../game/'+'levels/'+fileName+'.py')
 	return t
 
 

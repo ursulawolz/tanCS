@@ -1,6 +1,9 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
 from objectcode import *
-import tkFileDialog, Tkinter
+try:
+	import tkFileDialog, Tkinter
+except:
+	pass
 #----GUI TODOS----
 # Get user preference directory from OS and store settings file there
 # Cement Borrows
@@ -399,8 +402,9 @@ class Editor(Gtk.Window):
 		self.toolbar.show_all()
 
 	def on_destroy(self,window):
-		f=open(self.parent.defaultfile.file_name,'wb')
-		f.write(self.parent.defaultfile.content)
+		#f=open(self.parent.defaultfile.file_name,'wb')
+		#f.write(self.parent.defaultfile.content)
+		pass
 
 	def open_file(self,widget):
 		root=Tkinter.Tk()
@@ -415,9 +419,43 @@ class Editor(Gtk.Window):
 		self.parent.defaultfile.content=sbuff.get_text(sbuff.get_start_iter(),sbuff.get_end_iter(),True)
 
 	def level_select(self, widget):
+		import sys
+		sys.path.append("../game")
+		from gui.levels import LevelWindow
+		win=LevelWindow()
+		
+		win.connect("delete-event", win.close)
+		win.show_all()
 		pass
 
 	def run_file(self,widget):
+		import sys
+		sys.path.append("../game")
+		from guirun import runGame
+
+		f=open(self.parent.defaultfile.file_name,'w+')
+		f.close
+		f = open(self.parent.defaultfile.file_name,'w+b')
+
+		print "FILE NAME TO WRITE TO", self.parent.defaultfile.file_name
+		self.parent.defaultfile.content = str(self.sbuff.get_text(self.sbuff.get_start_iter(),self.sbuff.get_end_iter(),True))
+
+		print "CONTENT", self.parent.defaultfile.content
+		print "CONTENT2 !!", self.parent.defaultfile.content
+		print "FILE NAME", self.parent.defaultfile.file_name
+		f.write(str(self.parent.defaultfile.content))
+		f.close()
+
+
+		#f=open(self.parent.defaultfile.file_name, 'w')
+		#f.write("Hello 1234")
+		#f.close()
+
+		#ff = open(self.parent.defaultfile.file_name,'r')
+		#import pdb
+		#pdb.set_trace()
+		runGame(self.parent.defaultfile.file_name)
+
 		pass
 
 def change_window(widget,new_window_name,parent_window,top_parent):

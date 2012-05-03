@@ -4,10 +4,15 @@ from gi.repository import Gtk,GObject,GtkSource,Clutter
 from gi.repository import Gdk
 from objectcode import Account,Comment,Borrow
 import datetime, sys
+
+
+sys.path.append("community")
+
 #from mainproto2 import on_window_mode_changed
 ###-------------------------------Main Functions---------------------------###
 
 #How the user creates line comments. Should involve clicking on the line or something like that. So this will get called by a button I think.Should add a line comment to the code.
+
 def submit_line_comment(self,account,linenum,text):
 	time=datetime.date.today()
 	new_comment=Comment(text,time,"Hash","Which_file",self.fake_user,linenum)
@@ -67,13 +72,13 @@ class TempWindow(Gtk.Window):
 		clutterscroll.add_with_viewport(self.embed)
 		clutterscroll.set_size_request(200,800)'''
 		#self.embed.connect("button-press-event",self.stageclicked)
-		imagebox.pack_start(embed,True,True,0)
+		imagebox.pack_start(self.embed,True,True,0)
 
 		self.render_clutter()
 
 		imageframe=Gtk.Frame()
 		imageframe.add(imagebox)
-		self.embed.set_size_request(200,2000)
+		self.embed.set_size_request(200,800)
 
 		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		self.toplevel.set_size_request(self.x,self.y)
@@ -199,7 +204,7 @@ class TempWindow(Gtk.Window):
 		self.rect.set_color(blue)
 		self.rect.set_reactive(True)
 		Clutter.Container.add_actor(self.stage, self.rect)
-		self.rect.set_position(40,1200)
+		self.rect.set_position(40,500)
 		self.rect.set_size(50,50)
 		
 

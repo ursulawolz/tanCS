@@ -1,11 +1,13 @@
-from gi.repository import Gtk
+from gi.repository import Gtk, Gdk
 import pdb
-class GridWindow(Gtk.Window): 
+class LevelWindow(Gtk.Window): 
 	def parseLevels(self):
 		'''
 		Parse the level file and return a reasonable thing.
 		'''
-		f = open('levels.txt')
+		self.appendpath = '../game/gui/'
+		f = open('../game/gui/levels.txt')
+
 		levels = [] 
 		onWorld = -1
 		for i in f:
@@ -91,6 +93,7 @@ class GridWindow(Gtk.Window):
 		self.levelGrid.attach(self.levelNameLabel, 0, 1, 0, 1)
 		
 		self.levelImage = Gtk.Image()
+		
 		self.levelImage.set_alignment(0,1)
 		#self.levelGrid.attach_next_to( self.levelImage,self.levelNameLabel,Gtk.PositionType.BOTTOM,2,2)
 		self.levelGrid.attach( self.levelImage, 0, 1, 1, 2)
@@ -102,22 +105,31 @@ class GridWindow(Gtk.Window):
 		self.selectLevel(None, levels[self.worldNum-1]['levelInfo'][self.levelNum-1], self.worldNum, self.levelNum)
 
 	def close(self, unused1, unused2):
-		f = open('saved.data', 'w')
+		f = open('../game/gui/saved.data', 'w')
 		f.write('World'+str(self.worldNum)+'\n'+'Level'+str(self.levelNum)+'\n')
 		f.close()
 		print "Closed Gui"
 	def selectLevel(self, button, level,worldnum,levelnum):
 		self.levelNameLabel.set_text(level[0] + ": "+ level[1])
 		self.levelDescription.set_text(level[2])
-		self.levelImage.set_from_file('level1.png')
+		self.levelImage.set_from_file(self.appendpath +level[0]+'.png')
+		
+		#pixbuf = self.levelImage.get_pixbuf()
 
+		#scaled_buf = pixbuf.scale_simple(.5,.5,2)
+
+		#self.levelImage.set_from_pixbuf(pixbuf)
+		#im.show()
+		
+		#self.levelImage.set_pixel_size(.1);
+		#self.levelImage.set_size_request(10,10)
 		self.levelNum = levelnum
 		self.worldNum = worldnum
 
 
-win=GridWindow()
-win.connect("delete-event", Gtk.main_quit)
-win.connect("delete-event", win.close)
-win.show_all()
-Gtk.main()
+#win=GridWindow()
+#win.connect("delete-event", Gtk.main_quit)
+#win.connect("delete-event", win.close)
+#win.show_all()
+#Gtk.main()
 
