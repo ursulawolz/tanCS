@@ -220,7 +220,23 @@ class TempWindow(Gtk.Window):
 		#[circle,label,files,isopen,ishead]
 		self.circles=[] 
 
+		headcircle=Clutter.Texture.new_from_file("headcircle.png");
+		Clutter.Container.add_actor(self.stage, headcircle)
+		headcircle.set_position(50,50)
+		headcircle.set_size(100,100)
+		headcircle.set_reactive(True)
+		headcircle.connect('button-press-event',self.revclick,0)
+
+		headlabel=Clutter.Text.new_full("Serif 20","Head",black)
+		Clutter.Container.add_actor(self.stage,headlabel)
+		headlabel.set_anchor_point(headlabel.get_size()[0]/2.0,headlabel.get_size()[1]/2.0)
+		headlabel.set_position(100,100)
+
+		self.circles.append([headcircle,headlabel,[],False,True])
+
 		for i in range(num_revs):
+			i=i+1
+			rev=num_revs-i
 			newcircle=Clutter.Texture.new_from_file("circle.png");
 			Clutter.Container.add_actor(self.stage, newcircle)
 			newcircle.set_position(50,125*i+50)
@@ -228,26 +244,13 @@ class TempWindow(Gtk.Window):
 			newcircle.set_reactive(True)
 			newcircle.connect('button-press-event',self.revclick,i)
 
-			newlabel=Clutter.Text.new_full("Serif 20","Rev "+str(i+1),black)
+			newlabel=Clutter.Text.new_full("Serif 20","Rev "+str(rev+1),black)
 			Clutter.Container.add_actor(self.stage,newlabel)
 			newlabel.set_anchor_point(newlabel.get_size()[0]/2.0,newlabel.get_size()[1]/2.0)
 			newlabel.set_position(100,125*i+100)
 
 			self.circles.append([newcircle,newlabel,[],False,False])
 
-		headcircle=Clutter.Texture.new_from_file("headcircle.png");
-		Clutter.Container.add_actor(self.stage, headcircle)
-		headcircle.set_position(50,125*num_revs+50)
-		headcircle.set_size(100,100)
-		headcircle.set_reactive(True)
-		headcircle.connect('button-press-event',self.revclick,num_revs)
-
-		headlabel=Clutter.Text.new_full("Serif 20","Head",black)
-		Clutter.Container.add_actor(self.stage,headlabel)
-		headlabel.set_anchor_point(headlabel.get_size()[0]/2.0,headlabel.get_size()[1]/2.0)
-		headlabel.set_position(100,125*num_revs+100)
-
-		self.circles.append([headcircle,headlabel,[],False,True])
 
 		'''
 		circle=Clutter.Texture.new_from_file("circle.png");
@@ -305,7 +308,7 @@ class TempWindow(Gtk.Window):
 			if self.circles[revnum][4]:
 				files=self.parent.defaultproject.head.files
 			else:
-				files=self.parent.defaultproject.revisions[revnum].files
+				files=self.parent.defaultproject.revisions[revnum-1].files
 			for f in files:
 				numfiles+=1
 				newlabel=Clutter.Text.new_full("Serif 12",f.file_name,black)
@@ -325,21 +328,20 @@ class TempWindow(Gtk.Window):
 		self.embed.grab_focus()
 
 	def mouse_moved(self,widget,event):
-		miny=100
-		maxy=self.embed.get_allocation().height-100
+		miny=200
+		maxy=self.embed.get_allocation().height-200
 		self.curr_y=event.get_coords()[1]
-		#print maxy
 		if self.curr_y<miny:
-			GObject.timeout_add(200,self.scrollup)
+			GObject.timeout_add(50,self.scrollup)
 		if self.curr_y>maxy:
-			GObject.timeout_add(200,self.scrolldown)
+			GObject.timeout_add(50,self.scrolldown)
 
 	def scrollup(self,data=None):
 		if self.scroll<0:
-			self.scroll+=2
+			self.scroll+=.5
 			self.reset_clutter()
 			miny=150
-			maxy=self.embed.get_allocation().height-150
+			maxy=self.embed.get_allocation().height-200
 			if self.curr_y<miny:
 				return True
 			else:
@@ -348,10 +350,10 @@ class TempWindow(Gtk.Window):
 			return False
 
 	def scrolldown(self,data=None):
-		self.scroll-=2
+		self.scroll-=.5
 		self.reset_clutter()
 		miny=100
-		maxy=self.embed.get_allocation().height-100
+		maxy=self.embed.get_allocation().height-200
 		if self.curr_y>maxy:
 			return True
 		else:
