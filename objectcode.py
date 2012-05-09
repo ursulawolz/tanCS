@@ -166,7 +166,7 @@ class Group(object):
         self.accountIDs.remove(userID)
 
 
-class Comment:
+class Comment(object):
     ## Object for comments on users' codes, be they in-line or general.
 
     def __init__(self,text,time,hashID,which_file,accountID,which_line=-1):

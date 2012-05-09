@@ -41,7 +41,9 @@ class tanCS(object):
 		self.defaultproject=Project('The default!','A dummy project.', 'proj01',None, 8, 'groupHASH')
 		f=open("testingtk3.py")
 		file1=File(self.defaultproject, 0, 'testingtk3.py', f.read())
+		f.close()
 		self.defaultfile=file1
+		f=open("testingtk3.py")
 		file2=File(self.defaultproject, 1, 'testingtk3.py', f.read())
 		f.close()
 		f=open("cluttertest3.py")
@@ -50,21 +52,27 @@ class tanCS(object):
 		f=open("testingtk3.py")
 		file1=File(self.defaultproject, 2, 'testingtk3.py', f.read())
 		self.defaultfile=file1
+		f.close()
+		f=open("testingtk3.py")
 		file2=File(self.defaultproject, 3, 'testingtk3.py', f.read())
 		f.close()
 		f=open("cluttertest3.py")
 		file3=File(self.defaultproject, 4, 'cluttertest3.py', f.read())
+		f.close()
 
 		f=open("testingtk3.py")
 		file1=File(self.defaultproject, 5, 'testingtk3.py', f.read())
 		self.defaultfile=file1
+		f.close()
+		f=open("testingtk3.py")
 		file2=File(self.defaultproject, 6, 'testingtk3.py', f.read())
 		f.close()
 		f=open("cluttertest3.py")
 		file3=File(self.defaultproject, 7, 'cluttertest3.py', f.read())
+		f.close()
 
 		f.close()
-		self.defaultproject.head=Head(prevrev=self.defaultproject.revisions[1])
+		self.defaultproject.head=Head(prevrev=self.defaultproject.revisions[-1])
 		#self.defaultproject.revisions=[defaultrevision]
 		#self.defaultproject.head=defaulthead
 

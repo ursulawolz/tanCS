@@ -315,6 +315,7 @@ class TempWindow(Gtk.Window):
 				Clutter.Container.add_actor(self.stage,newlabel)
 				newlabel.set_anchor_point(newlabel.get_size()[0]/2.0,newlabel.get_size()[1]/2.0)
 				newlabel.set_position(100,starty+25*numfiles)
+				newlabel.set_reactive(True)
 				newlabel.connect('button-press-event',self.openfile,f)
 				filelabels.append(newlabel)
 			self.circles[revnum][2]=filelabels
@@ -361,6 +362,7 @@ class TempWindow(Gtk.Window):
 
 	def openfile(self,widget=None,data=None,f=None):
 		print 'Opening '+f.file_name
+		self.thecodebuffer.set_text(f.content)
 
 
 	def stageclicked(self,widget,event=-1,data=-1):
