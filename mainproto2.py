@@ -10,6 +10,7 @@ from objectcode import *
 import os
 import platform
 import subprocess
+import pdb
 
 class tanCS(object):
 
@@ -37,12 +38,18 @@ class tanCS(object):
 		#in the process of creating default objects
 		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH',"default group")
 		self.defaultaccount=Account('userHASH', 'oranges', 'kiwi', 'explorer-icon.png')
+		self.defaultproject=Project('The default!','A dummy project.', 'proj01',None, 2, 'groupHASH')
 		f=open("testingtk3.py")
-		self.defaultfile=File('projectHASH', 0, 'testingtk3.py', f.read())
-		#self.default
-
-		#self.defaultrevision=Revision(0)
-		self.defaultproject=Project
+		file1=File(self.defaultproject, 0, 'testingtk3.py', f.read())
+		self.defaultfile=file1
+		file2=File(self.defaultproject, 1, 'testingtk3.py', f.read())
+		f.close()
+		f=open("cluttertest3.py")
+		file3=File(self.defaultproject, 1, 'cluttertest3.py', f.read())
+		f.close()
+		self.defaultproject.head=Head(prevrev=self.defaultproject.revisions[1])
+		#self.defaultproject.revisions=[defaultrevision]
+		#self.defaultproject.head=defaulthead
 
 		win=viewer.TempWindow(self)
 		win.connect("delete-event",Gtk.main_quit)

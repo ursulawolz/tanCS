@@ -1,5 +1,10 @@
 ### Definitions for the various objects necessary for Community of Practice.
 
+#Since our objects are doubly-linked, Greg and I have created a few conventions for initializing them.
+#Initialization order: Account => Group => Project => Revision => File => Comment => Borrow
+
+import pdb
+
 class Account(object):
     ## Object for an individual user's account.
 
@@ -31,7 +36,7 @@ class Account(object):
         self.group_list.remove( group )
 
 class Borrow:
-    def __init__(self, date_taken, projectID, revisionID, file_name, line_range, line_offsets):
+    def __init__(self, date_taken, project_from_ID, revision_from_ID, file_from_name, line_range, line_offsets):
         self.date_taken = date_taken
         self.projectID = projectID
         self.revisionID = revisionID
@@ -40,6 +45,11 @@ class Borrow:
         self.line_range = line_range
         #line_offsets is a tuple of 2 offsets representing distance from start of line
         self.line_offsets = line_offsets
+
+    def link_borrow(self,project_to_ID,revision_to_ID,file_to_name):
+        self.project_to_id=project_to_ID
+        self.revision_to_id=revision_to_ID
+        self.file_to_name=file_to_name
 
     def get_text(self):
         #returns the borrowed text
@@ -69,77 +79,79 @@ class Borrow:
 
 
 class Project(object):
-	def __init__(self,title,description, projID, parentID, groupID, borrows=set(),revisions=[],head=None):
-		self.title=title
-		self.description=description
-		self.projID = projID
-		self.parentID = parentID
-		self.groupID = groupID
+    def __init__(self,title,description, projID, parentID, numrevs, groupID):
+        self.title=title
+        self.description=description
+        self.projID = projID
+        self.parentID = parentID
+        self.groupID = groupID
 
-		self.children = set()
-		self.borrows = borrows ##set of borrows
-		self.revisions = revisions ##set of revisions
+        self.revisions = [] ##list of revisions
+        for i in range(numrevs):
+            rev=Revision(self,i,files=[])
+            self.revisions.append(rev)
 
-		self.locked = 0
-		self.tags = set()
+        self.children = set()
+        self.borrows = set() ##set of borrows
 
-		if head is None:
-			self.head=Head(self,len(revisions))
-		else:
-			self.head=head
+        self.head = None
 
-		def add_child(self, child):
-			self.children.add( child )
+        self.locked = 0
+        self.tags = set()
 
-		def remove_child(self, child):
-			self.children.remove( child )
+    def add_child(self, child):
+        self.children.add( child )
 
-		def add_borrow(self, lender):
-			self.borrows.add( lender )
+    def remove_child(self, child):
+        self.children.remove( child )
 
-		def remove_borrow(self, lender):
-			self.borrows.remove( lender )
+    def add_borrow(self, lender):
+        self.borrows.add( lender )
 
-		def create_revision(self):
-			nextIndex = len(revisions) + 1
-			self.revisions[nextIndex] = self.head
+    def remove_borrow(self, lender):
+        self.borrows.remove( lender )
 
-		def lock_proj(self):
-			self.locked = 1
+    def create_revision(self):
+        nextIndex = len(revisions) + 1
+        self.revisions[nextIndex] = self.head
 
-		def unlock_proj(self):
-			self.locked = 0
+    def lock_proj(self):
+        self.locked = 1
 
-		def add_tag(self, new_tag):
-			self.tags.add( new_tag )
+    def unlock_proj(self):
+        self.locked = 0
 
-		def remove_tag(self, tag):
-			self.tags.remove( tag )
+    def add_tag(self, new_tag):
+        self.tags.add( new_tag )
+
+    def remove_tag(self, tag):
+        self.tags.remove( tag )
 
 
 class File:
     ## Object for a revision file.
 
-    def __init__(self, projectID, revision_number, file_name, content):
-        self.projectID = projectID
-        self.revision_number = revision_number
+    def __init__(self, project, rev_number, file_name, content):
+        self.project = project
+        self.revision_number = rev_number
         self.file_name = file_name
         self.content = content
+        self.project.revisions[rev_number].files.append(self)
 
 
 class Group(object):
     ## Object which defines a user-group.
 
     def __init__(self,groupID,godID,title,description="",accountIDs=set(),projIDs=set()):
-		# groupID is the group's unique hash ID.
-		# projIDs and accountIDs are sets of project and account hashes.
-		# godID is the account hash of the group god.
-		self.title=title
-		self.description=description
-		self.groupID = groupID
-		self.projIDs = projIDs
-		self.accountIDs = accountIDs
-		self.godID = godID
+        # groupID is the group's unique hash ID.
+        # projIDs and accountIDs are sets of project and account hashes.
+        # godID is the account hash of the group god.
+        self.title=title
+        self.description=description
+        self.groupID = groupID
+        self.projIDs = projIDs
+        self.accountIDs = accountIDs
+        self.godID = godID
 
     def add_project(self, projectID):
         self.projIDs.add(projectID)
@@ -181,18 +193,19 @@ class Comment:
 
 class Revision:
 
-    def __init__(self,revision_number,project=None, files=[]):
+    def __init__(self,project,rev_number,files=[]):
         self.project=project
-        self.revision_number=revision_number
+        self.rev_number=rev_number
         self.files=files
 
+#Creating a new Head with a previous revision specified copies that revision into the Head for editing
 class Head(Revision):
 
-    def __init__(self,project=None,revision_number=None,files=[],prevrev=None):
+    def __init__(self,project=None,rev_number=None,files=[],prevrev=None):
         if not (prevrev is None):
-            Revision.__init__(self,prevrev.project,prevrev.revision_number,prevrev.files)
+            Revision.__init__(self,prevrev.project,prevrev.rev_number,prevrev.files)
         else:
-            Revision.__init__(self,project,revision_number,files)
+            Revision.__init__(self,project,rev_number,files)
 
     def add_file(self,newfile):
         self.files.append(newfile)

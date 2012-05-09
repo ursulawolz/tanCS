@@ -4,6 +4,7 @@ from gi.repository import Gtk,GObject,GtkSource,Clutter
 from gi.repository import Gdk
 from objectcode import Account,Comment,Borrow
 import datetime, sys
+import pdb
 #from mainproto2 import on_window_mode_changed
 ###-------------------------------Main Functions---------------------------###
 
@@ -182,7 +183,9 @@ class TempWindow(Gtk.Window):
 		return
 
 	def render_clutter(self):
-		self.stage = self.embed.get_stage()		# Get the Stage
+		self.stage = self.embed.get_stage()	# Get the Stage
+		self.stage.set_no_clear_hint(False)
+		self.stage.ensure_redraw()
 		self.stage.set_title("The application title")		# Stage's title
 		self.stage.connect("motion-event",self.mouse_moved)
 		white = Clutter.Color.new(255,255,255,255)
@@ -191,6 +194,7 @@ class TempWindow(Gtk.Window):
 		self.stage.set_color(white)
 		self.stage.set_reactive(True)
 
+		'''
 		intext = Clutter.Text.new_full("Sans 20", "Hello! This\nis where the\ndynamic\nrevision map\nwill go.\nPlease do\nnot panic\nwhile we\nrenovate.", blue)
 		intext.set_reactive(True)
 		Clutter.Container.add_actor(self.stage, intext)
@@ -201,9 +205,36 @@ class TempWindow(Gtk.Window):
 		self.rect.set_reactive(True)
 		Clutter.Container.add_actor(self.stage, self.rect)
 		self.rect.set_position(40,1200)
-		self.rect.set_size(50,50)
+		self.rect.set_size(50,50)'''
 		
+		toptext = Clutter.Text.new_full("Sans 20", "Revision Map", blue)
+		toptext.set_reactive(True)
+		Clutter.Container.add_actor(self.stage, toptext)
+		toptext.set_position(15,5)
 
+		num_revs=len(self.parent.defaultproject.revisions)
+
+		#list of tuples containing the various clutter objects within a revision circle
+		#the third value in a tuple is the list of files in the object
+		#the last value in a tuple represents whether it is 'open' or not
+		self.circles=[] 
+
+		for i in range(num_revs):
+			newcircle=Clutter.Texture.new_from_file("circle.png");
+			Clutter.Container.add_actor(self.stage, newcircle)
+			newcircle.set_position(50,125*i+50)
+			newcircle.set_size(100,100)
+			newcircle.set_reactive(True)
+			newcircle.connect('button-press-event',self.revclick,i)
+
+			newlabel=Clutter.Text.new_full("Serif 20","Rev "+str(i+1),black)
+			Clutter.Container.add_actor(self.stage,newlabel)
+			newlabel.set_anchor_point(newlabel.get_size()[0]/2.0,newlabel.get_size()[1]/2.0)
+			newlabel.set_position(100,125*i+100)
+
+			self.circles.append([newcircle,newlabel,[],False])
+
+		'''
 		circle=Clutter.Texture.new_from_file("circle.png");
 		Clutter.Container.add_actor(self.stage, circle)
 		circle.set_position(50,450)
@@ -225,14 +256,57 @@ class TempWindow(Gtk.Window):
 		label2=Clutter.Text.new_full("Serif 20","Rev 2",black)
 		Clutter.Container.add_actor(self.stage,label2)
 		label2.set_anchor_point(label2.get_size()[0]/2.0,label2.get_size()[1]/2.0)
-		label2.set_position(100,620)
+		label2.set_position(100,620)'''
 
-
+		'''
 		#self.stage.connect('button-press-event',self.stageclicked)
 		self.rectrot=0
-		GObject.timeout_add(10,self.clutterupdate)
+		GObject.timeout_add(10,self.clutterupdate)'''
 
 		self.stage.show_all()	# We show everything
+
+	def reset_clutter(self):
+		for i in range(len(self.circles)):
+			self.circles[i]
+			self.circles[i][0].set_position(50,125*i+50)
+			self.circles[i][1].set_position(100,125*i+100)
+			self.circles[i][3] = False
+			#pdb.set_trace()
+			for j in range(len(self.circles[i][2])):
+				self.circles[i][2][j].hide_all()
+				#pdb.set_trace()
+				Clutter.Container.remove_actor(self.stage, self.circles[i][2][j])
+			self.circles[i][2] = []
+
+	def revclick(self,widget,data,revnum):
+		black=Clutter.Color.new(0,0,0,255)
+		#self.stage.hide_all()
+		#self.circles[1][0].hide()
+		flag=(not self.circles[revnum][3])
+		self.reset_clutter()
+		if flag:
+			filelist=[]
+			starty=self.circles[revnum][0].get_position()[1]+100
+			numfiles=0
+			for f in self.parent.defaultproject.revisions[revnum].files:
+				numfiles+=1
+				newlabel=Clutter.Text.new_full("Serif 12",f.file_name,black)
+				Clutter.Container.add_actor(self.stage,newlabel)
+				newlabel.set_anchor_point(newlabel.get_size()[0]/2.0,newlabel.get_size()[1]/2.0)
+				newlabel.set_position(100,starty+25*numfiles)
+				filelist.append(newlabel)
+			self.circles[revnum][2]=filelist
+			for i in range(len(self.circles)-(revnum+1)):
+				i+=revnum+1
+				self.circles[i][0].move_by(0,25+25*numfiles)
+				self.circles[i][1].move_by(0,25+25*numfiles)
+			self.circles[revnum][3]=True
+
+			#pdb.set_trace()
+			'''
+			for i in range(len(circles)-(revnum+1)):
+				i+=(revnum+1)'''
+
 
 	def success(self,widget,data=-1):
 		print 'success'
