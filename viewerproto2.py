@@ -194,6 +194,8 @@ class TempWindow(Gtk.Window):
 		self.stage.set_color(white)
 		self.stage.set_reactive(True)
 
+		self.scroll=0
+
 		'''
 		intext = Clutter.Text.new_full("Sans 20", "Hello! This\nis where the\ndynamic\nrevision map\nwill go.\nPlease do\nnot panic\nwhile we\nrenovate.", blue)
 		intext.set_reactive(True)
@@ -207,16 +209,15 @@ class TempWindow(Gtk.Window):
 		self.rect.set_position(40,1200)
 		self.rect.set_size(50,50)'''
 		
-		toptext = Clutter.Text.new_full("Sans 20", "Revision Map", blue)
-		toptext.set_reactive(True)
-		Clutter.Container.add_actor(self.stage, toptext)
-		toptext.set_position(15,5)
+		self.toptext = Clutter.Text.new_full("Sans 20", "Revision Map", blue)
+		self.toptext.set_reactive(True)
+		Clutter.Container.add_actor(self.stage, self.toptext)
+		self.toptext.set_position(15,5)
 
 		num_revs=len(self.parent.defaultproject.revisions)
 
-		#list of tuples containing the various clutter objects within a revision circle
-		#the third value in a tuple is the list of files in the object
-		#the last value in a tuple represents whether it is 'open' or not
+		#nested lists containing the various clutter objects within a revision circle
+		#[circle,label,files,isopen,ishead]
 		self.circles=[] 
 
 		for i in range(num_revs):
@@ -232,7 +233,21 @@ class TempWindow(Gtk.Window):
 			newlabel.set_anchor_point(newlabel.get_size()[0]/2.0,newlabel.get_size()[1]/2.0)
 			newlabel.set_position(100,125*i+100)
 
-			self.circles.append([newcircle,newlabel,[],False])
+			self.circles.append([newcircle,newlabel,[],False,False])
+
+		headcircle=Clutter.Texture.new_from_file("headcircle.png");
+		Clutter.Container.add_actor(self.stage, headcircle)
+		headcircle.set_position(50,125*num_revs+50)
+		headcircle.set_size(100,100)
+		headcircle.set_reactive(True)
+		headcircle.connect('button-press-event',self.revclick,num_revs)
+
+		headlabel=Clutter.Text.new_full("Serif 20","Head",black)
+		Clutter.Container.add_actor(self.stage,headlabel)
+		headlabel.set_anchor_point(headlabel.get_size()[0]/2.0,headlabel.get_size()[1]/2.0)
+		headlabel.set_position(100,125*num_revs+100)
+
+		self.circles.append([headcircle,headlabel,[],False,True])
 
 		'''
 		circle=Clutter.Texture.new_from_file("circle.png");
@@ -268,15 +283,14 @@ class TempWindow(Gtk.Window):
 	def reset_clutter(self):
 		for i in range(len(self.circles)):
 			self.circles[i]
-			self.circles[i][0].set_position(50,125*i+50)
-			self.circles[i][1].set_position(100,125*i+100)
+			self.circles[i][0].set_position(50,125*i+50+self.scroll)
+			self.circles[i][1].set_position(100,125*i+100+self.scroll)
 			self.circles[i][3] = False
-			#pdb.set_trace()
 			for j in range(len(self.circles[i][2])):
 				self.circles[i][2][j].hide_all()
-				#pdb.set_trace()
 				Clutter.Container.remove_actor(self.stage, self.circles[i][2][j])
 			self.circles[i][2] = []
+		self.toptext.set_position(15,5+self.scroll)
 
 	def revclick(self,widget,data,revnum):
 		black=Clutter.Color.new(0,0,0,255)
@@ -285,31 +299,27 @@ class TempWindow(Gtk.Window):
 		flag=(not self.circles[revnum][3])
 		self.reset_clutter()
 		if flag:
-			filelist=[]
+			filelabels=[]
 			starty=self.circles[revnum][0].get_position()[1]+100
 			numfiles=0
-			for f in self.parent.defaultproject.revisions[revnum].files:
+			if self.circles[revnum][4]:
+				files=self.parent.defaultproject.head.files
+			else:
+				files=self.parent.defaultproject.revisions[revnum].files
+			for f in files:
 				numfiles+=1
 				newlabel=Clutter.Text.new_full("Serif 12",f.file_name,black)
 				Clutter.Container.add_actor(self.stage,newlabel)
 				newlabel.set_anchor_point(newlabel.get_size()[0]/2.0,newlabel.get_size()[1]/2.0)
 				newlabel.set_position(100,starty+25*numfiles)
-				filelist.append(newlabel)
-			self.circles[revnum][2]=filelist
+				newlabel.connect('button-press-event',self.openfile,f)
+				filelabels.append(newlabel)
+			self.circles[revnum][2]=filelabels
 			for i in range(len(self.circles)-(revnum+1)):
 				i+=revnum+1
 				self.circles[i][0].move_by(0,25+25*numfiles)
 				self.circles[i][1].move_by(0,25+25*numfiles)
 			self.circles[revnum][3]=True
-
-			#pdb.set_trace()
-			'''
-			for i in range(len(circles)-(revnum+1)):
-				i+=(revnum+1)'''
-
-
-	def success(self,widget,data=-1):
-		print 'success'
 
 	def enter_clutter(self,widget,data=-1):
 		self.embed.grab_focus()
@@ -317,12 +327,39 @@ class TempWindow(Gtk.Window):
 	def mouse_moved(self,widget,event):
 		miny=100
 		maxy=self.embed.get_allocation().height-100
-		curr_y=event.get_coords()[1]
+		self.curr_y=event.get_coords()[1]
 		#print maxy
-		if curr_y<miny:
-			print 'too low'
-		if curr_y>maxy:
-			print 'too high'
+		if self.curr_y<miny:
+			GObject.timeout_add(200,self.scrollup)
+		if self.curr_y>maxy:
+			GObject.timeout_add(200,self.scrolldown)
+
+	def scrollup(self,data=None):
+		if self.scroll<0:
+			self.scroll+=2
+			self.reset_clutter()
+			miny=150
+			maxy=self.embed.get_allocation().height-150
+			if self.curr_y<miny:
+				return True
+			else:
+				return False
+		else:
+			return False
+
+	def scrolldown(self,data=None):
+		self.scroll-=2
+		self.reset_clutter()
+		miny=100
+		maxy=self.embed.get_allocation().height-100
+		if self.curr_y>maxy:
+			return True
+		else:
+			return False
+
+	def openfile(self,widget=None,data=None,f=None):
+		print 'Opening '+f.file_name
+
 
 	def stageclicked(self,widget,event=-1,data=-1):
 		#print "Stage clicked at (%f, %f)" % (event.get_coords()[0],event.get_coords()[1])
