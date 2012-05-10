@@ -189,9 +189,10 @@ class explorer_window(Gtk.Window):
 		self.password_label.set_text(account.password)
 		self.avatar_label=Gtk.Image()
 		self.avatar_label.set_from_file(account.avatar)
-		user_button=Gtk.Button("Change")
-		pass_button=Gtk.Button("Change")
-		avatar_button=Gtk.Button("Change")
+		if account==self.parent.user:
+			user_button=Gtk.Button("Change")
+			pass_button=Gtk.Button("Change")
+			avatar_button=Gtk.Button("Change")
 
 		user_button.connect("clicked",self.on_change_pressed,"usr")
 		pass_button.connect("clicked",self.on_change_pressed,"pass")
@@ -338,7 +339,7 @@ class explorer_window(Gtk.Window):
 		#comment="Comment goes here. This should be very long and take up ALL of the space"
 		#other_info="Other info goes here"
 		temp_group=Group('','','','')
-		temp_project=Project('','','','','','','','')
+		temp_project=Project('','','','',4,'')
 		temp_account=Account('','','','')
 
 		outer_padding=Gtk.EventBox()
@@ -359,6 +360,9 @@ class explorer_window(Gtk.Window):
 		if type(result)==type(temp_project):
 			outer_padding.connect("button_press_event",self.on_project_display_clicked,self.toplevel,result)
 		
+		if type(result)==type(temp_account):
+			outer_padding.connect("button_press_event",self.on_account_clicked,self.toplevel,result)		
+
 		outer_padding.add(outer_frame)
 		outer_frame.add(outer_vbox)
 		outer_vbox.pack_start(heading,True,True,0)
@@ -411,7 +415,7 @@ class explorer_window(Gtk.Window):
 
 	def what_display(self,result):
 		temp_group=Group('','','','')
-		temp_project=Project('','','','','','','','')
+		temp_project=Project('','','','',4,'')
 		temp_account=Account('','','','')
 		#print result
 		if type(result)==type(temp_account):
@@ -423,13 +427,17 @@ class explorer_window(Gtk.Window):
 			title=result.title
 			comment=result.description
 			#other_info="Accounts are"+result.get_accounts()
-			other_info="Accounts are: "+str(result.accountIDs)
+			dictionary=result.accountIDs
+			thelist=[]
+			for key in dictionary:
+				thelist.append(dictionary[key]) 
+			other_info="Accounts are: "+str(thelist)
 			return [title,comment,other_info]
 		elif type(result)==type(temp_project):
 			print "project"	
 			title=result.title
 			comment=result.description
-			other_info="Current Revision is: "+result.revisions
+			other_info="Current Revision is: ",str(result.revisions[0])
 			return [title,comment,other_info]
 		elif type(result)==type(('','')):
 			#print "result is: ",result
@@ -502,17 +510,17 @@ class explorer_window(Gtk.Window):
 			print "working in get results"
 			return results
 		elif type_results=="projects" and type(identifier)==type(temp_account):
-			result1=Project("This is a title","This is a description",'','','','','1.0','')
-			result2=Project("This is a title","This is a description",'','','','','3.2','')
-			result3=Project("This is a title","This is a description",'','','','','9.7','')
-			result4=Project("This is a title","This is a description",'','','','','1.2','')
+			result1=Project("This is a title","This is a description",'','',4,'')
+			result2=Project("This is a title","This is a description",'','',4,'')
+			result3=Project("This is a title","This is a description",'','',4,'')
+			result4=Project("This is a title","This is a description",'','',4,'')
 			results=[result1,result2,result3,result4]
 			return results
 			
 		elif type_results=="projects" and type(identifier)==type(temp_group):
-			result1=Project("This is a title","This is a description",'','','','','2.0','')
-			result2=Project("This is a title","This is a description",'','','','','4.2','')
-			result3=Project("This is a title","This is a description",'','','','','8.7','')
+			result1=Project("This is a title","This is a description",'','',4,'')
+			result2=Project("This is a title","This is a description",'','',4,'')
+			result3=Project("This is a title","This is a description",'','',4,'')
 			results=[result1,result2,result3]
 			return results
 		elif type_results=="accounts" and type(identifier)==type(temp_group):

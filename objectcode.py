@@ -196,6 +196,8 @@ class Revision:
         self.project=project
         self.rev_number=rev_number
         self.files=files
+    def __str__(self):
+        return str(self.rev_number)
 
 #Creating a new Head with a previous revision specified copies that revision into the Head for editing
 class Head(Revision):
