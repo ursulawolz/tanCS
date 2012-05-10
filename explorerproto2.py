@@ -1,6 +1,7 @@
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 from objectcode import *
+import pdb
 
 def change_window(widget,new_window_name,parent_window,top_parent):
 		top_parent.on_window_mode_changed(new_window_name,parent_window,parent_window.activeproject,parent_window.activerev,parent_window.activefile)
@@ -114,7 +115,9 @@ class explorer_window(Gtk.Window):
 		self.return_box.pack_start(self.label3,True,True,0)
 		return self.return_box
 
-	def make_display_project(self,project):
+###-------------------------Project Methods---------------------###
+	def make_display_project(self,project,toplevel):
+		print project.title,project.description
 		self.return_box=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=20)
 		title=Gtk.Label('<b>'+project.title+'</b>')
 		title.set_use_markup(True)
@@ -130,12 +133,56 @@ class explorer_window(Gtk.Window):
 		self.activerev=None
 		self.activefile=None
 		to_revision_map.connect("clicked",change_window,"Viewer",self,self.parent)
+		#TODO 
+		#Search for project's group
+		fake_group=Group('','BLARG','','','')
 		back_to_group=Gtk.Button("Return to Group Page")
+		back_to_group.connect("clicked",self.on_group_display_clicked,'',toplevel,fake_group)
 		self.return_box.pack_start(title,False,False,0)
 		self.return_box.pack_start(description_block,False,False,0)
 		self.return_box.pack_start(to_revision_map,False,False,0)
 		self.return_box.pack_start(back_to_group,False,False,0)
 		return self.return_box
+
+	def on_create_project_clicked(self,widget,toplevel):
+		self.the_new_page=self.create_project(toplevel)
+		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Create a Group")
+
+	def create_project(self,toplevel):
+		self.return_box2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=20)
+		title_title=Gtk.Label("Title for your project: ")
+		desc_title=Gtk.Label("Enter a description for your project: ")
+		new_title=Gtk.Entry()
+		#Change to text frame thingy later
+		new_desc=Gtk.Entry()
+		new_title.set_text("Put the title here")
+		new_desc.set_text("Put the description here")
+		title_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=20)
+		desc_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=20)
+		
+		title_block.pack_start(title_title,False,False,0)
+		title_block.pack_start(new_title, False,False,0)
+		desc_block.pack_start(desc_title,False,False,0)
+		desc_block.pack_start(new_desc,False,False,0)
+		submit_project=Gtk.Button("Submit")
+
+		submit_project.connect("clicked",self.submit_new_project,new_title,new_desc,toplevel)
+		self.return_box2.pack_start(title_block,False,False,0)
+		self.return_box2.pack_start(desc_block,False,False,0)
+		self.return_box2.pack_start(submit_project,False,False,0)
+		return self.return_box2
+		
+	def submit_new_project(self,widget,title,desc,toplevel):
+		the_new_project=Project(title.get_text(),desc.get_text(),'a','b',0,'c')
+		print the_new_project.title,the_new_project.description
+		#TODO 
+		#ADD
+		#Adds the new project to the world and connects to its parent group
+		self.on_project_display_clicked(widget,'',toplevel,the_new_project)
+		
+		
+		
 		
 ###---------------------------Register-----------------------------###
 	def on_register_clicked(self,widget,toplevel):
@@ -193,7 +240,7 @@ class explorer_window(Gtk.Window):
 		#self.return_box.pack_start(self.label5,True,True,0)
 		return self.return_box
 
-	def make_display_group(self,group):
+	def make_display_group(self,group,toplevel):
 		self.return_box2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=20)
 
 		title=Gtk.Label('<b>'+group.title+'</b>')
@@ -209,7 +256,10 @@ class explorer_window(Gtk.Window):
 		accounts=self.make_search_results("accounts",temp_group)
 		projects=self.make_search_results("projects",temp_group)
 		new_project_button=Gtk.Button("Create New Project")
+		new_project_button.connect("clicked",self.on_create_project_clicked, toplevel)
 		join_group_button=Gtk.Button("Join This Group")
+	
+		join_group_button.connect("clicked",self.join_group,group)
 
 		admin_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=20)
 		description_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=20)
@@ -229,6 +279,12 @@ class explorer_window(Gtk.Window):
 		self.return_box2.pack_start(new_project_button,False,False,0)		
 		return self.return_box2
 
+	def join_group(self,widget,group):
+		#TODO
+		#ADD
+		#Add account to group's account list
+		self.alert.set_text("You are now part of group"+str(group.title))
+				
 ###---------------------------Account-Functions---------------------###
 	def make_account(self,account):
 		self.return_box2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
@@ -550,11 +606,11 @@ class explorer_window(Gtk.Window):
 		self.alert.set_text("You have not logged in yet!") 
 
 	def on_group_display_clicked(self,widget,something,toplevel,group):
-		self.the_new_page=self.make_display_group(group)
+		self.the_new_page=self.make_display_group(group,toplevel)
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Group Display Page")
 	def on_project_display_clicked(self,widget,something,toplevel,project):
-		self.the_new_page=self.make_display_project(project)
+		self.the_new_page=self.make_display_project(project,toplevel)
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Project Display Page")
 
