@@ -14,8 +14,6 @@ class Account(object):
         self.password = password
         self.avatar = avatar
 
-        # User's projects and groups will be stored as sets,
-        # for the sake of memory.
         self.project_list = {}
         self.group_list = {}
 

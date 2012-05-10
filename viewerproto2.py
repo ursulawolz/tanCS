@@ -32,13 +32,13 @@ def change_window(widget,new_window_name,parent_window,top_parent):
 class TempWindow(Gtk.Window):
 	def __init__(self,parent,activeproject,activerev,activefile):
 		Gtk.Window.__init__(self,title="tanCS IDE - Viewer")
-		pdb.set_trace()
 		renderall = not(activerev==None and activefile==None) #enable full functionality
 
 		self.activeproject=activeproject
 		self.activerev=activerev
 		self.activefile=activefile
 
+		#TODO: remove this, integrate account with explorer
 		self.fake_user=Account("Random Hash","The instigator","Password","Avatar")
 
 		color=Gdk.Color(1000,1000,1000)
@@ -91,7 +91,7 @@ class TempWindow(Gtk.Window):
 		self.thecodebuffer = GtkSource.Buffer()
 		self.thecode.set_buffer(self.thecodebuffer)
 		if renderall:
-			self.thecodebuffer.set_text(self.activeproject.revisions[activerev].files[activefile].content) ###############################################
+			self.thecodebuffer.set_text(self.activeproject.revisions[activerev].files[activefile].content)
 		self.thecode.set_show_line_numbers(True)
 		self.thecode.set_size_request(self.x-150,560)
 		self.thecodeframe=Gtk.Frame()
@@ -108,15 +108,16 @@ class TempWindow(Gtk.Window):
 
 		hbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-		self.filebutton=Gtk.ToggleButton("File comments") ###############################################
-		self.linebutton=Gtk.ToggleButton("Line comments") ###############################################
+		self.filebutton=Gtk.ToggleButton("File comments")
+		self.linebutton=Gtk.ToggleButton("Line comments")
 		
 		self.filebuttonhandler=self.filebutton.connect("clicked", self.on_File_toggled,vbox2)
 		self.linebuttonhandler=self.linebutton.connect("clicked", self.on_Line_toggled,vbox2)
 		hbox.pack_end(self.linebutton,False, False,0)
 		hbox.pack_end(self.filebutton,False, False,0)
 
-		self.on_File_toggled(self.filebutton,vbox2)
+		if renderall:
+			self.on_File_toggled(self.filebutton,vbox2)
 
 		#vbox.pack_start(hbox, False, False,0)
 
@@ -127,13 +128,13 @@ class TempWindow(Gtk.Window):
 		
 		frame=Gtk.Frame()
 
-		###############################################
+		'''
 		if renderall:
 			self.filecomments=self.get_file_comments("This file")
 			index=0
 			while index<len(self.filecomments):
 				vbox2.pack_start(self.create_comment(self.filecomments[index]),False,False,0)
-				index=index+1
+				index=index+1'''
 		
 		self.padding=Gtk.EventBox()
 		self.padding.set_border_width(15)

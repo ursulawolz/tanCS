@@ -81,6 +81,7 @@ class tanCS(object):
 
 
 		win=viewer.TempWindow(self,self.defaultproject,self.defaultrevision,self.defaultfile)
+		#win=viewer.TempWindow(self,self.defaultproject,None,None)
 		win.connect("delete-event",Gtk.main_quit)
 		win.show_all()
 
