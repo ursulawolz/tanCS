@@ -3,8 +3,8 @@ from gi.repository import GtkClutter
 GtkClutter.init([])
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
-import viewerproto2 as viewer
-import editortest as editor
+import Viewer as viewer
+import Editor as editor
 import explorerproto2 as explorer
 from objectcode import *
 import os
