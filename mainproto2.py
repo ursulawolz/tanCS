@@ -39,6 +39,7 @@ class tanCS(object):
 		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH',"default group")
 		self.defaultaccount=Account('userHASH', 'oranges', 'kiwi', 'explorer-icon.png')
 		self.defaultproject=Project('The default!','A dummy project.', 'proj01',None, 8, 'groupHASH')
+		#THESE SHOULDS BE OF A FUNCTION
 		f=open("testingtk3.py")
 		file1=File(self.defaultproject, 0, 'testingtk3.py', f.read())
 		f.close()
