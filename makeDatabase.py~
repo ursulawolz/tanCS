@@ -1,10 +1,42 @@
-def update(information , information_type , identifier , identifier_type,  host1, port1, username, password): #creations come before updates. ie an update doesnt create a NEW but a NEW can create an update
 
+def makeTableStructure(host , password , username, personalpassword) :
+	
+	import MySQLdb as mdb 
+	import sys
+	
 	con = None
-	con = mdb.connect(host=host1, port= port1, user=username, passwd=password)
+	con = mdb.connect(host, 'root', password)
+	cur = con.cursor()
+	
+
+	cur.execute("create database oogadaBoogada")
+	cur.execute("use oogadaBoogada")
+	cur.execute("grant usage on *.* to " + username + " identified by '" + personalpassword + "' ;")
+	cur.execute("grant all privileges on oogadaBoogada.* to " + username + ";")
+	cur.execute("create table account(account_id int, username tinytext, password tinytext, avatar blob, groups text, creation_time datetime);")
+	cur.execute("create table borrow( borrow_id int, project_to_id smallint, project_id smallint, revision_id smallint, file_name tinytext, line_range tinytext, line_offset tinytext, creation_time datetime);")
+	cur.execute("create table comment(all_of_the_text longtext, account_posting_id smallint, project_id smallint, revision_number smallint, file_name tinytext, line_number tinyint, creation_time datetime);")
+	cur.execute("create table file_info( project_id smallint, revision_number smallint, file_name tinytext, file_content blob, creation_time datetime);")
+	cur.execute("create table group_info( group_id smallint, group_projects text, account_ids text, god_id int, creation_time datetime);")
+	cur.execute("create table project_info( project_id smallint, parent_id smallint, children_ids text, borrow_ids text, group_id smallint, revisions text, locked tinyint, tags text, head tinyint, creation_time datetime);")
+	cur.execute("create table revision( revision_number tinyint, filenames text, project_id smallint, head tinyint, creation_time datetime);")
+	
+
+
+	
+
+
+
+
+def update(information , information_type , identifier , identifier_type, host,password): #creations come before updates. ie an update doesnt create a NEW but a NEW can create an update
+
+	import MySQLdb as mdb 
+	import sys
+	
+	con = None
+	con = mdb.connect(host, 'root', password)
 	cur = con.cursor()
 	cur.execute("use oogadaBoogada")
-
 	if type(information) == str:
 		information = "'" + information + "'"
 	else:
@@ -94,10 +126,12 @@ def update(information , information_type , identifier , identifier_type,  host1
 
 
 
-def NewEntry(object_type, column_info, column_type, host1, port1, username, password):  #if a person creates a new revision they must also provide the changes made
+def NewEntry(object_type, column_info, column_type, host,password):  #if a person creates a new revision they must also provide the changes made
+	import MySQLdb as mdb 
+	import sys
 	
 	con = None
-	con = mdb.connect(host=host1, port= port1, user=username, passwd=password)
+	con = mdb.connect(host, 'root', password)
 	cur = con.cursor()
 	cur.execute("use oogadaBoogada")
 
@@ -145,12 +179,15 @@ def NewEntry(object_type, column_info, column_type, host1, port1, username, pass
 			NewEntry('file_info', new_info, new_types, host, password)
  
 
-def SearchAll(search_type, search_value, object_type, fist, last,  host1, port1, username, password):  # ex: give me all of the object_type who have search_type equal to search_value
+def SearchAll(search_type, search_value, object_type, fist, last, host, password):  # ex: give me all of the object_type who have search_type equal to search_value
+	
+	import MySQLdb as mdb 
+	import sys
+	
 	con = None
-	con = mdb.connect(host=host1, port= port1, user=username, passwd=password)
+	con = mdb.connect(host, 'root', password)
 	cur = con.cursor()
 	cur.execute("use oogadaBoogada")
-
 
 	string_of_stuff = ""
 	for i in range(len(search_value)):
@@ -167,13 +204,20 @@ def SearchAll(search_type, search_value, object_type, fist, last,  host1, port1,
 	stuff = results.fetch_row()
 
 	return stuff
+ 
 
-import MySQLdb as mdb 
-import sys
-	
-meep = [123, 'FearBisquick', 'weee', 'NULL', 'groups and things']
-moop = ['account_id', 'username' , 'password', 'avatar', 'groups', 'creation_time' ]
-NewEntry('account', meep, moop, 'calvin.olin.edu', 3306, 'clinet_yay', 'password')
-	
-	
-	
+
+
+
+
+# test
+makeTableStructure('localhost', 'olin' , 'jrivero', 'x8mafw63')
+meep = [123, 236, 321, 345, 'mine', '1 - 10']
+moop = [ 'borrow_id', 'project_to_id', 'project_id', 'revision_id', 'file_name', 'line_range', 'creation_time']
+meeep = [236, 417, '127$$$$195', '127$$$$195', 285, '1$$$$3$$$$6', 1, 'tanCS']
+mooop = ['project_id', 'parent_id', 'children_ids', 'borrow_ids', 'group_id', 'revisions', 'locked', 'tags', 'creation_time']
+NewEntry('project_info', meeep, mooop, 'localhost', 'olin')
+NewEntry('borrow', meep, moop, 'localhost', 'olin')
+print SearchAll(['project_id', 'borrow_ids'] , [36, 27], 'project_info', '0' , '1', 'localhost' , 'olin')
+update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')
+
