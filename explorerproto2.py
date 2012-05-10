@@ -488,7 +488,7 @@ class explorer_window(Gtk.Window):
 			title=result.title
 			comment=result.description
 			#other_info="Accounts are"+result.get_accounts()
-			dictionary=result.accountIDs
+			dictionary=result.accounts
 			thelist=[]
 			for key in dictionary:
 				thelist.append(dictionary[key]) 
