@@ -3,8 +3,8 @@ from gi.repository import GtkClutter
 GtkClutter.init([])
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
-import viewerproto2 as viewer
-import editortest as editor
+import Viewer as viewer
+import Editor as editor
 import explorerproto2 as explorer
 from objectcode import *
 import os
@@ -79,9 +79,8 @@ class tanCS(object):
 		self.defaultrevision=7
 		self.defaultfile='cluttertest3.py'
 
-
-		win=viewer.TempWindow(self,self.defaultproject,self.defaultrevision,self.defaultfile)
-		#win=viewer.TempWindow(self,self.defaultproject,None,None)
+		#win=viewer.TempWindow(self,self.defaultproject,self.defaultrevision,self.defaultfile)
+		win=viewer.TempWindow(self,self.defaultproject,None,None)
 		win.connect("delete-event",Gtk.main_quit)
 		win.show_all()
 
@@ -105,5 +104,5 @@ class tanCS(object):
 			window.show_all()
 
 ###---------------------------------MAIN-------------------------------###
-	
+
 a=tanCS()

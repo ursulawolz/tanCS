@@ -7,9 +7,7 @@ from objectcode import *
 
 #-----DEREK TODOS-----
 # Add borrow "to" attributes
-# Create Clutter borrow map
-# Make comments appear dynamically and save to project object
-# 
+# Long-term: Create massive Clutter borrow map
 
 
 class Editor(Gtk.Window):

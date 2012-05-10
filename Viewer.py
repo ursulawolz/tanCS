@@ -24,7 +24,7 @@ def add_mode_menu_actions(action_group,on_window_mode_changed,parent_window):
 		("Explorer", None, "Explorer", None, None, 2),
 		("Editor", None, "Editor", None, None, 3)
 	], 1, change_window,[on_window_mode_changed,parent_window])
-
+                                      
 def change_window(widget,new_window_name,parent_window,top_parent):
 	top_parent.on_window_mode_changed(new_window_name,parent_window,parent_window.activeproject,parent_window.activerev,parent_window.activefile)
 
@@ -107,17 +107,17 @@ class TempWindow(Gtk.Window):
 		vbox.pack_start(codescroll,False,False,0)	
 
 		hbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
-		vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+		self.vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
 		self.filebutton=Gtk.ToggleButton("File comments")
 		self.linebutton=Gtk.ToggleButton("Line comments")
 		
-		self.filebuttonhandler=self.filebutton.connect("clicked", self.on_File_toggled,vbox2)
-		self.linebuttonhandler=self.linebutton.connect("clicked", self.on_Line_toggled,vbox2)
+		self.filebuttonhandler=self.filebutton.connect("clicked", self.on_File_toggled)
+		self.linebuttonhandler=self.linebutton.connect("clicked", self.on_Line_toggled)
 		hbox.pack_end(self.linebutton,False, False,0)
 		hbox.pack_end(self.filebutton,False, False,0)
 
 		if renderall:
-			self.on_File_toggled(self.filebutton,vbox2)
+			self.on_File_toggled(self.filebutton)
 
 		#vbox.pack_start(hbox, False, False,0)
 
@@ -127,18 +127,10 @@ class TempWindow(Gtk.Window):
 		commentswindow.set_vexpand(True)
 		
 		frame=Gtk.Frame()
-
-		'''
-		if renderall:
-			self.filecomments=self.get_file_comments("This file")
-			index=0
-			while index<len(self.filecomments):
-				vbox2.pack_start(self.create_comment(self.filecomments[index]),False,False,0)
-				index=index+1'''
 		
 		self.padding=Gtk.EventBox()
 		self.padding.set_border_width(15)
-		self.padding.add(vbox2)
+		self.padding.add(self.vbox2)
 		
 		commentswindow.add_with_viewport(self.padding)
 		commentswindow.set_size_request(self.x-150,240)
@@ -150,7 +142,7 @@ class TempWindow(Gtk.Window):
 		hbox2=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		entryframe=Gtk.Frame()
 		self.entry=Gtk.TextView()
-		# Don't change the name of this text view, it is connected to the pop up window for sumbit line number.
+		# Don't change the name of this text view, it is connected to the pop up window for submit line number.
 		entryframe.add(self.entry)
 		self.comment_buffer=self.entry.get_buffer()
 		self.comment_buffer.set_text("Thanks a bunch!")
@@ -160,10 +152,10 @@ class TempWindow(Gtk.Window):
 		commentscroll.set_size_request(self.x-150,60)
 
 		self.submitcomment=Gtk.Button("Submit")
-		self.submitcomment.connect("clicked", self.toggle_file_comment,self.entry,vbox2)
+		self.submitcomment.connect("clicked", self.toggle_file_comment)
 
 		self.submitlinecomment=Gtk.Button("Submit Line Comment")
-		self.submitlinecomment.connect("clicked", self.toggle_line_comment,vbox2)
+		self.submitlinecomment.connect("clicked", self.toggle_line_comment)
 		
 		vbox3=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
 		vbox3.pack_start(self.submitlinecomment,True,True,0)
@@ -196,7 +188,8 @@ class TempWindow(Gtk.Window):
 		self.stage.ensure_redraw()
 		self.stage.set_title("The application title")		# Stage's title
 		self.stage.connect("motion-event",self.mouse_moved)
-		white = Clutter.Color.new(255,255,255,255)
+		self.stage.connect("leave-event",self.leave_clutter)
+		white=Clutter.Color.new(255,255,255,255)
 		black=Clutter.Color.new(0,0,0,255)
 		blue = Clutter.Color.new(0,0,255,255) # red,green,blue,alpha
 		self.stage.set_color(white)
@@ -319,8 +312,10 @@ class TempWindow(Gtk.Window):
 		self.curr_y=event.get_coords()[1]
 		if self.curr_y<miny:
 			GObject.timeout_add(50,self.scrollup)
+			self.scrollOn=True
 		if self.curr_y>maxy:
 			GObject.timeout_add(50,self.scrolldown)
+			self.scrollOn=True
 
 	def scrollup(self,data=None):
 		if self.scroll<0:
@@ -329,7 +324,7 @@ class TempWindow(Gtk.Window):
 			miny=150
 			maxy=self.embed.get_allocation().height-200
 			if self.curr_y<miny:
-				return True
+				return self.scrollOn
 			else:
 				return False
 		else:
@@ -341,9 +336,13 @@ class TempWindow(Gtk.Window):
 		miny=100
 		maxy=self.embed.get_allocation().height-200
 		if self.curr_y>maxy:
-			return True
+			return self.scrollOn
 		else:
 			return False
+
+
+	def leave_clutter(self,widget,data):
+		self.scrollOn=False
 
 	def openfile(self,widget=None,data=None,f=None):
 		print 'Opening '+f.file_name
@@ -351,13 +350,19 @@ class TempWindow(Gtk.Window):
 		self.activerev=f.rev_number
 		self.activefile=f.file_name
 
-		if self.linebutton.get_sensitive()==False:
+		if self.filebutton.get_active()==True:
+			self.on_File_toggled(self.filebutton)
+		else:
+			self.on_Line_toggled(self.linebutton)
+
+		if self.filebutton.get_sensitive()==False:
 			self.linebutton.set_sensitive(True)
 			self.filebutton.set_sensitive(True)
 			self.submitcomment.set_sensitive(True)
 			self.submitlinecomment.set_sensitive(True)
 			self.toolbar.get_nth_item(2).set_sensitive(True)
 			self.toolbar.get_nth_item(4).set_sensitive(True)
+			self.on_File_toggled(self.filebutton)
 
 	def clutterupdate(self,data=-1):
 		self.rect.set_rotation(Clutter.RotateAxis.X_AXIS, self.rectrot, 0, 25, 0)
@@ -424,12 +429,12 @@ class TempWindow(Gtk.Window):
 		return notsure	
 
 #What happens when you click on the line comments only button
-	def on_Line_toggled(self,button,vbox):
+	def on_Line_toggled(self,button):
 		if button.get_active()==False:
 			button.handler_block(self.linebuttonhandler)
 			button.set_active(True)
 			button.handler_unblock(self.linebuttonhandler)
-		children=vbox.get_children()
+		children=self.vbox2.get_children()
 		index=0
 		while index<len(children):
 			children[index].destroy()
@@ -437,20 +442,20 @@ class TempWindow(Gtk.Window):
 		linecomments=self.get_line_comments("This File")
 		index=0
 		while index<len(linecomments):
-			vbox.pack_start(self.create_comment(linecomments[index]),False,False,0)
+			self.vbox2.pack_start(self.create_comment(linecomments[index]),False,False,0)
 			index=index+1
 		self.filebutton.handler_block(self.filebuttonhandler)
 		self.filebutton.set_active(False)
 		self.filebutton.handler_unblock(self.filebuttonhandler)
-		vbox.show_all()
+		self.vbox2.show_all()
 
 #What happens when you click on the file comments only button
-	def on_File_toggled(self,button,vbox):	
+	def on_File_toggled(self,button):
 		if button.get_active()==False:
 			button.handler_block(self.filebuttonhandler)
 			button.set_active(True)
 			button.handler_unblock(self.filebuttonhandler)
-		children=vbox.get_children()
+		children=self.vbox2.get_children()
 		index=0
 		while index<len(children):
 			children[index].destroy()
@@ -458,48 +463,55 @@ class TempWindow(Gtk.Window):
 		filecomments=self.get_file_comments("This File")
 		index=0
 		while index<len(filecomments):
-			vbox.pack_start(self.create_comment(filecomments[index]),False,False,0)
+			self.vbox2.pack_start(self.create_comment(filecomments[index]),False,False,0)
 			index=index+1	
 		self.linebutton.handler_block(self.linebuttonhandler)
 		self.linebutton.set_active(False)
 		self.linebutton.handler_unblock(self.linebuttonhandler)
-		vbox.show_all()
+		self.vbox2.show_all()
 
 #What happens when you hit the submit line comment button
-	def toggle_line_comment(self,widget,vbox):
-		dialog=LineCommentDialog(self)
-		endresult=dialog.run()
-
-#What happens when you hit the submit file comment button.
-	def toggle_file_comment(self,widget,entry,vbox):
-		#account=get_account()
-		account="The Instigater"
-		tempbuffer=entry.get_buffer()
+	def toggle_line_comment(self,widget):
+		tempbuffer=self.entry.get_buffer()
 		startiter = tempbuffer.get_start_iter()
 		enditer = tempbuffer.get_end_iter()
 		thetext=tempbuffer.get_text(startiter,enditer,False)
-		self.submit_file_comment(account,thetext,vbox)
+		if len(thetext)>0:
+			dialog=LineCommentDialog(self)
+			endresult=dialog.run()
+			tempbuffer.set_text('')
+
+#What happens when you hit the submit file comment button.
+	def toggle_file_comment(self,widget):
+		#account=get_account()
+		account="The Instigater"
+		tempbuffer=self.entry.get_buffer()
+		startiter = tempbuffer.get_start_iter()
+		enditer = tempbuffer.get_end_iter()
+		thetext=tempbuffer.get_text(startiter,enditer,False)
+		if len(thetext)>0:
+			self.submit_file_comment(account,thetext)
+			tempbuffer.set_text('')
 		return
 
 	#How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
-	def submit_file_comment(self,account,text,vbox):
+	def submit_file_comment(self,account,text):
 		time=datetime.date.today()
 		new_comment=Comment(text,time,"Hash",self.activerev,self.activefile,self.fake_user,-1)
 		self.activeproject.revisions[self.activerev].files[self.activefile].comments.append(new_comment)
 		if self.filebutton.get_active():
-			vbox.pack_start(self.create_comment(new_comment),False,False,0)
-			vbox.show_all()
+			self.vbox2.pack_start(self.create_comment(new_comment),False,False,0)
+			self.vbox2.show_all()
 		print(account+" says: '"+text+"' about this file")
 		return
 
-	#How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
-	def submit_line_comment(self,account,text,linenum,vbox):
+	def submit_line_comment(self,account,text,linenum):
 		time=datetime.date.today()
 		new_comment=Comment(text,time,"Hash",self.activerev,self.activefile,self.fake_user,linenum)
 		self.activeproject.revisions[self.activerev].files[self.activefile].comments.append(new_comment)
 		if self.linebutton.get_active():
-			vbox.pack_start(self.create_comment(new_comment),False,False,0)
-			vbox.show_all()
+			self.vbox2.pack_start(self.create_comment(new_comment),False,False,0)
+			self.vbox2.show_all()
 		print(account+" says: '"+text+"' about this file")
 		return
 
@@ -601,7 +613,8 @@ class LineCommentDialog(Gtk.Dialog):
 	def __init__(self, parent):
 		Gtk.Dialog.__init__(self,"Submit Line Comment",parent,0)
 		label=Gtk.Label("Testing")
-		adjustment = Gtk.Adjustment(0, 0, 100, 1, 10, 0)
+		pdb.set_trace()
+		adjustment = Gtk.Adjustment(1, 1, parent.thecode.get_buffer().get_line_count(), 1, 10, 0)
 		#Note that the limits on the spinner can change, don't exceed line numbs
 		self.spinbutton = Gtk.SpinButton()
 		self.spinbutton.set_adjustment(adjustment)
@@ -636,5 +649,5 @@ class LineCommentDialog(Gtk.Dialog):
 		startiter = tempbuffer.get_start_iter()
 		enditer = tempbuffer.get_end_iter()
 		thetext=tempbuffer.get_text(startiter,enditer,False)
-		submit_line_comment(parent,account,str(spinner.get_value()),thetext)
+		parent.submit_line_comment(account,thetext,str(spinner.get_value()))
 		self.destroy()
