@@ -54,10 +54,26 @@ def update(information , information_type , identifier , identifier_type,  host1
 		else:
 			current = current[0]
 			current = current[information_type]
+			current = str(current)
 			information = information.strip("'")
 			information = information.lstrip("'")
 			new_info = "'" + current + '$$$$' + information + "'"
 		cur.execute("update group_info set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
+
+			elif information_type == "comments":
+		con.query("select " + information_type +  " from file_info where " + identifier_type + ' = ' + identifier)
+		results = con.store_result()
+		current = results.fetch_row(0,1)
+		if len(current) == 0:
+			new_info = information
+		else:
+			current = current[0]
+			current = current[information_type]
+			current = str(current)
+			information = information.strip("'")
+			information = information.lstrip("'")
+			new_info = "'" + current + '$$$$' + information + "'"
+		cur.execute("update file_info set " + information_type + " = " + new_info + " where " + identifier_type + " = " + identifier)
 
 	elif information_type == "groups" :
 		con.query("select " + information_type + " from account where " + identifier_type + ' = ' + identifier)
@@ -68,6 +84,7 @@ def update(information , information_type , identifier , identifier_type,  host1
 		else:
 			current = current[0]
 			current = current[information_type]
+			current = str(current)
 			information = information.strip("'")
 			information = information.lstrip("'")
 			new_info = "'" + current + '$$$$' + information + "'"
@@ -119,23 +136,25 @@ def NewEntry(object_type, column_info, column_type, host1, port1, username, pass
 	cur.execute('insert into ' + object_type + '(' + types + ')' + 'values (' + infos +  ');')
 	con.commit()
 
+		if object_type == "comment":
+		update(column_info[6], "comments", column_info[4], "file_name",  host1, port1, username, password )
 
 	if object_type == "borrow":
-		update(column_info[0], "borrow_ids", column_info[1], "project_id", host,password )
+		update(column_info[0], "borrow_ids", column_info[1], "project_id",  host1, port1, username, password )
 
 	elif object_type == "project_info":
-		update(column_info[0], "group_projects", column_info[4], "group_id" , host,password)
+		update(column_info[0], "group_projects", column_info[4], "group_id" ,  host1, port1, username, password)
 		if not column_info[1] == None :
-			update(column_info[0],'children_ids',column_info[1], 'project_id', host, password)
+			update(column_info[0],'children_ids',column_info[1], 'project_id',  host1, port1, username, password)
 
 	elif object_type == "group_info":
-		update(column_info[0], "groups", column_info[3], "account_id", host,password )
+		update(column_info[0], "groups", column_info[3], "account_id", host1, port1, username, password )
 
 	elif object_type == "file_info":
-		update(column_info[2], "filenames", column_info[1], "revision_number" , host,password)
+		update(column_info[2], "filenames", column_info[1], "revision_number" ,  host1, port1, username, password)
 
 	elif object_type == "revision":
-		update(column_info[0], "revisions", column_info[2], "project_id" , host,password)
+		update(column_info[0], "revisions", column_info[2], "project_id" ,  host1, port1, username, password)
 		if column_info[0] != 1:
 			update(0, "head", column_info[0]-1, "revision_number")
 		string = column_info[1]
@@ -143,7 +162,7 @@ def NewEntry(object_type, column_info, column_type, host1, port1, username, pass
 		new_types = ['project_id', 'revision_number', 'file_name', 'file_content']
 		for i in list_of_files:
 			new_info = [column_info[2], column_info[0], i, column_info[4]]
-			NewEntry('file_info', new_info, new_types, host, password)
+			NewEntry('file_info', new_info, new_types,  host1, port1, username, password)
  
 
 
@@ -178,10 +197,16 @@ import sys
 	
 
 
-meep = [123, 'FearBisquick', 'weee', 'NULL', 'groups and things']
-moop = ['account_id', 'username' , 'password', 'avatar', 'groups', 'creation_time' ]
-NewEntry('account', meep, moop, 'calvin.olin.edu', 3306, 'clinet_yay', 'password')
-print SearchAll(['groups', 'account_id'] , ['and', 12], 'account', '0' , '1',  'calvin.olin.edu', 3306, 'clinet_yay', 'password')
+
 	
 	
 	
+makeTableStructure('localhost', 'olin' , 'jrivero', 'x8mafw63')
+meep = [123, 236, 321, 345, 'mine', '1 - 10']
+moop = [ 'borrow_id', 'project_to_id', 'project_id', 'revision_id', 'file_name', 'line_range', 'creation_time']
+meeep = [236, 417, '127$$$$195', '127$$$$195', 285, '1$$$$3$$$$6', 1, 'tanCS']
+mooop = ['project_id', 'parent_id', 'children_ids', 'borrow_ids', 'group_id', 'revisions', 'locked', 'tags', 'creation_time']
+NewEntry('project_info', meeep, mooop, 'localhost', 'olin')
+NewEntry('borrow', meep, moop, 'localhost', 'olin')
+print SearchAll(['project_id', 'borrow_ids'] , [36, 27], 'project_info', '0' , '1', 'localhost' , 'olin')
+update('weeeee', 'password' , 123 , 'account_id', 'localhost', 'olin')

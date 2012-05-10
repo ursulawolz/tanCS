@@ -13,6 +13,12 @@ def convertForSearch(infos_to_be_updated, info_types_being_updated, object_that_
 	password = 'password'
 
 	object_type = type(object_that_is_being_updated)
+	database_object_type = converter[object_type]
+	
+	for i in range(len(info_types_being_updated)) :
+		info_types_being_updated[i] = converter[info_types_being_updated[i]]
+		update(infos_to_be_updated[i], info_types_being_updated[i] , )
+
 
 
 	converter['Account'] = 'account'
@@ -34,8 +40,6 @@ def convertForSearch(infos_to_be_updated, info_types_being_updated, object_that_
 	converter['project_to'] = 'project_to_id'
 	converter['revision_to'] = 'revision_id'
 	converter['file_to'] = 'file_to_name'
-
-
 	converter['Project'] = 'project_info'
 	converter['title'] = 'title'
 	converter['description'] = 'description'
@@ -48,15 +52,13 @@ def convertForSearch(infos_to_be_updated, info_types_being_updated, object_that_
 	converter['head'] = 'head'
 	converter['locked'] = 'locked'
 	converter['tags'] = 'tags'
-
 	converter['File'] = 'file_info'
 	converter['rev_number'] = 'revision_number'
 	converter['file_name'] = 'file_name'
 	converter['content'] = 'file_content'
 	converter['revision'] = 'revision_number'
-	converter['comments'] = ''
+	converter['comments'] = 'comments'
 	converter['date_created'] = 'creation_time'
-
 	converter['Group'] = 'group_info'
 	converter['title'] = 'title'
 	converter['description'] = 'description'
@@ -65,7 +67,6 @@ def convertForSearch(infos_to_be_updated, info_types_being_updated, object_that_
 	converter['godID'] = 'god_id'
 	converter['accounts'] = 'account_ids'
 	converter['date_formed'] = 'creation_time'
-
 	converter['Comment'] = 'comment'
 	converter['text'] = 'all_of_the_text'
 	converter['time'] = 'creation_time'
@@ -74,8 +75,6 @@ def convertForSearch(infos_to_be_updated, info_types_being_updated, object_that_
 	converter['file'] = 'file_name'
 	converter['account'] = 'account_posting_id'
 	converter['linenum'] = 'line_number'
-
-
 	converter['Revision'] = 'revision'
 	converter['project'] = 'project_id'
 	converter['rev_number'] = 'revision_number'
