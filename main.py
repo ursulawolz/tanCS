@@ -5,7 +5,7 @@ from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 import Viewer as viewer
 import Editor as editor
-import explorerproto2 as explorer
+import Explorer as explorer
 from objectcode import *
 import os
 import platform
