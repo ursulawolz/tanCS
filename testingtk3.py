@@ -6,7 +6,7 @@ class GridWindow(Gtk.Window):
 		Gtk.Window.__init__(self, title="Grid Example")
 		grid=Gtk.Grid()
 		self.add(grid)
-		
+		#blarg
 		button1=Gtk.Button(label="Button 1")
 		button2=Gtk.Button(label="Button 2")
 		button3=Gtk.Button(label="Button 3")

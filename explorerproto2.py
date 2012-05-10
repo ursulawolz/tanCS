@@ -2,6 +2,9 @@ from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 from objectcode import *
 
+def change_window(widget,new_window_name,parent_window,top_parent):
+		top_parent.on_window_mode_changed(new_window_name,parent_window,parent_window.activeproject,parent_window.activerev,parent_window.activefile)
+
 ###------------------------Explorer Class--------------------------###
 class explorer_window(Gtk.Window):
 	def __init__(self,parent):
@@ -121,7 +124,12 @@ class explorer_window(Gtk.Window):
 		description_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL,spacing=20)
 		description_block.pack_start(description_title,False,False,0)
 		description_block.pack_start(description,False,False,0)
-		to_revision_map=Gtk.Button("View Revision Map")
+		to_revision_map=Gtk.Button("To Revision/Code Viewer")
+		#to_revision_map.connect("clicked",self.parent.change_window,"Editor",self,self.parent)
+		self.activeproject=project
+		self.activerev=None
+		self.activefile=None
+		to_revision_map.connect("clicked",change_window,"Viewer",self,self.parent)
 		back_to_group=Gtk.Button("Return to Group Page")
 		self.return_box.pack_start(title,False,False,0)
 		self.return_box.pack_start(description_block,False,False,0)
@@ -129,6 +137,52 @@ class explorer_window(Gtk.Window):
 		self.return_box.pack_start(back_to_group,False,False,0)
 		return self.return_box
 		
+###---------------------------Register-----------------------------###
+	def on_register_clicked(self,widget,toplevel):
+		self.the_new_page=self.make_register(toplevel)
+		self.create_new_page(toplevel,self.the_new_page)
+		self.alert.set_text("Register Page")
+	
+	def make_register(self,toplevel):
+		self.return_box2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL,spacing=20)
+		info_block=Gtk.Table(4,4,True)
+
+		user_title=Gtk.Label("Username: ")
+		pass_title=Gtk.Label("Password: ")
+		avatar_title=Gtk.Label("Avatar: ")
+		new_account=Account('','Add a Username Here','Add a Password Here',"")
+		username_label=Gtk.Entry()
+		username_label.set_text(new_account.username)
+		password_label=Gtk.Entry()
+		password_label.set_text(new_account.password)
+		user_button=Gtk.Button("Change")
+		pass_button=Gtk.Button("Change")
+		avatar_button=Gtk.Button("Change")
+
+		avatar_label=Gtk.Image()
+		avatar_label.set_from_file(new_account.avatar)
+
+		user_button.connect("clicked",self.on_change_pressed,"usr")
+		pass_button.connect("clicked",self.on_change_pressed,"pass")
+		avatar_button.connect("clicked",self.on_change_pressed,"avatar",avatar_label)
+
+		info_block.attach(user_button,3,4,0,1)
+		info_block.attach(pass_button,3,4,1,2)
+		info_block.attach(avatar_button,3,4,2,3)
+		info_block.attach(user_title,0,1,0,1)
+		info_block.attach(pass_title,0,1,1,2)
+		info_block.attach(avatar_title,0,1,2,3)
+		info_block.attach(username_label,1,3,0,1)
+		info_block.attach(password_label,1,3,1,2)
+		info_block.attach(avatar_label,1,3,2,4)
+		#TODO
+		#MAKE
+		#make the account here on the data base and send and shit
+		submit_register=Gtk.Button("Submit")
+		submit_register.connect("clicked",self.submit_login,new_account.username,new_account.password,toplevel)
+		self.return_box2.pack_start(info_block,False,False,0)
+		self.return_box2.pack_start(submit_register,False,False,0)
+		return self.return_box2
 		
 
 ###-------------------------Group-Methods--------------------------###
@@ -183,19 +237,27 @@ class explorer_window(Gtk.Window):
 		user_title=Gtk.Label("Username: ")
 		pass_title=Gtk.Label("Password: ")
 		avatar_title=Gtk.Label("Avatar: ")
-		self.username_label=Gtk.Entry()
-		self.username_label.set_text(account.username)
-		self.password_label=Gtk.Entry()
-		self.password_label.set_text(account.password)
+
+		self.username_label=Gtk.Label(account.username)
+		self.password_label=Gtk.Label("N/A")
 		self.avatar_label=Gtk.Image()
 		self.avatar_label.set_from_file(account.avatar)
-		user_button=Gtk.Button("Change")
-		pass_button=Gtk.Button("Change")
-		avatar_button=Gtk.Button("Change")
+		if account==self.parent.user:
+			self.username_label=Gtk.Entry()
+			self.username_label.set_text(account.username)
+			self.password_label=Gtk.Entry()
+			self.password_label.set_text(account.password)
+			user_button=Gtk.Button("Change")
+			pass_button=Gtk.Button("Change")
+			avatar_button=Gtk.Button("Change")
 
-		user_button.connect("clicked",self.on_change_pressed,"usr")
-		pass_button.connect("clicked",self.on_change_pressed,"pass")
-		avatar_button.connect("clicked",self.on_change_pressed,"avatar",self.avatar_label)
+			user_button.connect("clicked",self.on_change_pressed,"usr")
+			pass_button.connect("clicked",self.on_change_pressed,"pass")
+			avatar_button.connect("clicked",self.on_change_pressed,"avatar",self.avatar_label)
+
+			info_block.attach(user_button,3,4,0,1)
+			info_block.attach(pass_button,3,4,1,2)
+			info_block.attach(avatar_button,3,4,2,3)
 
 		info_block.attach(user_title,0,1,0,1)
 		info_block.attach(pass_title,0,1,1,2)
@@ -203,9 +265,7 @@ class explorer_window(Gtk.Window):
 		info_block.attach(self.username_label,1,3,0,1)
 		info_block.attach(self.password_label,1,3,1,2)
 		info_block.attach(self.avatar_label,1,3,2,4)
-		info_block.attach(user_button,3,4,0,1)
-		info_block.attach(pass_button,3,4,1,2)
-		info_block.attach(avatar_button,3,4,2,3)
+
 		
 		group_title=Gtk.Label("Groups: ")
 		temp=self.make_search_results("groups",self.parent.user)
@@ -257,7 +317,7 @@ class explorer_window(Gtk.Window):
 		self.login=Gtk.Button("Login")
 
 		self.login.connect("clicked",self.submit_login,self.username_entry,self.password_entry,toplevel)
-
+		self.register.connect("clicked",self.on_register_clicked,toplevel)
 		self.username_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
 		self.password_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
 		self.button_block=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=40)
@@ -278,6 +338,8 @@ class explorer_window(Gtk.Window):
 		return self.return_box
 
 	def submit_login(self,widget,username,password,toplevel):
+		#TODO
+		#
 		#check to see if the account is valid
 		#Account=get_account(username.get_text(),password.get_text())
 		account=Account("account ID","Fake Account","1234","fork-icon.png")
@@ -338,8 +400,8 @@ class explorer_window(Gtk.Window):
 		#comment="Comment goes here. This should be very long and take up ALL of the space"
 		#other_info="Other info goes here"
 		temp_group=Group('','','','')
-		temp_project=Project('','','','','','','','')
-		temp_account=Account('','','','')
+		temp_project=Project('','','','',4,'')
+		temp_account=Account('','','',"fork-icon.png")
 
 		outer_padding=Gtk.EventBox()
 		outer_frame=Gtk.Frame()
@@ -359,6 +421,9 @@ class explorer_window(Gtk.Window):
 		if type(result)==type(temp_project):
 			outer_padding.connect("button_press_event",self.on_project_display_clicked,self.toplevel,result)
 		
+		if type(result)==type(temp_account):
+			outer_padding.connect("button_press_event",self.on_account_clicked,self.toplevel,result)		
+
 		outer_padding.add(outer_frame)
 		outer_frame.add(outer_vbox)
 		outer_vbox.pack_start(heading,True,True,0)
@@ -411,7 +476,7 @@ class explorer_window(Gtk.Window):
 
 	def what_display(self,result):
 		temp_group=Group('','','','')
-		temp_project=Project('','','','','','','','')
+		temp_project=Project('','','','',4,'')
 		temp_account=Account('','','','')
 		#print result
 		if type(result)==type(temp_account):
@@ -423,13 +488,17 @@ class explorer_window(Gtk.Window):
 			title=result.title
 			comment=result.description
 			#other_info="Accounts are"+result.get_accounts()
-			other_info="Accounts are: "+str(result.accountIDs)
+			dictionary=result.accounts
+			thelist=[]
+			for key in dictionary:
+				thelist.append(dictionary[key]) 
+			other_info="Accounts are: "+str(thelist)
 			return [title,comment,other_info]
 		elif type(result)==type(temp_project):
-			print "project"	
+			#print "project"	
 			title=result.title
 			comment=result.description
-			other_info="Current Revision is: "+result.revisions
+			other_info="Current Revision is: ",str(result.revisions[0])
 			return [title,comment,other_info]
 		elif type(result)==type(('','')):
 			#print "result is: ",result
@@ -443,14 +512,16 @@ class explorer_window(Gtk.Window):
 ###--------------------------Quicknav-Functions----------------------###
 	
 	def on_home_clicked(self,widget,something,toplevel):
-		print("Home clicked")
+		#print("Home clicked")
 		self.the_new_page=self.make_homepage()
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Homepage")
 
-	def on_account_clicked(self,widget,something,toplevel):
-		print("Account clicked")
-		self.the_new_page=self.make_account(self.parent.user)
+	def on_account_clicked(self,widget,something,toplevel,account=0):
+		if account==0:
+			account=self.parent.user
+		#print("Account clicked")
+		self.the_new_page=self.make_account(account)
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Account Page")
 
@@ -460,14 +531,14 @@ class explorer_window(Gtk.Window):
 		self.alert.set_text("My Groups")
 
 	def on_search_clicked(self,widget,something,toplevel):
-		print("Search clicked")
+		#print("Search clicked")
 		#self.the_new_page=self.make_search_results("type_results","Identifier")
 		self.the_new_page=self.search_input(toplevel)
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Search Parameters")
 
 	def on_help_clicked(self,widget,something,toplevel):
-		print("Help clicked")
+		#print("Help clicked")
 		#self.the_new_page=self.make_help()
 		temp=Group("GroupID","GodID","This is the title","This is the description",'a','a')
 		self.the_new_page=self.make_display_group(temp)
@@ -488,8 +559,10 @@ class explorer_window(Gtk.Window):
 		self.alert.set_text("Project Display Page")
 
 	###-------------------------Other-Functions-----------------------###
+	#TODO
+	#EVERYTHING
 	def get_results(self,type_results,identifier):
-		temp_account=Account("Fake ID","Fake Username",'','')
+		temp_account=Account("Fake ID","Fake Username",'',"fork-icon.png")
 		temp_group=Group('','','','','')
 		if type_results=="groups" and type(identifier)==type(temp_account):			
 			result1=Group("gId",["aID","aID2"],"godId","Title1")
@@ -502,17 +575,17 @@ class explorer_window(Gtk.Window):
 			print "working in get results"
 			return results
 		elif type_results=="projects" and type(identifier)==type(temp_account):
-			result1=Project("This is a title","This is a description",'','','','','1.0','')
-			result2=Project("This is a title","This is a description",'','','','','3.2','')
-			result3=Project("This is a title","This is a description",'','','','','9.7','')
-			result4=Project("This is a title","This is a description",'','','','','1.2','')
+			result1=Project("This is a title","This is a description",'','',4,'')
+			result2=Project("This is a title","This is a description",'','',4,'')
+			result3=Project("This is a title","This is a description",'','',4,'')
+			result4=Project("This is a title","This is a description",'','',4,'')
 			results=[result1,result2,result3,result4]
 			return results
 			
 		elif type_results=="projects" and type(identifier)==type(temp_group):
-			result1=Project("This is a title","This is a description",'','','','','2.0','')
-			result2=Project("This is a title","This is a description",'','','','','4.2','')
-			result3=Project("This is a title","This is a description",'','','','','8.7','')
+			result1=Project("This is a title","This is a description",'','',4,'')
+			result2=Project("This is a title","This is a description",'','',4,'')
+			result3=Project("This is a title","This is a description",'','',4,'')
 			results=[result1,result2,result3]
 			return results
 		elif type_results=="accounts" and type(identifier)==type(temp_group):
