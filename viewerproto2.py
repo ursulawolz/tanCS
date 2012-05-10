@@ -480,7 +480,7 @@ class TempWindow(Gtk.Window):
 		button_explorer=Gtk.ToolButton()
 		button_explorer.set_icon_widget(explorer_icon)
 		self.toolbar.insert(button_explorer, 3)
-		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent,self.activeproject,self.activerev,self.activefile)
+		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent)
 
 		sep=Gtk.SeparatorToolItem()
 		self.toolbar.insert(sep,4)
