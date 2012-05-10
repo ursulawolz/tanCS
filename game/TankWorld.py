@@ -118,6 +118,8 @@ class TankWorld(ShowBase):
 			globalClock.tick()
 			#print textObject
 
+		self.close()
+
 	def _updatePositions(self, task):
 
 		try:
@@ -143,6 +145,7 @@ class TankWorld(ShowBase):
 		self._displayTime = globalClock.getRealTime() - self.startTime
 		self.frameTime += self.displaySpeed * (self._displayTime - self._lastTime)
 		self.frame = int(60 * self.frameTime)
+
 		#print self.frame, (self._displayTime - self._lastTime)
 		if self.frame < len(self.gameData) - 1:
 			frameData = self.gameData[self.frame]
@@ -284,14 +287,20 @@ class TankWorld(ShowBase):
 		self.right = inputState.watch('right','d','d-up')
 
 	def close(self, task=None):
+		import os
+
 		self.taskMgr.removeTasksMatching("*")
 		self.isDead = True
 		self.shutdown()
-		
+		print "ASDFASDFADSFASDF"
 		#pdb.set_trace()
 		self.exitfunc()
 		self.destroy()
-		sys.exit()
+		del self
+		#import gc
+		#gc.collect()
+
+		#sys.exit()
 		#sys.exit()
 
 	def run(self):
