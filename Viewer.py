@@ -102,7 +102,8 @@ class TempWindow(Gtk.Window):
 		self.thecodebuffer.set_language(lang)
 		codescroll=Gtk.ScrolledWindow()
 		codescroll.add_with_viewport(self.thecodeframe)
-		codescroll.set_size_request(self.x-150,390)	
+		#codescroll.set_size_request(self.x-150,390)
+		codescroll.set_size_request(self.x-150,300)	
 		vbox.pack_start(self.toolbar,False,True,0)
 		vbox.pack_start(codescroll,False,False,0)	
 
