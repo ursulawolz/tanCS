@@ -7,15 +7,16 @@ from objectcode import *
 
 #-----DEREK TODOS-----
 # Add borrow "to" attributes
-# Implement missing methods
+# Implement missing methods in Editor
 # Long-term: Create massive Clutter borrow map
+# Add copy/paste override to context menu
+# Add line comment to context menu
 
 
 class Editor(Gtk.Window):
 
 	def __init__(self,parent,activeproject,activerev,activefile):
 		Gtk.Window.__init__(self,title='tanCS IDE - Editor')
-		
 		self.activeproject=activeproject
 		self.activerev=activerev
 		self.activefile=activefile

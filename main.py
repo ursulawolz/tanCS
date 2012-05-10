@@ -91,11 +91,12 @@ class tanCS(object):
 	def on_window_mode_changed(self,new_window_name,parent_window,activeproject,activerev,activefile):
 		parent_window.destroy()
 		if new_window_name==("Viewer"):
-			window=viewer.TempWindow(self,activeproject,activerev,activefile)
+			window=viewer.TempWindow(self,self.defaultproject,self.defaultrevision,self.defaultfile) #DEMO CODE
+			#window=viewer.TempWindow(self,activeproject,activerev,activefile) #REAL CODE
 			window.connect("delete-event",Gtk.main_quit)
 			window.show_all()
 		if new_window_name==("Explorer"):
-			window=explorer.explorer_window(self)
+			window=explorer.explorer_window(self,)
 			window.connect("delete-event",Gtk.main_quit)
 			window.show_all()
 		if new_window_name==("Editor"):

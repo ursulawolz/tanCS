@@ -203,7 +203,7 @@ class TempWindow(Gtk.Window):
 		Clutter.Container.add_actor(self.stage, self.toptext)
 		self.toptext.set_position(15,5)
 
-		num_revs=len(self.parent.defaultproject.revisions)
+		num_revs=len(self.activeproject.revisions)
 
 		#nested lists containing the various clutter objects within a revision circle
 		#[circle,label,files,isopen,ishead]
@@ -267,9 +267,9 @@ class TempWindow(Gtk.Window):
 			starty=self.circles[revnum][0].get_position()[1]+100
 			numfiles=0
 			if self.circles[revnum][4]:
-				files=self.parent.defaultproject.head.files
+				files=self.activeproject.head.files
 			else:
-				files=self.parent.defaultproject.revisions[revnum-1].files
+				files=self.activeproject.revisions[revnum-1].files
 			for f in files:
 				numfiles+=1
 				newlabel=Clutter.Text.new_full("Serif 12",files[f].file_name,black)
@@ -614,7 +614,6 @@ class LineCommentDialog(Gtk.Dialog):
 	def __init__(self, parent):
 		Gtk.Dialog.__init__(self,"Submit Line Comment",parent,0)
 		label=Gtk.Label("Testing")
-		pdb.set_trace()
 		adjustment = Gtk.Adjustment(1, 1, parent.thecode.get_buffer().get_line_count(), 1, 10, 0)
 		#Note that the limits on the spinner can change, don't exceed line numbs
 		self.spinbutton = Gtk.SpinButton()
