@@ -176,7 +176,7 @@ class Comment(object):
         self.rev=rev
         self.file=whichfile
         self.account = account
-        self.linenum=linenum
+        self.linenum=int(float(linenum))
 
     def edit(self,new_text,edit_time):
         ## To be called when a user edits a comment.
