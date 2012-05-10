@@ -51,13 +51,18 @@ class TankWorld(ShowBase):
 		self.numFrames = 0
 		self.dynamics = [] 
 		self.gameData = [] #Will be huge eventually
-		self.debugTime = 0
+		self.debugTime = 0 #Prints every integer second
 		self.laterTasks = []
+		self._afterStarts = []
+		self.isOver = False #Tells Tank to stop
+		self.displaySpeed = 1
 
 	def __display(self):
 		'''Must be called after preCalc. Sets the stage for the display of the performance'''
 		self.taskMgr.add(self.igLoop, 'igLoop')
 		self._displayTime = 0
+		self._lastTime = 0
+		self.frameTime = 0
 		#print "TankWorld.__dusplay: ", self.taskMgr.getAllTasks()
 		self.taskMgr.removeTasksMatching('*tank*')
 		self.taskMgr.removeTasksMatching('*NAME*')
@@ -65,17 +70,31 @@ class TankWorld(ShowBase):
 		self.taskMgr.removeTasksMatching('*name*')
 		self.taskMgr.removeTasksMatching('*collide*')
 		self.taskMgr.removeTasksMatching('*bullet*')
+		self.taskMgr.removeTasksMatching('*Tank*')
 		self.taskMgr.add(self._updatePositions, 'gameDataDisplay')
 		#print self.taskMgr.getAllTasks()
 		
+		def setSpeed(num):
+			#print "Heyo displaySpeed"
+			self.displaySpeed = num 
+
+		self.accept('1', setSpeed, [1])
+		self.accept('2', setSpeed, [2])
+		self.accept('3', setSpeed, [4])
+		self.accept('4', setSpeed, [8])
+		self.accept('0', setSpeed, [0])
+		self.accept('5', setSpeed, [-1])
+		self.accept('6', setSpeed, [-2])
+		self.accept('7', setSpeed, [-4])
+
 		self.frame = 0
 		self.startTime = globalClock.getRealTime()
 
 		while self.frame < len(self.gameData) - 1:
 			self.taskMgr.step()
 			globalClock.tick()
-			self._displayTime = globalClock.getRealTime()
 
+		self.taskMgr.removeTasksMatching('*Positions*')
 
 		#Pause for two seconds at end: Probably launch victory/defeat screen here
 		victory = ''
@@ -87,13 +106,16 @@ class TankWorld(ShowBase):
 		elif self.victoryState == 2:
 			victory = 'Defeat'
 
-		print victory
+		#print victory
 		from direct.gui.OnscreenText import OnscreenText
-		textObject = OnscreenText(text = 'victory', 
+		textObject = OnscreenText(text = victory, 
 			pos = (0, 0), scale = 0.3, bg=VBase4(.6,.6,.6,.1), fg=VBase4(0,0,0,95))
-
-		while globalClock.getRealTime() < self._displayTime + 2:
-			x = 100
+		
+		self._endTime = globalClock.getRealTime()
+		
+		while globalClock.getRealTime() < self._endTime + 2:
+			self.taskMgr.step()
+			globalClock.tick()
 			#print textObject
 
 	def _updatePositions(self, task):
@@ -106,8 +128,8 @@ class TankWorld(ShowBase):
 			changeY =  (inputState.isSet('foward')-inputState.isSet('backward'))*moveAmount
 			changeX = (inputState.isSet('right')-inputState.isSet('left'))*moveAmount;
 
-			base.cam.setPos(base.cam,changeX,changeY,0);	
-			hpr = base.cam.getHpr();
+			base.cam.setPos(base.cam,changeX,changeY,0)	
+			hpr = base.cam.getHpr()
 			if base.mouseWatcherNode.hasMouse() and self.doMouseStuff:	
 				hpr.x = -100*base.mouseWatcherNode.getMouseX()
 				hpr.y = 100*base.mouseWatcherNode.getMouseY()
@@ -117,8 +139,11 @@ class TankWorld(ShowBase):
 		except:
 			print "error in TankWorld._updatePositions"
 		
+		self._lastTime = self._displayTime
 		self._displayTime = globalClock.getRealTime() - self.startTime
-		self.frame = int(60 * self._displayTime)
+		self.frameTime += self.displaySpeed * (self._displayTime - self._lastTime)
+		self.frame = int(60 * self.frameTime)
+		#print self.frame, (self._displayTime - self._lastTime)
 		if self.frame < len(self.gameData) - 1:
 			frameData = self.gameData[self.frame]
 
@@ -134,6 +159,10 @@ class TankWorld(ShowBase):
 						dynamic.setHpr(Point3(dynData[3], dynData[4], dynData[5]))
 					else:
 						dynamic.hide()
+				else:
+					dynamic.hide()
+
+
 
 		return task.cont
 
@@ -145,6 +174,9 @@ class TankWorld(ShowBase):
 		self.taskMgr.removeTasksMatching('*bullet*')
 		self.taskMgr.add(self.__update2,"bullet-update")
 
+		for i in self._afterStarts:
+			self.doMethodLater(i[0], i[1], i[2])
+
 		#Exits when win. lose, or more than 1 minute(s)
 		while self.victoryState == 0 and len(self.gameData) < 60 * 60:
 			self.taskMgr.remove('igLoop')
@@ -152,7 +184,8 @@ class TankWorld(ShowBase):
 			self.taskMgr.step()
 			globalClock.tick()
 
-		print self.dynamics
+		self.isOver = True
+		#print self.dynamics
 		self.__display()
 
 	def doMethodLater(self, time, task, name = ''):
@@ -160,6 +193,9 @@ class TankWorld(ShowBase):
 			ShowBase.doMethodLater(self, time, task, name)
 		else:
 			self.laterTasks.append([time, task, name])
+
+	def doMethodAfterStart(self, time, task, name = ''):
+		self._afterStarts.append([time, task, name])
 
 	def updateLaterTasks(self, time = 1.0/60.0):
 		for i in range(len(self.laterTasks)):
@@ -175,34 +211,33 @@ class TankWorld(ShowBase):
 		'''
 		Task task: Time since last frame	
 		'''
-		#try:
+		try:
+			stepSize = 1.0 / 60.0
 
-		stepSize = 1.0 / 60.0
+			#set up a fixed time constant step for more accurate physics.
+			
+			self.__bulletWorld.doPhysics(stepSize)
 
-		#set up a fixed time constant step for more accurate physics.
+			self.gameData.append([])
+			numFrames = len(self.gameData) - 1
+
+			for i in range(len(self.dynamics)):
+				self.gameData[numFrames].append(array('f'))
+				dynamic = self.dynamics[i]
+				if not dynamic._nodePath.is_empty() and not dynamic._nodePath.isHidden():
+					pos = dynamic.getPos()
+					hpr = dynamic.getHpr()
+					self.gameData[numFrames][i].extend(pos)
+					self.gameData[numFrames][i].extend(hpr)
+				else:
+					x = 1
 		
-		self.__bulletWorld.doPhysics(stepSize)
+			if len(self.gameData) % 60 == 0:
+				self.debugTime += 1
+				#print self.debugTime
 
-		self.gameData.append([])
-		numFrames = len(self.gameData) - 1
-
-		for i in range(len(self.dynamics)):
-			self.gameData[numFrames].append(array('f'))
-			dynamic = self.dynamics[i]
-			if not dynamic._nodePath.is_empty() and not dynamic._nodePath.isHidden():
-				pos = dynamic.getPos()
-				hpr = dynamic.getHpr()
-				self.gameData[numFrames][i].extend(pos)
-				self.gameData[numFrames][i].extend(hpr)
-			else:
-				x = 1
-	
-		if len(self.gameData) % 60 == 0:
-			self.debugTime += 1
-			print self.debugTime
-
-		#except:
-		#	print "error tankworld.__update2	"
+		except:
+			print "error tankworld.__update2	"
 
 		return task.cont
 
@@ -258,6 +293,11 @@ class TankWorld(ShowBase):
 		self.destroy()
 		sys.exit()
 		#sys.exit()
+
+	def run(self):
+		for i in self._afterStarts:
+			self.taskMgr.doMethodLater(i[0], i[1], i[2])
+		ShowBase.run(self)
 
 	def __update(self, task):
 		'''
@@ -318,7 +358,7 @@ class TankWorld(ShowBase):
 		debugNode.showNormals(False)
 		self.debugNP = render.attachNewNode(debugNode)
 
-		print "TankWorld.drawDebugNode: debug node activated" 
+		#print "TankWorld.drawDebugNode: debug node activated" 
 		self.accept('9', self.debugNP.show)
 		self.accept('8', self.debugNP.hide)
 
@@ -330,7 +370,7 @@ class TankWorld(ShowBase):
 		'''
 			Called when a victory condition has been met
 		'''
-		print "YOU HAVE WON THE GAME"
+		#print "YOU HAVE WON THE GAME"
 		#pdb.set_trace()
 		self.victoryState = 1
 
@@ -344,9 +384,10 @@ class TankWorld(ShowBase):
 		'''
 			Called when a loss condition has been met
 		'''
-		print "YOU HAVE LOST THE GAME"
+		#print "YOU HAVE LOST THE GAME"
 		self.victoryState = 2
-		sys.exit()
+		self.taskMgr.remove('bullet-update')
+		self.taskMgr.doMethodLater(2, self.close, 'close Task Name')
 
 
 
@@ -380,4 +421,8 @@ class TankWorld(ShowBase):
 		return self.levelData
 
 	def registerDynamic(self, dynamic):
+		#print dynamic
 		self.dynamics.append(dynamic)
+
+	def isRealTime(self):
+		return self.realTime

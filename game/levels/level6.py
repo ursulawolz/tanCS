@@ -44,4 +44,4 @@ makeCollisionState(trigger, position=(x*2+2,x*3,0), tracking_name='tank', size=(
 
 #set up the level data
 
-addLevelData({'data':[x*5, x*4, x*3+3, x*3-3, x*2+3, x*1,x*2]})
+addLevelData({'data':[x*5, x*4, x*3+4, x*3-3, x*2+4, x*1 + 2,x*2]})

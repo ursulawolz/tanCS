@@ -1,13 +1,10 @@
 x = level_data['x']
 tank.move(x)
-tank.left()
+tank.turn_to(180)
 tank.fire()
-tank.right()
+tank.turn_to(90)
 tank.move(x + 1)
-tank.left()
+tank.turn_to(180)
 tank.fire()
 tank.wait(1)
 tank.fire()
-tank.right()
-
-

@@ -38,7 +38,8 @@ class Tank(DynamicWorldObject):
         DynamicWorldObject.__init__(self, world, attach, name, position, self._shape, orientation, Vec3(0,0,0), mass = tankMass)   #Initial velocity must be 0
         self.__createVehicle(self._tankWorld.getPhysics())
 
-        self._taskTimer = 0;
+        self._collisionCounter = 0
+        self._taskTimer = 0
         self._nodePath.node().setFriction(friction)		
         self._nodePath.setPos(position)
         # Set up turret nodepath
@@ -52,7 +53,7 @@ class Tank(DynamicWorldObject):
 
         self.movementPoint = Point3(10,10,0)
 
-        print "Tank.__init__: " + name
+        #print "Tank.__init__: " + name
         
         # Set up the 
     def __createVehicle(self,bulletWorld):
@@ -361,14 +362,20 @@ class Tank(DynamicWorldObject):
         '''
         Tasks called to wait
         '''
-        dt = 1.0/60.0
-        #print "Tank.updateWait: ", dt
-        self._taskTimer -= dt
+        try:
+            if self._tankWorld.isRealTime():
+                dt = globalClock.getDt()
+            else:
+                dt = 1.0/60.0
+            #print "Tank.updateWait: ", dt
+            self._taskTimer -= dt
 
-        if self._taskTimer < 0: 
-            return task.done
-        return task.cont
+            if self._taskTimer < 0: 
+                return task.done
 
+            return task.cont
+        except:
+            print "error, tank.wait"
 
     def updateRotateLoc(self, task):
         heading = self.fixAngle(self._nodePath.getH())
@@ -468,7 +475,7 @@ class Tank(DynamicWorldObject):
     def nextTask(self,task):
         self._nodePath.node().setActive(True)
         self.onTask += 1
-        if(self._tankWorld.isDead):
+        if(self._tankWorld.isDead or self._tankWorld.isOver):
             return
         #if self.onTask >= len(self.taskList):
         #   return
@@ -489,6 +496,7 @@ class Tank(DynamicWorldObject):
                 self.nextTask(task)
 
         except StopIteration:
+            #print 'Tank.nextTask error'
             pass
         #self.taskList[self.onTask][0](self.taskList[self.onTask][1])
     
@@ -563,3 +571,38 @@ class Tank(DynamicWorldObject):
         x = self._weapon.fire(amt)        
         self.wait(.1)
         return x
+
+    def deleteAfter(self, task = None):
+        if not self._nodePath.is_empty():
+            x = self._nodePath.node()
+            self._tankWorld.removeRigidBody(x)
+            self.hide()                 
+            self._tankWorld.lose()                               
+            #self._nodePath.detachNode()
+
+    def handleCollision(self, collide, taskName):
+        self._collisionCounter += 1
+
+        forReal = True
+
+        hitBy = collide.getNode0()
+        if hitBy.getName() == self._nodePath.node().getName():
+            hitBy = collide.getNode1()
+
+        allowedNames = ['floor', 'wall', 'State']
+
+        for name in allowedNames:
+            if name in hitBy.getName():
+                forReal = False
+
+        if not self._nodePath.is_empty():        
+            
+            if forReal:
+                print "Tank.handleCollision:(pos) ", self.getPos(), 'obj 1', collide.getNode0().getName(), 'obj 2', collide.getNode1().getName()
+            
+                self._tankWorld.taskMgr.remove(taskName)
+                self._tankWorld.doMethodLater(.01, self.deleteAfter, 'deleteAfter')
+
+        else:
+            print "Tank.handleCollision Failed to have _nodepath"
+            self._tankWorld.taskMgr.remove(taskName)

@@ -88,7 +88,7 @@ class UserTank:
         if not(type(new_heading) == type(1) or type(new_heading) == type(1.0)):
             raise TypeError('new_heading in turn_to() must be a number')
         
-        self.rotate(newH - self._nodePath.getH())
+        self.rotate(new_heading - self.__tank._nodePath.getH())
 
     def left(self, angle = 90):
         '''Turns the specified number of degrees left'''

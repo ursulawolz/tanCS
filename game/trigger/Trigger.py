@@ -17,7 +17,7 @@ class Trigger(object):
 		else:
 			self.function = function
 
-		print "Trigger.__init__ : Method added"
+		#print "Trigger.__init__ : Method added"
 		pass
 
 	def addState(self, state):

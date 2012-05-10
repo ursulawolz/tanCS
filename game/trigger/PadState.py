@@ -26,7 +26,7 @@ class PadState(State):
 		self.position = position+Vec3(0,0,.01)
 		self.tracking_name = tracking_name
 		self.size = size
-		print "PositionTrigger.__init__: Trigger created"
+		#print "PositionTrigger.__init__: Trigger created"
 		assert(self.tracking_object, "No tracking object")
 
 		cm=CardMaker('')

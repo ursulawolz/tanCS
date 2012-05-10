@@ -30,6 +30,6 @@ class TurretBlaster(Weapon):
 		if self.canFire == True:
 			self.canFire = False
 			x = Blast(self, amt * self.maxVel)
-			self._tankWorld.taskMgr.doMethodLater(self.reloadTimer, self.setCanFire, 'can fire reload')
+			self._tankWorld.doMethodLater(self.reloadTimer, self.setCanFire, 'can fire reload')
 			return x
 		
