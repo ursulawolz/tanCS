@@ -398,7 +398,7 @@ class explorer_window(Gtk.Window):
 		#
 		#check to see if the account is valid
 		#Account=get_account(username.get_text(),password.get_text())
-		account=Account("account ID","Fake Account","1234","fork-icon.png")
+		account=Account("account ID","Userman37","password","fork-icon.png")
 		if not account==None:
 			self.parent.user=account
 			self.alert.set_text("You have logged in!")
@@ -596,8 +596,8 @@ class explorer_window(Gtk.Window):
 	def on_help_clicked(self,widget,something,toplevel):
 		#print("Help clicked")
 		#self.the_new_page=self.make_help()
-		temp=Group("GroupID","GodID","This is the title","This is the description",'a','a')
-		self.the_new_page=self.make_display_group(temp)
+		temp=Group("GroupID","GodID","I can't believe its not recursion","This is a group that uses iteration for literally everything.",'a','a')
+		self.the_new_page=self.make_display_group(temp,toplevel)
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Help Page")
 
@@ -618,30 +618,30 @@ class explorer_window(Gtk.Window):
 	#TODO
 	#EVERYTHING
 	def get_results(self,type_results,identifier):
-		temp_account=Account("Fake ID","Fake Username",'',"fork-icon.png")
+		temp_account=Account("Userman37","caynessian",'',"fork-icon.png")
 		temp_group=Group('','','','','')
 		if type_results=="groups" and type(identifier)==type(temp_account):			
-			result1=Group("gId",["aID","aID2"],"godId","Title1")
-			result1.description="This is a Description"
-			result2=Group("gId","aID","godId","Title2")
-			result2.description="This is a Description"
-			result3=Group("gId","aID","godId","Title3")
-			result3.description="This is a Description"
+			result1=Group("gId",["aID","aID2"],"Tauntology Group","Title1")
+			result1.description="The tauntology group is of course, the tauntology group"
+			result2=Group("gId","aID","Nonexistant Group","Title2")
+			result2.description="Nihilism FTW"
+			result3=Group("gId","aID","Blue","Title3")
+			result3.description="The introspective postmodern perspective of art majors"
 			results=[result1,result2,result3]
 			print "working in get results"
 			return results
 		elif type_results=="projects" and type(identifier)==type(temp_account):
-			result1=Project("This is a title","This is a description",'','',4,'')
-			result2=Project("This is a title","This is a description",'','',4,'')
-			result3=Project("This is a title","This is a description",'','',4,'')
-			result4=Project("This is a title","This is a description",'','',4,'')
+			result1=Project("TanCS","Community of practice, game and totally awesome",'','',4,'')
+			result2=Project("Optional Project","You don't really need to work on this project",'','',4,'')
+			result3=Project("Physics Simulations and More","Everything from electricity and magnetism to mechanics",'','',4,'')
+			result4=Project("The Space Core","SPAAAAAAAACE",'','',4,'')
 			results=[result1,result2,result3,result4]
 			return results
 			
 		elif type_results=="projects" and type(identifier)==type(temp_group):
-			result1=Project("This is a title","This is a description",'','',4,'')
-			result2=Project("This is a title","This is a description",'','',4,'')
-			result3=Project("This is a title","This is a description",'','',4,'')
+			result1=Project("TanCS","Community of practice, game and totally awesome",'','',4,'')
+			result2=Project("Optional Project","You don't really need to work on this project",'','',4,'')
+			result3=Project("Physics Simulations and More","Everything from electricity and magnetism to mechanics",'','',4,'')
 			results=[result1,result2,result3]
 			return results
 		elif type_results=="accounts" and type(identifier)==type(temp_group):
