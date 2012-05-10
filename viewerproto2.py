@@ -26,17 +26,21 @@ def add_mode_menu_actions(action_group,on_window_mode_changed,parent_window):
 	], 1, change_window,[on_window_mode_changed,parent_window])
 
 def change_window(widget,new_window_name,parent_window,top_parent):
-	top_parent.on_window_mode_changed(new_window_name,parent_window)
+	top_parent.on_window_mode_changed(new_window_name,parent_window,parent_window.activeproject,parent_window.activerev,parent_window.activefile)
 
 ###------------------------------Viewer Class------------------------------###
 class TempWindow(Gtk.Window):
-	def __init__(self,parent):
-		Gtk.Window.__init__(self,title="Entry Demo")
+	def __init__(self,parent,activeproject,activerev,activefile):
+		Gtk.Window.__init__(self,title="tanCS IDE - Viewer")
 		
 		#Clutter.init(sys.argv)
 
+		self.activeproject=activeproject
+		self.activerev=activerev
+		self.activefile=activefile
+
 		self.fake_user=Account("Random Hash","The instigator","Password","Avatar")
-		
+
 		color=Gdk.Color(1000,1000,1000)
 		self.set_resizable(False)
 		self.x=840
@@ -89,7 +93,7 @@ class TempWindow(Gtk.Window):
 		self.thecode=GtkSource.View()
 		self.thecodebuffer = GtkSource.Buffer()
 		self.thecode.set_buffer(self.thecodebuffer)
-		self.thecodebuffer.set_text(self.parent.defaultfile.content)
+		self.thecodebuffer.set_text(self.activeproject.revisions[activerev].files[activefile].content)
 		self.thecode.set_show_line_numbers(True)
 		self.thecode.set_size_request(self.x-150,560)
 		self.thecodeframe=Gtk.Frame()
@@ -154,10 +158,10 @@ class TempWindow(Gtk.Window):
 		commentscroll.set_size_request(self.x-150,60)
 
 		self.submitcomment=Gtk.Button("Submit")
-		self.submitcomment.connect("clicked", self.toggle_file_comment,self.entry)
+		self.submitcomment.connect("clicked", self.toggle_file_comment,self.entry,vbox2)
 
 		self.submitlinecomment=Gtk.Button("Submit Line Comment")
-		self.submitlinecomment.connect("clicked", self.toggle_line_comment)
+		self.submitlinecomment.connect("clicked", self.toggle_line_comment,vbox2)
 		
 		vbox3=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
 		vbox3.pack_start(self.submitlinecomment,True,True,0)
@@ -175,13 +179,6 @@ class TempWindow(Gtk.Window):
 
 ###---------------------------------METHODS--------------------------------###
 
-	#How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
-	def submit_file_comment(self,account,text):
-		time=datetime.date.today()
-		new_comment=Comment(text,time,"Hash","Which_file",self.fake_user)
-		print(account+" says: '"+text+"' about this file")
-		return
-
 	def render_clutter(self):
 		self.stage = self.embed.get_stage()	# Get the Stage
 		self.stage.set_no_clear_hint(False)
@@ -195,19 +192,6 @@ class TempWindow(Gtk.Window):
 		self.stage.set_reactive(True)
 
 		self.scroll=0
-
-		'''
-		intext = Clutter.Text.new_full("Sans 20", "Hello! This\nis where the\ndynamic\nrevision map\nwill go.\nPlease do\nnot panic\nwhile we\nrenovate.", blue)
-		intext.set_reactive(True)
-		Clutter.Container.add_actor(self.stage, intext)
-		intext.set_position(5,5)
-
-		self.rect=Clutter.Rectangle()
-		self.rect.set_color(blue)
-		self.rect.set_reactive(True)
-		Clutter.Container.add_actor(self.stage, self.rect)
-		self.rect.set_position(40,1200)
-		self.rect.set_size(50,50)'''
 		
 		self.toptext = Clutter.Text.new_full("Sans 20", "Revision Map", blue)
 		self.toptext.set_reactive(True)
@@ -226,6 +210,8 @@ class TempWindow(Gtk.Window):
 		headcircle.set_size(100,100)
 		headcircle.set_reactive(True)
 		headcircle.connect('button-press-event',self.revclick,0)
+		headcircle.connect('enter-event',self.revhover,0)
+		headcircle.connect('leave-event',self.revleave,0)
 
 		headlabel=Clutter.Text.new_full("Serif 20","Head",black)
 		Clutter.Container.add_actor(self.stage,headlabel)
@@ -243,6 +229,8 @@ class TempWindow(Gtk.Window):
 			newcircle.set_size(100,100)
 			newcircle.set_reactive(True)
 			newcircle.connect('button-press-event',self.revclick,i)
+			newcircle.connect('enter-event',self.revhover,i)
+			newcircle.connect('leave-event',self.revleave,i)
 
 			newlabel=Clutter.Text.new_full("Serif 20","Rev "+str(rev+1),black)
 			Clutter.Container.add_actor(self.stage,newlabel)
@@ -250,36 +238,6 @@ class TempWindow(Gtk.Window):
 			newlabel.set_position(100,125*i+100)
 
 			self.circles.append([newcircle,newlabel,[],False,False])
-
-
-		'''
-		circle=Clutter.Texture.new_from_file("circle.png");
-		Clutter.Container.add_actor(self.stage, circle)
-		circle.set_position(50,450)
-		circle.set_size(100,100)
-		circle.set_reactive(True)
-		#circle.connect('button-press-event',lambda x,y:self.success())
-
-		label1=Clutter.Text.new_full("Serif 20","Rev 1",black)
-		Clutter.Container.add_actor(self.stage,label1)
-		label1.set_anchor_point(label1.get_size()[0]/2.0,label1.get_size()[1]/2.0)
-		label1.set_position(100,500)
-
-		circle2=Clutter.Texture.new_from_file("circle.png");
-		Clutter.Container.add_actor(self.stage, circle2)
-		circle2.set_position(50,570)
-		circle2.set_size(100,100)
-		circle2.set_reactive(True)
-
-		label2=Clutter.Text.new_full("Serif 20","Rev 2",black)
-		Clutter.Container.add_actor(self.stage,label2)
-		label2.set_anchor_point(label2.get_size()[0]/2.0,label2.get_size()[1]/2.0)
-		label2.set_position(100,620)'''
-
-		'''
-		#self.stage.connect('button-press-event',self.stageclicked)
-		self.rectrot=0
-		GObject.timeout_add(10,self.clutterupdate)'''
 
 		self.stage.show_all()	# We show everything
 
@@ -297,8 +255,6 @@ class TempWindow(Gtk.Window):
 
 	def revclick(self,widget,data,revnum):
 		black=Clutter.Color.new(0,0,0,255)
-		#self.stage.hide_all()
-		#self.circles[1][0].hide()
 		flag=(not self.circles[revnum][3])
 		self.reset_clutter()
 		if flag:
@@ -311,12 +267,14 @@ class TempWindow(Gtk.Window):
 				files=self.parent.defaultproject.revisions[revnum-1].files
 			for f in files:
 				numfiles+=1
-				newlabel=Clutter.Text.new_full("Serif 12",f.file_name,black)
+				newlabel=Clutter.Text.new_full("Serif 12",files[f].file_name,black)
 				Clutter.Container.add_actor(self.stage,newlabel)
 				newlabel.set_anchor_point(newlabel.get_size()[0]/2.0,newlabel.get_size()[1]/2.0)
 				newlabel.set_position(100,starty+25*numfiles)
 				newlabel.set_reactive(True)
-				newlabel.connect('button-press-event',self.openfile,f)
+				newlabel.connect('button-press-event',self.openfile,files[f])
+				newlabel.connect('enter-event',self.filehover,revnum,numfiles-1)
+				newlabel.connect('leave-event',self.fileleave,revnum,numfiles-1)
 				filelabels.append(newlabel)
 			self.circles[revnum][2]=filelabels
 			for i in range(len(self.circles)-(revnum+1)):
@@ -324,6 +282,22 @@ class TempWindow(Gtk.Window):
 				self.circles[i][0].move_by(0,25+25*numfiles)
 				self.circles[i][1].move_by(0,25+25*numfiles)
 			self.circles[revnum][3]=True
+
+	def revhover(self,widget,data,revnum):
+		red=Clutter.Color.new(255,0,0,255)
+		self.circles[revnum][1].set_color(red)
+
+	def revleave(self,widget,data,revnum):
+		black=Clutter.Color.new(0,0,0,255)
+		self.circles[revnum][1].set_color(black)
+
+	def filehover(self,widget,data,revnum,filenum):
+		blue=Clutter.Color.new(0,10,255,255)
+		self.circles[revnum][2][filenum].set_color(blue)
+
+	def fileleave(self,widget,data,revnum,filenum):
+		black=Clutter.Color.new(0,0,0,255)
+		self.circles[revnum][2][filenum].set_color(black)
 
 	def enter_clutter(self,widget,data=-1):
 		self.embed.grab_focus()
@@ -363,15 +337,8 @@ class TempWindow(Gtk.Window):
 	def openfile(self,widget=None,data=None,f=None):
 		print 'Opening '+f.file_name
 		self.thecodebuffer.set_text(f.content)
-
-
-	def stageclicked(self,widget,event=-1,data=-1):
-		#print "Stage clicked at (%f, %f)" % (event.get_coords()[0],event.get_coords()[1])
-		'''
-		circle=Clutter.Texture.new_from_file("explorer-icon.png");
-		Clutter.Container.add_actor(self.stage, circle)
-		circle.set_position(event.get_coords()[0],event.get_coords()[1])'''
-		return True # Stop further handling of this event
+		self.activerev=f.rev_number
+		self.activefile=f.file_name
 
 	def clutterupdate(self,data=-1):
 		self.rect.set_rotation(Clutter.RotateAxis.X_AXIS, self.rectrot, 0, 25, 0)
@@ -390,7 +357,7 @@ class TempWindow(Gtk.Window):
 		temp_event.set_border_width(6)
 		temp_event.add(temp_label)
 		temp_frame.add(temp_event)
-		temp_title=Gtk.Label("<b>"+"Account Name Goes Here"+"</b>")
+		temp_title=Gtk.Label("<b>"+comment.account.username+"</b>") #CHANGE TO ACCOUNT.USERNAME WHEN IMPLEMENTED
 		temp_title.set_use_markup(True)
 		temp_frame.set_label_widget(temp_title)
 		return temp_frame
@@ -405,11 +372,15 @@ class TempWindow(Gtk.Window):
 		text2="Well, yes and no. It's a little hard, but you can definitely do it. Papayas?"
 		text3="Thanks for the help. Also, I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?"
 		text4="They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever, it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date"
-		fake1=Comment(text1,"10:20","Random Hash","This file","Some account")
-		fake2=Comment(text2,"10:35","Random Hash","This file","Some account")
-		fake3=Comment(text3,"10:47","Random Hash","This file","Some account")
-		fake4=Comment(text4,"11:00","Random Hash","This file","Some account")
-		filecommentlist=[fake1,fake2,fake3,fake4]
+		fake1=Comment(text1,"10:20","Random Hash",1,"This file",self.fake_user)
+		fake2=Comment(text2,"10:35","Random Hash",1,"This file",self.fake_user)
+		fake3=Comment(text3,"10:47","Random Hash",1,"This file",self.fake_user)
+		fake4=Comment(text4,"11:00","Random Hash",1,"This file",self.fake_user)
+		filecommentlist=[]
+		for comment in self.activeproject.revisions[self.activerev].files[self.activefile].comments:
+			if comment.linenum==-1:
+				filecommentlist.append(comment)
+		#filecommentlist=[fake1,fake2,fake3,fake4]
 		return filecommentlist
 
 #should unpack the line comments from where they are in revision and make a list of all of them so that they can be displayed.
@@ -418,10 +389,10 @@ class TempWindow(Gtk.Window):
 		text2="Well, yes and no. It's a little hard, but you can definitely do it. Papayas?"
 		text3="Thanks for the help. Also, I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?"
 		text4="They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever, it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date"
-		fake1=Comment(text1,"10:20","Random Hash","This file","Some account")
-		fake2=Comment(text2,"10:35","Random Hash","This file","Some account")
-		fake3=Comment(text3,"10:47","Random Hash","This file","Some account")
-		fake4=Comment(text4,"11:00","Random Hash","This file","Some account")
+		fake1=Comment(text1,"10:20","Random Hash",1,"This file",self.fake_user,6)
+		fake2=Comment(text2,"10:35","Random Hash",1,"This file",self.fake_user,4)
+		fake3=Comment(text3,"10:47","Random Hash",1,"This file",self.fake_user,32)
+		fake4=Comment(text4,"11:00","Random Hash",1,"This file",self.fake_user,12)
 		linecommentlist=[fake4,fake3,fake2,fake1]
 		return linecommentlist
 
@@ -441,7 +412,7 @@ class TempWindow(Gtk.Window):
 			index=0
 			while index<len(linecomments):
 				vbox.pack_start(self.create_comment(linecomments[index]),False,False,0)
-				index=index+1	
+				index=index+1
 			other.set_active(False)
 			vbox.show_all()
 
@@ -462,19 +433,28 @@ class TempWindow(Gtk.Window):
 			vbox.show_all()
 
 #What happens when you hit the submit line comment button
-	def toggle_line_comment(self,widget):
+	def toggle_line_comment(self,widget,vbox):
 		dialog=LineCommentDialog(self)
 		endresult=dialog.run()
 
 #What happens when you hit the submit file comment button.
-	def toggle_file_comment(self,widget,entry):
+	def toggle_file_comment(self,widget,entry,vbox):
 		#account=get_account()
 		account="The Instigater"
 		tempbuffer=entry.get_buffer()
 		startiter = tempbuffer.get_start_iter()
 		enditer = tempbuffer.get_end_iter()
 		thetext=tempbuffer.get_text(startiter,enditer,False)
-		self.submit_file_comment(account,thetext)
+		self.submit_file_comment(account,thetext,vbox)
+		return
+
+	#How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
+	def submit_file_comment(self,account,text,vbox):
+		time=datetime.date.today()
+		new_comment=Comment(text,time,"Hash",2,"Which_file",self.fake_user)
+		self.activeproject.revisions[self.activerev].files[self.activefile].comments.append(new_comment)
+		vbox.pack_start(self.create_comment(new_comment),False,False,0)
+		print(account+" says: '"+text+"' about this file")
 		return
 
 #Creates the top toolbar for the window.
@@ -500,7 +480,7 @@ class TempWindow(Gtk.Window):
 		button_explorer=Gtk.ToolButton()
 		button_explorer.set_icon_widget(explorer_icon)
 		self.toolbar.insert(button_explorer, 3)
-		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent)
+		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent,self.activeproject,self.activerev,self.activefile)
 
 		sep=Gtk.SeparatorToolItem()
 		self.toolbar.insert(sep,4)

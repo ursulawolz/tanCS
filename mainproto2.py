@@ -48,10 +48,10 @@ class tanCS(object):
 		f.close()
 		f=open("cluttertest3.py")
 		file3=File(self.defaultproject, 1, 'cluttertest3.py', f.read())
+		f.close()
 
 		f=open("testingtk3.py")
 		file1=File(self.defaultproject, 2, 'testingtk3.py', f.read())
-		self.defaultfile=file1
 		f.close()
 		f=open("testingtk3.py")
 		file2=File(self.defaultproject, 3, 'testingtk3.py', f.read())
@@ -62,7 +62,6 @@ class tanCS(object):
 
 		f=open("testingtk3.py")
 		file1=File(self.defaultproject, 5, 'testingtk3.py', f.read())
-		self.defaultfile=file1
 		f.close()
 		f=open("testingtk3.py")
 		file2=File(self.defaultproject, 6, 'testingtk3.py', f.read())
@@ -76,7 +75,11 @@ class tanCS(object):
 		#self.defaultproject.revisions=[defaultrevision]
 		#self.defaultproject.head=defaulthead
 
-		win=viewer.TempWindow(self)
+		self.defaultrevision=7
+		self.defaultfile='cluttertest3.py'
+
+
+		win=viewer.TempWindow(self,self.defaultproject,self.defaultrevision,self.defaultfile)
 		win.connect("delete-event",Gtk.main_quit)
 		win.show_all()
 
@@ -84,10 +87,10 @@ class tanCS(object):
 		Gtk.main()
 
 ###---------------------------MAIN SWITCH----------------------------###
-	def on_window_mode_changed(self,new_window_name,parent_window):
+	def on_window_mode_changed(self,new_window_name,parent_window,activeproject,activerev,activefile):
 		parent_window.destroy()
 		if new_window_name==("Viewer"):
-			window=viewer.TempWindow(self)
+			window=viewer.TempWindow(self,activeproject,activerev,activefile)
 			window.connect("delete-event",Gtk.main_quit)
 			window.show_all()
 		if new_window_name==("Explorer"):
@@ -95,7 +98,7 @@ class tanCS(object):
 			window.connect("delete-event",Gtk.main_quit)
 			window.show_all()
 		if new_window_name==("Editor"):
-			window=editor.Editor(self)
+			window=editor.Editor(self,activeproject,activerev,activefile)
 			window.connect("delete-event",Gtk.main_quit)
 			window.show_all()
 

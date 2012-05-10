@@ -7,15 +7,19 @@ from objectcode import *
 
 #-----DEREK TODOS-----
 # Add borrow "to" attributes
-# Finish Clutter work
+# Create Clutter borrow map
+# Make comments appear dynamically and save to project object
 # 
 
 
 class Editor(Gtk.Window):
 
-	def __init__(self,parent):
-		Gtk.Window.__init__(self,title='tanCS Editor')
+	def __init__(self,parent,activeproject,activerev,activefile):
+		Gtk.Window.__init__(self,title='tanCS IDE - Editor')
 		
+		self.activeproject=activeproject
+		self.activerev=activerev
+		self.activefile=activefile
 		self.parent=parent
 		self.on_window_mode_changed=parent.on_window_mode_changed
 
@@ -50,7 +54,7 @@ class Editor(Gtk.Window):
 
 		#add sourceview to window and initialize properties
 		Gtk.ScrolledWindow.add(self.scrolledwindow,self.sview)
-		self.sbuff.set_text(self.parent.defaultfile.content)
+		self.sbuff.set_text(self.activeproject.revisions[activerev].files[activefile].content)
 		self.sview.connect("key-press-event",self.on_key_press)
 		self.sbuff.connect("changed",self.on_text_changed)
 		self.connect("destroy",self.on_destroy)
@@ -68,7 +72,6 @@ class Editor(Gtk.Window):
 		#x is 120
 		#Ctrl is 65507
 		val=data.keyval #get the pressed key
-		print val
 		cursor=self.sbuff.get_iter_at_mark(self.sbuff.get_insert()) #get iter at cursor position
 		back=self.sbuff.get_iter_at_offset(cursor.get_offset()-1) #get iter at cursor position-1
 		if val==65289: #tab key ####TODO: what if user selects text
@@ -147,9 +150,6 @@ class Editor(Gtk.Window):
 			backb=self.sbuff.get_iter_at_offset(offset+4*i+4)
 			txt=self.sbuff.get_slice(backa,backb,True)
 		return indent
-
-	def on_button_clicked(self,widget):
-		print "Hello World" #test func
 
 	def copy_text(self,widget=None):
 		select=self.sbuff.get_selection_bounds()
@@ -315,7 +315,6 @@ class Editor(Gtk.Window):
 		response = dialog.run()
 		dialog.destroy()
 
-
 	def create_toolbar(self):
 		self.toolbar=Gtk.Toolbar()
 		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
@@ -369,14 +368,14 @@ class Editor(Gtk.Window):
 		button_viewer.set_icon_widget(viewer_icon)
 		button_viewer.set_tooltip_text('Switch to Viewer')
 		self.toolbar.insert(button_viewer, 9)
-		button_viewer.connect("clicked", change_window,"Viewer",self,self.parent)
+		button_viewer.connect("clicked", change_window,"Viewer",self,self.parent,self.activeproject,self.activerev,self.activefile)
 
 		explorer_icon=Gtk.Image.new_from_file('explorer-icon.png')
 		button_explorer=Gtk.ToolButton()
 		button_explorer.set_icon_widget(explorer_icon)
 		button_explorer.set_tooltip_text('Switch to Explorer')
 		self.toolbar.insert(button_explorer, 10)
-		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent)
+		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent,self.activeproject,self.activerev,self.activefile)
 
 		sep2=Gtk.SeparatorToolItem()
 		self.toolbar.insert(sep2,11)
@@ -402,9 +401,9 @@ class Editor(Gtk.Window):
 
 		self.toolbar.show_all()
 
-	def on_destroy(self,window):
-		f=open(self.parent.defaultfile.file_name,'wb')
-		f.write(self.parent.defaultfile.content)
+	def on_destroy(self,window=None):
+		f=open(self.activefile,'wb')
+		f.write(self.activeproject.revisions[self.activerev].files[self.activefile].content)
 
 	def open_file(self,widget):
 		dialog=Gtk.FileChooserDialog('Open File',self,Gtk.FileChooserAction.OPEN,(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL,Gtk.STOCK_OK,Gtk.ResponseType.ACCEPT))
@@ -422,7 +421,7 @@ class Editor(Gtk.Window):
 		dialog.destroy()
 
 	def on_text_changed(self,sbuff):
-		self.parent.defaultfile.content=sbuff.get_text(sbuff.get_start_iter(),sbuff.get_end_iter(),True)
+		self.activeproject.revisions[self.activerev].files[self.activefile].content=sbuff.get_text(sbuff.get_start_iter(),sbuff.get_end_iter(),True)
 
 	def level_select(self, widget):
 		pass
@@ -430,8 +429,9 @@ class Editor(Gtk.Window):
 	def run_file(self,widget):
 		pass
 
-def change_window(widget,new_window_name,parent_window,top_parent):
-	top_parent.on_window_mode_changed(new_window_name,parent_window)
+def change_window(widget,new_window_name,parent_window,top_parent,activeproject,activerev,activefile):
+	parent_window.on_destroy()
+	top_parent.on_window_mode_changed(new_window_name,parent_window,activeproject,activerev,activefile)
 
 
 class ReferenceDialog(Gtk.Dialog):

@@ -36,20 +36,20 @@ class Account(object):
         self.group_list.remove( group )
 
 class Borrow:
-    def __init__(self, date_taken, project_from_ID, revision_from_ID, file_from_name, line_range, line_offsets):
+    def __init__(self, date_taken, project_from, revision_from_, file_from, line_range, line_offsets):
         self.date_taken = date_taken
-        self.projectID = projectID
-        self.revisionID = revisionID
-        self.file_name = file_name
+        self.project_from = project_from
+        self.revision_from = revision_from
+        self.file_from = file_from
         #line_range is a tuple of 2 line numbers, or 2 of the same line number for single-line borrows
         self.line_range = line_range
         #line_offsets is a tuple of 2 offsets representing distance from start of line
         self.line_offsets = line_offsets
 
-    def link_borrow(self,project_to_ID,revision_to_ID,file_to_name):
-        self.project_to_id=project_to_ID
-        self.revision_to_id=revision_to_ID
-        self.file_to_name=file_to_name
+    def link_borrow(self,project_to,revision_to,file_to):
+        self.project_to=project_to
+        self.revision_to=revision_to
+        self.file_to=file_to
 
     def get_text(self):
         #returns the borrowed text
@@ -88,7 +88,7 @@ class Project(object):
 
         self.revisions = [] ##list of revisions
         for i in range(numrevs):
-            rev=Revision(self,i,files=[])
+            rev=Revision(self,i,files={})
             self.revisions.append(rev)
 
         self.children = set()
@@ -133,10 +133,11 @@ class File:
 
     def __init__(self, project, rev_number, file_name, content):
         self.project = project
-        self.revision_number = rev_number
+        self.rev_number = rev_number
         self.file_name = file_name
         self.content = content
-        self.project.revisions[rev_number].files.append(self)
+        self.project.revisions[rev_number].files[file_name]=self
+        self.comments=[]
 
 
 class Group(object):
@@ -169,17 +170,15 @@ class Group(object):
 class Comment(object):
     ## Object for comments on users' codes, be they in-line or general.
 
-    def __init__(self,text,time,hashID,which_file,accountID,which_line=-1):
+    def __init__(self,text,time,project,rev,whichfile,account,linenum=-1):
         self.text = text
         self.time = time
-        self.last_edited = time
-
-        self.accountID = accountID
-        #self.projectID = projectID
-        #self.revisionID = revisionID
-
-        #self.file_name = file_name
-        #self.line_number = line_number
+        self.last_edited = time #implement later?
+        self.project=project
+        self.rev=rev
+        self.file=whichfile
+        self.account = account
+        self.linenum=linenum
 
     def edit(self,new_text,edit_time):
         ## To be called when a user edits a comment.
@@ -193,7 +192,7 @@ class Comment(object):
 
 class Revision:
 
-    def __init__(self,project,rev_number,files=[]):
+    def __init__(self,project,rev_number,files={}):
         self.project=project
         self.rev_number=rev_number
         self.files=files
@@ -201,7 +200,7 @@ class Revision:
 #Creating a new Head with a previous revision specified copies that revision into the Head for editing
 class Head(Revision):
 
-    def __init__(self,project=None,rev_number=None,files=[],prevrev=None):
+    def __init__(self,project=None,rev_number=None,files={},prevrev=None):
         if not (prevrev is None):
             Revision.__init__(self,prevrev.project,prevrev.rev_number,prevrev.files)
         else:
