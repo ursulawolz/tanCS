@@ -15,6 +15,5 @@ while True:
             distance = math.sqrt(total)
 
             if (distance < 50):
-                print "GO",
                 tank.fire_at(b[0] - Vec3(0,0,.5))
-                print "GO"
+                

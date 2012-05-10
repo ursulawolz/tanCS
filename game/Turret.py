@@ -15,7 +15,7 @@ class Turret(CubeObject):
 		self.orientation = orientation
 
 	def fireTask(self, task):
-		print "Turret.fireTask"
+		#print "Turret.fireTask"
 		pos = self._tankWorld.getUserTank().get_pos()
 		if self._weapon.aimAt(self._tankWorld.getUserTank().get_pos(), aimLow = True):
 			self._weapon.fire(1)

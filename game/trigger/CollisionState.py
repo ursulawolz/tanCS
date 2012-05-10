@@ -20,7 +20,7 @@ class CollisionState(State, CubeObject):
 
 		self.position = position
 		self.tracking_name = tracking_name
-		print "PositionTrigger.__init__: Trigger created"
+		#print "PositionTrigger.__init__: Trigger created"
 
 		
 

@@ -1,8 +1,11 @@
 data = level_data['data']
 
+direction = 90
+
 for l in data:
+	direction += 90
 	tank.move(l)
-	tank.left()
+	tank.turn_to(direction)
 
 
 #bad way to solve this
