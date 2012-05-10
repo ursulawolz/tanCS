@@ -32,8 +32,8 @@ def change_window(widget,new_window_name,parent_window,top_parent):
 class TempWindow(Gtk.Window):
 	def __init__(self,parent,activeproject,activerev,activefile):
 		Gtk.Window.__init__(self,title="tanCS IDE - Viewer")
-		
-		#Clutter.init(sys.argv)
+		pdb.set_trace()
+		renderall = not(activerev==None and activefile==None) #enable full functionality
 
 		self.activeproject=activeproject
 		self.activerev=activerev
@@ -59,7 +59,7 @@ class TempWindow(Gtk.Window):
 		imagebox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
 		self.image2=Gtk.Image.new_from_file("side.jpg")
 		self.image=Gtk.Image.new_from_file("sideb.jpg")
-		
+
 		#imagebox.pack_start(self.image,False,False,0)
 		#imagebox.pack_start(self.image2,False,False,0)
 
@@ -67,10 +67,7 @@ class TempWindow(Gtk.Window):
 		self.embed = GtkClutter.Embed()
 		self.embed.grab_focus()
 		self.embed.connect("enter-notify-event",self.enter_clutter)
-		'''
-		clutterscroll=Gtk.ScrolledWindow()
-		clutterscroll.add_with_viewport(self.embed)
-		clutterscroll.set_size_request(200,800)'''
+
 		#self.embed.connect("button-press-event",self.stageclicked)
 		imagebox.pack_start(self.embed,True,True,0)
 
@@ -93,7 +90,8 @@ class TempWindow(Gtk.Window):
 		self.thecode=GtkSource.View()
 		self.thecodebuffer = GtkSource.Buffer()
 		self.thecode.set_buffer(self.thecodebuffer)
-		self.thecodebuffer.set_text(self.activeproject.revisions[activerev].files[activefile].content)
+		if renderall:
+			self.thecodebuffer.set_text(self.activeproject.revisions[activerev].files[activefile].content) ###############################################
 		self.thecode.set_show_line_numbers(True)
 		self.thecode.set_size_request(self.x-150,560)
 		self.thecodeframe=Gtk.Frame()
@@ -110,13 +108,15 @@ class TempWindow(Gtk.Window):
 
 		hbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
-		self.listbutton=Gtk.ToggleButton("List")
-		self.linebutton=Gtk.ToggleButton("Line")
+		self.filebutton=Gtk.ToggleButton("File comments") ###############################################
+		self.linebutton=Gtk.ToggleButton("Line comments") ###############################################
 		
-		self.listbutton.connect("toggled", self.on_List_toggled,self.listbutton,self.linebutton,vbox2)
-		self.linebutton.connect("toggled", self.on_Line_toggled,self.linebutton,self.listbutton,vbox2)
-		hbox.pack_end(self.listbutton,False, False,0)
+		self.filebuttonhandler=self.filebutton.connect("clicked", self.on_File_toggled,vbox2)
+		self.linebuttonhandler=self.linebutton.connect("clicked", self.on_Line_toggled,vbox2)
 		hbox.pack_end(self.linebutton,False, False,0)
+		hbox.pack_end(self.filebutton,False, False,0)
+
+		self.on_File_toggled(self.filebutton,vbox2)
 
 		#vbox.pack_start(hbox, False, False,0)
 
@@ -127,12 +127,13 @@ class TempWindow(Gtk.Window):
 		
 		frame=Gtk.Frame()
 
-
-		self.filecomments=self.get_file_comments("This file")
-		index=0
-		while index<len(self.filecomments):
-			vbox2.pack_start(self.create_comment(self.filecomments[index]),False,False,0)
-			index=index+1	
+		###############################################
+		if renderall:
+			self.filecomments=self.get_file_comments("This file")
+			index=0
+			while index<len(self.filecomments):
+				vbox2.pack_start(self.create_comment(self.filecomments[index]),False,False,0)
+				index=index+1
 		
 		self.padding=Gtk.EventBox()
 		self.padding.set_border_width(15)
@@ -173,6 +174,15 @@ class TempWindow(Gtk.Window):
 		vbox.pack_start(frame,False,False,0)
 		vbox.pack_start(hbox2,False,False,0)
 		#vbox.pack_start(embed,True,True,0)
+
+		if not renderall:
+			self.thecodebuffer.set_text('Please select a file to view from one of the revisions on the map at left.')
+			self.linebutton.set_sensitive(False)
+			self.filebutton.set_sensitive(False)
+			self.submitcomment.set_sensitive(False)
+			self.submitlinecomment.set_sensitive(False)
+			self.toolbar.get_nth_item(2).set_sensitive(False)
+			self.toolbar.get_nth_item(4).set_sensitive(False)
 
 		self.toplevel.pack_start(vbox,False,False,0)
 		#Gtk.UIManager()
@@ -340,6 +350,14 @@ class TempWindow(Gtk.Window):
 		self.activerev=f.rev_number
 		self.activefile=f.file_name
 
+		if self.linebutton.get_sensitive()==False:
+			self.linebutton.set_sensitive(True)
+			self.filebutton.set_sensitive(True)
+			self.submitcomment.set_sensitive(True)
+			self.submitlinecomment.set_sensitive(True)
+			self.toolbar.get_nth_item(2).set_sensitive(True)
+			self.toolbar.get_nth_item(4).set_sensitive(True)
+
 	def clutterupdate(self,data=-1):
 		self.rect.set_rotation(Clutter.RotateAxis.X_AXIS, self.rectrot, 0, 25, 0)
 		self.rectrot+=5 
@@ -357,7 +375,11 @@ class TempWindow(Gtk.Window):
 		temp_event.set_border_width(6)
 		temp_event.add(temp_label)
 		temp_frame.add(temp_event)
-		temp_title=Gtk.Label("<b>"+comment.account.username+"</b>") #CHANGE TO ACCOUNT.USERNAME WHEN IMPLEMENTED
+		linenum=comment.linenum
+		if linenum==-1:
+			temp_title=Gtk.Label("<b>"+comment.account.username+"</b>")
+		else:
+			temp_title=Gtk.Label("<b>"+comment.account.username+" (in reference to line "+str(linenum)+")"+"</b>")
 		temp_title.set_use_markup(True)
 		temp_frame.set_label_widget(temp_title)
 		return temp_frame
@@ -372,10 +394,10 @@ class TempWindow(Gtk.Window):
 		text2="Well, yes and no. It's a little hard, but you can definitely do it. Papayas?"
 		text3="Thanks for the help. Also, I saw that there are some variables that just seem to come out of nowhere like 'clicked' and 'label'. Where do these come from?"
 		text4="They are variables that Gtk has included in it. When you import they get recognized. \n\nHowever, it is important to recognize that the c++ library for Gtk+ and the python bindings for gtk are slightly different.\n\n For instance, most of the final variables associated with the style attributes of buttons (ex. Gtk.SHADOW_OUT) are different in the python version.\n\n This can lead to much frustruation, especially because documentation is sometimes inconsistant or out of date"
-		fake1=Comment(text1,"10:20","Random Hash",1,"This file",self.fake_user)
-		fake2=Comment(text2,"10:35","Random Hash",1,"This file",self.fake_user)
-		fake3=Comment(text3,"10:47","Random Hash",1,"This file",self.fake_user)
-		fake4=Comment(text4,"11:00","Random Hash",1,"This file",self.fake_user)
+		fake1=Comment(text1,"10:20","Random Hash",1,"This file",self.fake_user,-1)
+		fake2=Comment(text2,"10:35","Random Hash",1,"This file",self.fake_user,-1)
+		fake3=Comment(text3,"10:47","Random Hash",1,"This file",self.fake_user,-1)
+		fake4=Comment(text4,"11:00","Random Hash",1,"This file",self.fake_user,-1)
 		filecommentlist=[]
 		for comment in self.activeproject.revisions[self.activerev].files[self.activefile].comments:
 			if comment.linenum==-1:
@@ -400,37 +422,47 @@ class TempWindow(Gtk.Window):
 	def create_revision_map(self):
 		return notsure	
 
-#What happens when you click on the list comments only button
-	def on_List_toggled(self,button,which,other,vbox):
-		if button.get_active()==True:
-			children=vbox.get_children()
-			index=0
-			while index<len(children):
-				children[index].destroy()
-				index=index+1	
-			linecomments=self.get_line_comments("This File")
-			index=0
-			while index<len(linecomments):
-				vbox.pack_start(self.create_comment(linecomments[index]),False,False,0)
-				index=index+1
-			other.set_active(False)
-			vbox.show_all()
+#What happens when you click on the line comments only button
+	def on_Line_toggled(self,button,vbox):
+		if button.get_active()==False:
+			button.handler_block(self.linebuttonhandler)
+			button.set_active(True)
+			button.handler_unblock(self.linebuttonhandler)
+		children=vbox.get_children()
+		index=0
+		while index<len(children):
+			children[index].destroy()
+			index=index+1	
+		linecomments=self.get_line_comments("This File")
+		index=0
+		while index<len(linecomments):
+			vbox.pack_start(self.create_comment(linecomments[index]),False,False,0)
+			index=index+1
+		self.filebutton.handler_block(self.filebuttonhandler)
+		self.filebutton.set_active(False)
+		self.filebutton.handler_unblock(self.filebuttonhandler)
+		vbox.show_all()
 
 #What happens when you click on the file comments only button
-	def on_Line_toggled(self,button,which,other,vbox):	
-		if button.get_active()==True:
-			children=vbox.get_children()
-			index=0
-			while index<len(children):
-				children[index].destroy()
-				index=index+1
-			filecomments=self.get_file_comments("This File")
-			index=0
-			while index<len(filecomments):
-				vbox.pack_start(self.create_comment(filecomments[index]),False,False,0)
-				index=index+1	
-			other.set_active(False)
-			vbox.show_all()
+	def on_File_toggled(self,button,vbox):	
+		if button.get_active()==False:
+			button.handler_block(self.filebuttonhandler)
+			button.set_active(True)
+			button.handler_unblock(self.filebuttonhandler)
+		children=vbox.get_children()
+		index=0
+		while index<len(children):
+			children[index].destroy()
+			index=index+1
+		filecomments=self.get_file_comments("This File")
+		index=0
+		while index<len(filecomments):
+			vbox.pack_start(self.create_comment(filecomments[index]),False,False,0)
+			index=index+1	
+		self.linebutton.handler_block(self.linebuttonhandler)
+		self.linebutton.set_active(False)
+		self.linebutton.handler_unblock(self.linebuttonhandler)
+		vbox.show_all()
 
 #What happens when you hit the submit line comment button
 	def toggle_line_comment(self,widget,vbox):
@@ -451,9 +483,22 @@ class TempWindow(Gtk.Window):
 	#How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
 	def submit_file_comment(self,account,text,vbox):
 		time=datetime.date.today()
-		new_comment=Comment(text,time,"Hash",2,"Which_file",self.fake_user)
+		new_comment=Comment(text,time,"Hash",self.activerev,self.activefile,self.fake_user,-1)
 		self.activeproject.revisions[self.activerev].files[self.activefile].comments.append(new_comment)
-		vbox.pack_start(self.create_comment(new_comment),False,False,0)
+		if self.filebutton.get_active():
+			vbox.pack_start(self.create_comment(new_comment),False,False,0)
+			vbox.show_all()
+		print(account+" says: '"+text+"' about this file")
+		return
+
+	#How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
+	def submit_line_comment(self,account,text,linenum,vbox):
+		time=datetime.date.today()
+		new_comment=Comment(text,time,"Hash",self.activerev,self.activefile,self.fake_user,linenum)
+		self.activeproject.revisions[self.activerev].files[self.activefile].comments.append(new_comment)
+		if self.linebutton.get_active():
+			vbox.pack_start(self.create_comment(new_comment),False,False,0)
+			vbox.show_all()
 		print(account+" says: '"+text+"' about this file")
 		return
 

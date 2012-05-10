@@ -16,24 +16,24 @@ class Account(object):
 
         # User's projects and groups will be stored as sets,
         # for the sake of memory.
-        self.project_list = set()
-        self.group_list = set()
+        self.project_list = {}
+        self.group_list = {}
 
     def add_project(self,new_project):
         ## Adds a new project to the user's list of projects.
-        self.project_list.add( new_project )
+        self.project_list[new_project.projID]=new_project
 
     def remove_project(self,project):
         ## Removes a project from the user's list of projects.
-        self.project_list.remove( project )
+        del self.project_list[project.projID]
 
     def add_group(self, new_group):
         ## Adds a new group to the user's list of groups.
-        self.group_list.add( new_group )
+        self.group_list[new_group.groupID]=new_group
 
     def remove_group(self, group):
         ## Removes a group from the user's list of groups.
-        self.group_list.remove( group )
+        del self.project_list[new_project.groupID]
 
 class Borrow:
     def __init__(self, date_taken, project_from, revision_from_, file_from, line_range, line_offsets):
@@ -91,7 +91,7 @@ class Project(object):
             rev=Revision(self,i,files={})
             self.revisions.append(rev)
 
-        self.children = set()
+        self.children = {}
         self.borrows = set() ##set of borrows
 
         self.head = None
@@ -100,10 +100,10 @@ class Project(object):
         self.tags = set()
 
     def add_child(self, child):
-        self.children.add( child )
+        self.children[child.projID]=child
 
     def remove_child(self, child):
-        self.children.remove( child )
+        del self.children[child.projID]
 
     def add_borrow(self, lender):
         self.borrows.add( lender )
@@ -143,28 +143,28 @@ class File:
 class Group(object):
     ## Object which defines a user-group.
 
-    def __init__(self,groupID,godID,title,description="",accountIDs=set(),projIDs=set()):
+    def __init__(self,groupID,godID,title,description="",accounts={},projects={}):
         # groupID is the group's unique hash ID.
         # projIDs and accountIDs are sets of project and account hashes.
         # godID is the account hash of the group god.
         self.title=title
         self.description=description
         self.groupID = groupID
-        self.projIDs = projIDs
-        self.accountIDs = accountIDs
+        self.projects = projects
+        self.accounts = accounts
         self.godID = godID
 
-    def add_project(self, projectID):
-        self.projIDs.add(projectID)
+    def add_project(self, project):
+        self.projects[project.projID]=project
 
-    def remove_project(self, projectID):
-        self.projIDs.remove(projectID)
+    def remove_project(self, project):
+        del self.projects[project.projID]
 
-    def add_user(self, userID):
-        self.accountIDs.add(userID)
+    def add_user(self, user):
+        self.accounts[user.accountID]=user
 
-    def remove_user(self, userID):
-        self.accountIDs.remove(userID)
+    def remove_user(self, user):
+        del self.accounts[user.accountID]
 
 
 class Comment(object):
