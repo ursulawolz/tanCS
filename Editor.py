@@ -7,6 +7,7 @@ from objectcode import *
 
 #-----DEREK TODOS-----
 # Add borrow "to" attributes
+# Implement missing methods
 # Long-term: Create massive Clutter borrow map
 
 
@@ -154,6 +155,7 @@ class Editor(Gtk.Window):
 		if not select==():
 			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.sbuff.get_text(select[0],select[1],True),-1)
 
+	##TODO: implement
 	def cut_text(self,widget=None):
 		print 'cutting'
 
@@ -170,6 +172,7 @@ class Editor(Gtk.Window):
 			response = dialog.run()
 			dialog.destroy()
 			#--------END DEMO CODE--------
+			self.cite_source(borrowobj=isborrow[1])
 			line1=isborrow[1].line_range[0]
 			line2=isborrow[1].line_range[1]
 			self.statusbar.push(1,'Lines '+str(line1+1)+' through '+str(line2+1)+' from file $FILE have been linked to this document.')
@@ -181,8 +184,27 @@ class Editor(Gtk.Window):
 				text=dialog.reference.get_text()
 				if not text.strip()==None:
 					print 'Source cited:'+text
+					self.cite_source(citetext=text)
 					#TODO: create a new Borrow object
 			dialog.destroy()
+
+	def cite_source(self,borrowobj=None,citetext=None):
+		linenum=-1
+		for line in range(self.sbuff.get_line_count()-1):
+			iter_start=self.sbuff.get_iter_at_line(line)
+			iter_next=self.sbuff.get_iter_at_line(line+1)
+			if iter_next.get_offset()-iter_start.get_offset()>4:
+				iter_end=self.sbuff.get_iter_at_line_offset(line,4)
+				text = self.sbuff.get_text(iter_start,iter_end,True)
+				if text=='###!':
+					linenum=line
+		if linenum==-1:
+			self.sbuff.insert(self.sbuff.get_start_iter(),'###! Sources:\n')
+			linenum=0
+		if borrowobj==None:
+			self.sbuff.insert(self.sbuff.get_iter_at_line(linenum+1),'## '+citetext+' \n')
+		else:
+			self.sbuff.insert(self.sbuff.get_iter_at_line(linenum+1),'## Project: '+borrowobj.project_from.title+', Revision: '+str(len(borrowobj.project_from.revisions)-borrowobj.revision_from)+', File: '+borrowobj.file_from+'\n')
 
 	def clear_statusbar(self,context):
 		self.statusbar.remove_all(context)
@@ -305,6 +327,11 @@ class Editor(Gtk.Window):
 				print 'comment'
 				self.sbuff.insert(itera,'#')
 
+	##TODO: implement
+	def create_new(self,widget):
+		pass
+
+	##TODO: implement
 	def create_save_point(self,widget):
 		dialog = Gtk.Dialog("My dialog",parent=self,flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
 		label1=Gtk.Label('Create a new revision of your whole project?')
@@ -318,7 +345,7 @@ class Editor(Gtk.Window):
 		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
 		self.toolbar.insert(button_new, 0)
 		button_new.set_tooltip_text('New File')
-		#button_new.connect("clicked", self.create_new)
+		button_new.connect("clicked", self.create_new)
 
 		button_savepoint=Gtk.ToolButton.new_from_stock(Gtk.STOCK_SAVE)
 		self.toolbar.insert(button_savepoint, 1)
@@ -392,10 +419,11 @@ class Editor(Gtk.Window):
 		self.toolbar.insert(button_level, 13)
 		button_level.connect("clicked",self.level_select)
 
+		'''
 		button_open=Gtk.ToolButton.new_from_stock(Gtk.STOCK_OPEN)
 		self.toolbar.insert(button_open, 1)
 		button_open.set_tooltip_text('Open File')
-		button_open.connect("clicked", self.open_file)
+		button_open.connect("clicked", self.open_file)'''
 
 		self.toolbar.show_all()
 

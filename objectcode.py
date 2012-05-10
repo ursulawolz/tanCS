@@ -34,7 +34,7 @@ class Account(object):
         del self.project_list[new_project.groupID]
 
 class Borrow:
-    def __init__(self, date_taken, project_from, revision_from_, file_from, line_range, line_offsets):
+    def __init__(self, date_taken, project_from, revision_from, file_from, line_range, line_offsets):
         self.date_taken = date_taken
         self.project_from = project_from
         self.revision_from = revision_from

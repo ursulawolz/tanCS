@@ -574,9 +574,9 @@ class TempWindow(Gtk.Window):
 			offset1=select[0].get_offset()
 			offset2=select[1].get_offset()
 			if line1==line2:
-				self.copy=Borrow(date,'self.project.projID','self.revision','self.file.file_name',(line1,line1),(lineoffset1,lineoffset2))
+				self.copy=Borrow(date,self.activeproject,self.activerev,self.activefile,(line1,line1),(lineoffset1,lineoffset2))
 			else:
-				self.copy=Borrow(date,'self.project.projID','self.revision','self.file.file_name',(line1,line2),(lineoffset1,lineoffset2))
+				self.copy=Borrow(date,self.activeproject,self.activerev,self.activefile,(line1,line2),(lineoffset1,lineoffset2))
 			self.parent.borrows.append(self.copy)
 			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.thecodebuffer.get_text(select[0],select[1],True),-1)
 
