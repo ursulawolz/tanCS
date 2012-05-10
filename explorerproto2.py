@@ -175,7 +175,9 @@ class explorer_window(Gtk.Window):
 		info_block.attach(username_label,1,3,0,1)
 		info_block.attach(password_label,1,3,1,2)
 		info_block.attach(avatar_label,1,3,2,4)
-	#make the account here on the data base and send and shit
+		#TODO
+		#MAKE
+		#make the account here on the data base and send and shit
 		submit_register=Gtk.Button("Submit")
 		submit_register.connect("clicked",self.submit_login,new_account.username,new_account.password,toplevel)
 		self.return_box2.pack_start(info_block,False,False,0)
@@ -336,6 +338,8 @@ class explorer_window(Gtk.Window):
 		return self.return_box
 
 	def submit_login(self,widget,username,password,toplevel):
+		#TODO
+		#
 		#check to see if the account is valid
 		#Account=get_account(username.get_text(),password.get_text())
 		account=Account("account ID","Fake Account","1234","fork-icon.png")
@@ -555,6 +559,8 @@ class explorer_window(Gtk.Window):
 		self.alert.set_text("Project Display Page")
 
 	###-------------------------Other-Functions-----------------------###
+	#TODO
+	#EVERYTHING
 	def get_results(self,type_results,identifier):
 		temp_account=Account("Fake ID","Fake Username",'',"fork-icon.png")
 		temp_group=Group('','','','','')
