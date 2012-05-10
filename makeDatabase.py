@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+#Example: update('fileContent','File','revision','Revision',etc....)
 def update(information , information_type , identifier , identifier_type,  host1, port1, username, password): #creations come before updates. ie an update doesnt create a NEW but a NEW can create an update
 
 	con = None
