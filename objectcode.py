@@ -4,6 +4,7 @@
 #Initialization order: Account => Group => Project => Revision => File => Comment => Borrow
 
 import pdb
+import copy
 
 class Account(object):
     ## Object for an individual user's account.
@@ -92,8 +93,6 @@ class Project(object):
         self.children = {}
         self.borrows = set() ##set of borrows
 
-        self.head = None
-
         self.locked = 0
         self.tags = set()
 
@@ -110,8 +109,8 @@ class Project(object):
         self.borrows.remove( lender )
 
     def create_revision(self):
-        nextIndex = len(revisions) + 1
-        self.revisions[nextIndex] = self.head
+        #self.revisions.insert(len(self.revisions)-1,copy.deepcopy(self.revisions[-1]))
+        copy.deepcopy(self.revisions[-1])
 
     def lock_proj(self):
         self.locked = 1
@@ -136,6 +135,10 @@ class File:
         self.content = content
         self.project.revisions[rev_number].files[file_name]=self
         self.comments=[]
+
+    def __deepcopy__(self,memodict):
+        newobj=File(self.project,self.rev_number+1,self.file_name,self.content)
+        return newobj
 
 
 class Group(object):
@@ -188,6 +191,9 @@ class Comment(object):
         ## To be implemented.
         pass
 
+    def __deepcopy__(self,memodict):
+        return Comment(self.text,self.time,self.project,self.rev+1,self.whichfile,self.account,self.linenum)
+
 class Revision:
 
     def __init__(self,project,rev_number,files={}):
@@ -196,6 +202,13 @@ class Revision:
         self.files=files
     def __str__(self):
         return str(self.rev_number)
+    def __deepcopy__(self,memodict):
+        newobj=Head(self.project,self.rev_number+1)
+        self.project.revisions.append(newobj)
+        newobj.files=copy.deepcopy(self.files,memodict)
+        self=Revision(self.project,self.rev_number,self.files)
+        self.project.revisions[self.rev_number]=self
+        return newobj
 
 #Creating a new Head with a previous revision specified copies that revision into the Head for editing
 class Head(Revision):

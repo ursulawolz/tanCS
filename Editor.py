@@ -1,16 +1,17 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
 from objectcode import *
-#----GUI TODOS----
-# Get user preference directory from OS and store settings file there
-# Cement Borrows
-# New/Open/Save files
 
-#-----DEREK TODOS-----
+#------TODOS------
 # Add borrow "to" attributes
-# Implement missing methods in Editor
+# Implement missing methods in Editor (new file, etc)
 # Long-term: Create massive Clutter borrow map
 # Add copy/paste override to context menu
 # Add line comment to context menu
+# Add click-drag-resize ability to Viewer
+
+#-------DONE-------
+# Implemented make revision and cut in Editor
+# Implemented deepcopy stuff so that objects are actually copied over, esp File
 
 
 class Editor(Gtk.Window):
@@ -59,7 +60,6 @@ class Editor(Gtk.Window):
 		self.sbuff.connect("changed",self.on_text_changed)
 		self.connect("destroy",self.on_destroy)
 
-
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
 
@@ -99,12 +99,15 @@ class Editor(Gtk.Window):
 		elif val==99:
 			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
 				self.copy_text()
+				return True
 		elif val==120:
 			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
 				self.cut_text()
+				return True
 		elif val==118:
 			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
 				self.paste_text()
+				return True
 
 	def check_colon(self,cursor):
 		#check if previous line ended in a colon
@@ -158,7 +161,10 @@ class Editor(Gtk.Window):
 
 	##TODO: implement
 	def cut_text(self,widget=None):
-		print 'cutting'
+		select=self.sbuff.get_selection_bounds()
+		if not select==():
+			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.sbuff.get_text(select[0],select[1],True),-1)
+			self.sbuff.delete(select[0],select[1])
 
 	def paste_text(self,widget=None):
 		pasted = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
@@ -188,6 +194,7 @@ class Editor(Gtk.Window):
 					self.cite_source(citetext=text)
 					#TODO: create a new Borrow object
 			dialog.destroy()
+		self.sbuff.insert_at_cursor(pasted)
 
 	def cite_source(self,borrowobj=None,citetext=None):
 		linenum=-1
@@ -340,6 +347,9 @@ class Editor(Gtk.Window):
 		label1.show()
 		response = dialog.run()
 		dialog.destroy()
+		if response==Gtk.ResponseType.ACCEPT:
+			self.activeproject.create_revision()
+			self.activerev+=1
 
 	def create_toolbar(self):
 		self.toolbar=Gtk.Toolbar()
