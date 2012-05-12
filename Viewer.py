@@ -33,7 +33,7 @@ class TempWindow(Gtk.Window):
 	def __init__(self,parent,activeproject,activerev,activefile):
 		Gtk.Window.__init__(self,title="tanCS IDE - Viewer")
 		renderall = not(activerev==None and activefile==None) #enable full functionality
-
+		#pdb.set_trace()
 		self.activeproject=activeproject
 		self.activerev=activerev
 		self.activefile=activefile
@@ -169,6 +169,8 @@ class TempWindow(Gtk.Window):
 		vbox.pack_start(hbox2,False,False,0)
 		#vbox.pack_start(embed,True,True,0)
 
+		self.thecode.connect('populate-popup',self.code_clicked)
+
 		if not renderall:
 			self.thecodebuffer.set_text('Please select a file to view from one of the revisions on the map at left.')
 			self.linebutton.set_sensitive(False)
@@ -187,7 +189,7 @@ class TempWindow(Gtk.Window):
 		self.stage = self.embed.get_stage()	# Get the Stage
 		self.stage.set_no_clear_hint(False)
 		self.stage.ensure_redraw()
-		self.stage.set_title("The application title")		# Stage's title
+		self.stage.set_title("tanCS IDE - Viewer")		# Stage's title
 		self.stage.connect("motion-event",self.mouse_moved)
 		self.stage.connect("leave-event",self.leave_clutter)
 		white=Clutter.Color.new(255,255,255,255)
@@ -204,6 +206,8 @@ class TempWindow(Gtk.Window):
 		self.toptext.set_position(15,5)
 
 		num_revs=len(self.activeproject.revisions)
+
+		#pdb.set_trace()
 
 		#nested lists containing the various clutter objects within a revision circle
 		#[circle,label,files,isopen,ishead]
@@ -225,22 +229,21 @@ class TempWindow(Gtk.Window):
 
 		self.circles.append([headcircle,headlabel,[],False,True])
 
-		for i in range(num_revs):
-			i=i+1
-			rev=num_revs-i
+		for i in range(num_revs-1):
+			rev=num_revs-i-1
 			newcircle=Clutter.Texture.new_from_file("circle.png");
 			Clutter.Container.add_actor(self.stage, newcircle)
-			newcircle.set_position(50,125*i+50)
+			newcircle.set_position(50,125*(i+1)+50)
 			newcircle.set_size(100,100)
 			newcircle.set_reactive(True)
-			newcircle.connect('button-press-event',self.revclick,i)
-			newcircle.connect('enter-event',self.revhover,i)
-			newcircle.connect('leave-event',self.revleave,i)
+			newcircle.connect('button-press-event',self.revclick,i+1)
+			newcircle.connect('enter-event',self.revhover,i+1)
+			newcircle.connect('leave-event',self.revleave,i+1)
 
-			newlabel=Clutter.Text.new_full("Serif 20","Rev "+str(rev+1),black)
+			newlabel=Clutter.Text.new_full("Serif 20","Rev "+str(rev),black)
 			Clutter.Container.add_actor(self.stage,newlabel)
 			newlabel.set_anchor_point(newlabel.get_size()[0]/2.0,newlabel.get_size()[1]/2.0)
-			newlabel.set_position(100,125*i+100)
+			newlabel.set_position(100,125*(i+1)+100)
 
 			self.circles.append([newcircle,newlabel,[],False,False])
 
@@ -262,16 +265,20 @@ class TempWindow(Gtk.Window):
 		black=Clutter.Color.new(0,0,0,255)
 		flag=(not self.circles[revnum][3])
 		self.reset_clutter()
+		num_revs=len(self.activeproject.revisions)
 		if flag:
 			filelabels=[]
 			starty=self.circles[revnum][0].get_position()[1]+100
 			numfiles=0
-			if self.circles[revnum][4]:
-				files=self.activeproject.head.files
-			else:
-				files=self.activeproject.revisions[revnum-1].files
+			#if self.circles[revnum][4]:
+				#files=self.activeproject.head.files
+			#else:
+			files=self.activeproject.revisions[len(self.activeproject.revisions)-revnum-1].files
+			print files
+			#pdb.set_trace()
 			for f in files:
 				numfiles+=1
+				#pdb.set_trace()
 				newlabel=Clutter.Text.new_full("Serif 12",files[f].file_name,black)
 				Clutter.Container.add_actor(self.stage,newlabel)
 				newlabel.set_anchor_point(newlabel.get_size()[0]/2.0,newlabel.get_size()[1]/2.0)
@@ -351,6 +358,8 @@ class TempWindow(Gtk.Window):
 		self.activerev=f.rev_number
 		self.activefile=f.file_name
 
+		print self.activerev
+
 		if self.filebutton.get_active()==True:
 			self.on_File_toggled(self.filebutton)
 		else:
@@ -406,6 +415,7 @@ class TempWindow(Gtk.Window):
 		fake3=Comment(text3,"10:47","Random Hash",1,"This file",self.fake_user,-1)
 		fake4=Comment(text4,"11:00","Random Hash",1,"This file",self.fake_user,-1)
 		filecommentlist=[]
+		#pdb.set_trace()
 		for comment in self.activeproject.revisions[self.activerev].files[self.activefile].comments:
 			if comment.linenum==-1:
 				filecommentlist.append(comment)
@@ -551,6 +561,13 @@ class TempWindow(Gtk.Window):
 		button_explorer.connect("clicked",self.fork_file)
 
 		self.toolbar.show_all()
+
+	def code_clicked(self,widget,menu,event=None):
+		#print event.button
+		menu.append(Gtk.MenuItem('hello'))
+		print 'clicked'
+		return menu
+		#Gtk.Menu.popup(Gtk.Menu(),None,None,None,None,event.button,event.time)
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed

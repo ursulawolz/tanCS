@@ -18,6 +18,9 @@ class tanCS(object):
 		self.user=None
 		self.borrows=[]
 		
+		#The following code creates a tanCS preferences directory.
+		#I don't remember why I wrote it, so it's commented for now.
+		'''
 		#Checks whether user preference files already exist; if not, creates them.
 		self.USERPATH=os.path.expanduser('~')
 		osname=platform.system()
@@ -34,6 +37,7 @@ class tanCS(object):
 				subprocess.call('attrib +h '+self.USERPATH,shell=True)
 		else:
 			print 'ERROR: You appear to be using an unsupported OS.'
+		'''
 		
 		#in the process of creating default objects
 		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH',"default group")
@@ -41,40 +45,38 @@ class tanCS(object):
 		self.defaultproject=Project('The default!','A dummy project.', 'proj01',None, 8, 'groupHASH')
 		#THESE SHOULDS BE OF A FUNCTION
 		f=open("testingtk3.py")
-		file1=File(self.defaultproject, 0, 'testingtk3.py', f.read())
+		file1=File(self.defaultproject, 0, 'testingtk3.py0', f.read())
 		f.close()
 		self.defaultfile=file1
 		f=open("testingtk3.py")
-		file2=File(self.defaultproject, 1, 'testingtk3.py', f.read())
+		file2=File(self.defaultproject, 1, 'testingtk3.py1', f.read())
 		f.close()
 		f=open("cluttertest3.py")
-		file3=File(self.defaultproject, 1, 'cluttertest3.py', f.read())
+		file3=File(self.defaultproject, 1, 'cluttertest3.py1', f.read())
 		f.close()
 
 		f=open("testingtk3.py")
-		file1=File(self.defaultproject, 2, 'testingtk3.py', f.read())
+		file1=File(self.defaultproject, 2, 'testingtk3.py2', f.read())
 		f.close()
 		f=open("testingtk3.py")
-		file2=File(self.defaultproject, 3, 'testingtk3.py', f.read())
+		file2=File(self.defaultproject, 3, 'testingtk3.py3', f.read())
 		f.close()
 		f=open("cluttertest3.py")
-		file3=File(self.defaultproject, 4, 'cluttertest3.py', f.read())
+		file3=File(self.defaultproject, 4, 'cluttertest3.py4', f.read())
 		f.close()
 
 		f=open("testingtk3.py")
-		file1=File(self.defaultproject, 5, 'testingtk3.py', f.read())
+		file1=File(self.defaultproject, 5, 'testingtk3.py5', f.read())
 		f.close()
 		f=open("testingtk3.py")
-		file2=File(self.defaultproject, 6, 'testingtk3.py', f.read())
+		file2=File(self.defaultproject, 6, 'testingtk3.py6', f.read())
 		f.close()
 		f=open("cluttertest3.py")
-		file3=File(self.defaultproject, 7, 'cluttertest3.py', f.read())
+		file3=File(self.defaultproject, 7, 'cluttertest3.py7', f.read())
 		f.close()
 
 		f.close()
-		self.defaultproject.head=Head(prevrev=self.defaultproject.revisions[-1])
-		#self.defaultproject.revisions=[defaultrevision]
-		#self.defaultproject.head=defaulthead
+		self.defaultproject.create_revision() #make a new head
 
 		self.defaultrevision=7
 		self.defaultfile='cluttertest3.py'
@@ -91,8 +93,8 @@ class tanCS(object):
 	def on_window_mode_changed(self,new_window_name,parent_window,activeproject,activerev,activefile):
 		parent_window.destroy()
 		if new_window_name==("Viewer"):
-			window=viewer.TempWindow(self,self.defaultproject,self.defaultrevision,self.defaultfile) #DEMO CODE
-			#window=viewer.TempWindow(self,activeproject,activerev,activefile) #REAL CODE
+			#window=viewer.TempWindow(self,self.defaultproject,self.defaultrevision,self.defaultfile) #DEMO CODE
+			window=viewer.TempWindow(self,activeproject,activerev,activefile) #REAL CODE
 			window.connect("delete-event",Gtk.main_quit)
 			window.show_all()
 		if new_window_name==("Explorer"):
