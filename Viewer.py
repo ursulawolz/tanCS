@@ -75,7 +75,7 @@ class TempWindow(Gtk.Window):
 
 		imageframe=Gtk.Frame()
 		imageframe.add(imagebox)
-		self.embed.set_size_request(200,800)
+		self.embed.set_size_request(200,600)
 
 		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		self.toplevel.set_size_request(self.x,self.y)
@@ -103,7 +103,7 @@ class TempWindow(Gtk.Window):
 		codescroll=Gtk.ScrolledWindow()
 		codescroll.add_with_viewport(self.thecodeframe)
 		#codescroll.set_size_request(self.x-150,390)
-		codescroll.set_size_request(self.x-150,300)	
+		codescroll.set_size_request(self.x-150,260)	
 		vbox.pack_start(self.toolbar,False,True,0)
 		vbox.pack_start(codescroll,False,False,0)	
 
@@ -134,7 +134,7 @@ class TempWindow(Gtk.Window):
 		self.padding.add(self.vbox2)
 		
 		commentswindow.add_with_viewport(self.padding)
-		commentswindow.set_size_request(self.x-150,240)
+		commentswindow.set_size_request(self.x-150,180)
 		commentbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
 		commentbox.pack_start(hbox,False,False,0)
 		commentbox.pack_start(commentswindow,False,False,0)
