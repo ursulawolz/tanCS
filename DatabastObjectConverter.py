@@ -37,6 +37,7 @@
 	converter['head'] = 'head'
 	converter['locked'] = 'locked'
 	converter['tags'] = 'tags'
+	converter['times'] = 'creation_time'
 
 	converter['File'] = 'file_info'
 	converter['rev_number'] = 'revision_number'
@@ -63,6 +64,7 @@
 	converter['file'] = 'file_name'
 	converter['account'] = 'account_posting_id'
 	converter['linenum'] = 'line_number'
+	converter['commentID'] = 'comment_id'
 	
 	converter['Revision'] = 'revision'
 	converter['project'] = 'project_id'
@@ -126,51 +128,64 @@ def convertForNewEntry(object_thing):
 
 
 	if type(object_thing) == Account :
-	 	values = [object_thing.accountID, object_thing.username, object_thing.password, object_thing.password, object_thing.avatar]
+		for i in range object_thing.group_list:
+			groups_and_things = '$$$$' + i
+	 	values = [object_thing.accountID, object_thing.username, object_thing.password, object_thing.avatar, groups_and_things , object_thing.date_time]
 	 	types = ['account_id', 'username', 'password', 'avatar', 'groups', 'creation_time']
 
-
-
 	elif type(object_thing) == Borrow:
-		values = [object_thing.date_taken , object_thing.borrow_id]
+		values = [object_thing.borrow_id, object_thing.project_to, object_thing.project_from, object_thing.revision_from, object_thing.file_from, object_thing.line_range, object_thing.line_offsets, object_thing.revision_to, object_thing.file_to, object_thing.date_taken]
 		types = ['borrow_id', 'project_to_id', 'project_id', 'revision_id', 'file_name', 'line_range', 'line_offset', 'revision_to_id', 'file_to_name', 'creation_time']
 
-		self.date_taken = date_taken
-        self.borrow_id = borrow_id
-        self.project_from = project_from
-        self.revision_from = revision_from
-        self.project_to = project_to
-        self.file_from = file_from
-        #line_range is a tuple of 2 line numbers, or 2 of the same line number for single-line borrows
-        self.line_range = line_range
-        #line_offsets is a tuple of 2 offsets representing distance from start of line
-        self.line_offsets = line_offsets
-
-
-
-
-
-
 	elif type(object_thing) == Project:
-		values =
-		types =	
+		for i in range object_thing.children:
+			list_o_children = '$$$$' + i
+		for j in range object_thing.borrows:
+			rawr_borrows_rawr = '$$$$' + j
+		for k in range object_thing.revisions:
+			kiwi = '$$$$' + k
+		head_thing = object_thing.head.rev_number
+		values =[object_thing.projID, object_thing.parentID, list_o_children, rawr_borrows_rawr, object_thing.groupID, kiwi, object_thing.locked, object_thing.tags, head_thing, object_thing.title, object_thing.description, object_thing.times ]
+		types = ['project_id', 'parent_id', 'children_ids', 'borrow_ids', 'group_id', 'revisions', 'locked', 'tags', 'head', 'title', 'description', 'creation_time']
 
 	elif type(object_thing) == File:
-		values =
-		types =
+		for i in range object_thing.comments:
+			i_say_words = '$$$$' + i
+		values = [object_thing.project, object_thing.rev_number, object_thing.file_name, object_thing.content, i_say_words, object_thing.date_created]
+		types = ['project_id', 'revision_number', 'file_name', 'file_content', 'comments', 'creation_time']
 
-	elif type(object_that_is_being_updated) == Group:
-		values =
-		types =
+	elif type(object_thing) == Group:
+		for i in range object_thing.projects:
+			what_are_we_working_on = '$$$$' + i
+		for j in range object_thing.accounts:
+			whos_working = '$$$$' + j
+		values =[object_thing.groupID, what_are_we_working_on, whos_working, object_thing.godID, object_thing.title, object_thing.description, object_thing.date_formed]
+		types =	['group_id', 'group_projects', 'account_ids', 'god_id', 'title', 'description', 'creation_time']
 
-	elif type(object_that_is_being_updated) == Comment:
-		values =
-		types =
+	elif type(object_thing) == Comment:
+		values = [object_thing.text, object_thing.account, object_thing.project, object_thing.rev, object_thing.whichfile, object_thing.linenum, object_thing.commentID, object_thing.time]
+		types =	['all_of_the_text', 'account_posting_id', 'project_id', 'revision_number', 'file_name', 'line_number', 'comment_id', 'creation_time']
 
-	elif type(object_that_is_being_updated) == Revision:
-		values =
-		types =
+	elif type(object_thing) == Revision:
+		for i in range object_thing.files:
+			flying_flies = '$$$$' + i
+		if type(object_thing) == Revision:
+			head = 1 
+		values =[object_thing.rev_number, flying_flies, object_thing.project, head, object_thing.creation_time]
+		types =	['revision_number', 'filenames', 'project_id', 'head', 'creation_time']
+
+	NewEntry(converter(object_thing), values, types, host1, port1, username, password)
 
 
-def convertForSearchAll():
+def convertForSearchAll(search_type, search_value, object_type, first, last):
+	host = 'calvin.olin.edu'
+	port = 3306
+	username ='clinet_yay'
+	password = 'password'
+
+
+
+
+	SearchAll(converter(search_type), search_value, converter(object_type), fist, last, host1, port1, username, password)
+
 

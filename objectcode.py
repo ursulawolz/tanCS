@@ -70,12 +70,13 @@ class Borrow:
 
 
 class Project(object):
-    def __init__(self,title,description, projID, parentID, numrevs, groupID):
+    def __init__(self,title,description, projID, parentID, numrevs, groupID, times):
         self.title=title
         self.description=description
         self.projID = projID
         self.parentID = parentID
         self.groupID = groupID
+        self.times = times
 
         self.revisions = [] ##list of revisions
         for i in range(numrevs):
@@ -162,10 +163,10 @@ class Group(object):
 class Comment(object):
     ## Object for comments on users' codes, be they in-line or general.
 
-    def __init__(self,text,time,project,rev,whichfile,account,linenum=-1):
+    def __init__(self,text,time,project,rev,whichfile,account, commentID, linenum=-1):
         self.text = text
         self.time = time
-        
+        self.commentID = commentID
         self.project=project
         self.rev=rev
         self.file=whichfile
