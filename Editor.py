@@ -1,5 +1,7 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
 from objectcode import *
+import pdb
+import datetime
 
 class Editor(Gtk.Window):
 
@@ -140,8 +142,20 @@ class Editor(Gtk.Window):
 		return indent
 
 	def copy_text(self,widget=None):
+		date=datetime.date.today()
 		select=self.sbuff.get_selection_bounds()
 		if not select==():
+			line1=select[0].get_line()
+			line2=select[1].get_line()
+			lineoffset1=select[0].get_line_offset()
+			lineoffset2=select[1].get_line_offset()
+			offset1=select[0].get_offset()
+			offset2=select[1].get_offset()
+			if line1==line2:
+				self.copy=Borrow(date,self.activeproject,self.activerev,self.activefile,(line1,line1),(lineoffset1,lineoffset2))
+			else:
+				self.copy=Borrow(date,self.activeproject,self.activerev,self.activefile,(line1,line2),(lineoffset1,lineoffset2))
+			self.parent.borrows.append(self.copy)
 			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.sbuff.get_text(select[0],select[1],True),-1)
 
 	def cut_text(self,widget=None):
@@ -154,30 +168,22 @@ class Editor(Gtk.Window):
 		pasted = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD).wait_for_text()
 		isborrow=self.checkBorrow(pasted)
 		if isborrow[0]:
-			#--------DEMO CODE ONLY-------
-			#This is just for show.
-			dialog = Gtk.Dialog("My dialog",parent=self,flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
-			label1=Gtk.Label('Create new Borrow link?')
-			dialog.vbox.pack_start(label1,False,False,0)
-			label1.show()
-			response = dialog.run()
-			dialog.destroy()
-			#--------END DEMO CODE--------
 			self.cite_source(borrowobj=isborrow[1])
 			line1=isborrow[1].line_range[0]
 			line2=isborrow[1].line_range[1]
 			self.statusbar.push(1,'Lines '+str(line1+1)+' through '+str(line2+1)+' from file $FILE have been linked to this document.')
 			timeout=GObject.timeout_add(4000,self.clear_statusbar,1)
 		else:
-			dialog = ReferenceDialog(self,pasted)
-			response = dialog.run()
-			if response==Gtk.ResponseType.OK:
-				text=dialog.reference.get_text()
-				if not text.strip()==None:
-					print 'Source cited:'+text
-					self.cite_source(citetext=text)
+			if isborrow[0]==-1:
+				dialog = ReferenceDialog(self,pasted)
+				response = dialog.run()
+				if response==Gtk.ResponseType.OK:
+					text=dialog.reference.get_text()
+					if not text.strip()==None:
+						print 'Source cited:'+text
+						self.cite_source(citetext=text)
 					#TODO: create a new Borrow object
-			dialog.destroy()
+				dialog.destroy()
 		self.sbuff.insert_at_cursor(pasted)
 
 	def cite_source(self,borrowobj=None,citetext=None):
@@ -196,18 +202,19 @@ class Editor(Gtk.Window):
 		if borrowobj==None:
 			self.sbuff.insert(self.sbuff.get_iter_at_line(linenum+1),'## '+citetext+' \n')
 		else:
-			self.sbuff.insert(self.sbuff.get_iter_at_line(linenum+1),'## Project: '+borrowobj.project_from.title+', Revision: '+str(len(borrowobj.project_from.revisions)-borrowobj.revision_from)+', File: '+borrowobj.file_from+'\n')
+			self.sbuff.insert(self.sbuff.get_iter_at_line(linenum+1),'## Project: '+borrowobj.project_from.title+', Revision: '+str(borrowobj.revision_from+1)+', File: '+borrowobj.file_from+'\n')
 
 	def clear_statusbar(self,context):
 		self.statusbar.remove_all(context)
 		return False
 
 	def checkBorrow(self,text):
-		pdb.set_trace()
 		for item in self.parent.borrows:
 			if item.get_text()==text:
-				pdb.set_trace()
-				return [True,item]
+				if not (item.project_from==self.activeproject and item.revision_from==self.activerev and item.file_from==self.activefile):
+					return [True,item]
+				else:
+					return [False,None]
 		return [False,-1]
 
 	def indent_block(self,widget):
@@ -310,9 +317,18 @@ class Editor(Gtk.Window):
 			else:
 				self.sbuff.insert(itera,'#')
 
-	##TODO: implement
 	def create_new(self,widget):
-		pass
+		dialog = NewFileDialog(self)
+		response = dialog.run()
+		name=dialog.namebox.get_text()
+		if len(name)>0:
+			if len(name)>3:
+				if not name[-3:]=='.py':
+					name=name+'.py'
+			newfile=File(self.activeproject,self.activerev,name,'')
+			self.activefile=name
+			self.sbuff.set_text('')
+		dialog.destroy()
 
 	def create_save_point(self,widget):
 		dialog = Gtk.Dialog("My dialog",parent=self,flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
@@ -447,9 +463,7 @@ def change_window(widget,new_window_name,parent_window,top_parent):
 
 class ReferenceDialog(Gtk.Dialog):
 	def __init__(self,parent,text):
-		#Gtk.Dialog.__init__(self, "Search", parent,Gtk.DialogFlags.MODAL, buttons=(Gtk.STOCK_FIND, Gtk.ResponseType.OK,Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL))
-
-		Gtk.Dialog.__init__(self, flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, title="My Dialog", parent=parent, buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK))
+		Gtk.Dialog.__init__(self, flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, title="Cite Sources", parent=parent, buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK))
 		
 		self.text=text
 		length=len(self.text)
@@ -465,6 +479,17 @@ class ReferenceDialog(Gtk.Dialog):
 		box.add(self.label3)
 		box.add(self.reference)
 
+		self.show_all()
+
+class NewFileDialog(Gtk.Dialog):
+	def __init__(self,parent):
+		Gtk.Dialog.__init__(self, flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, title="New File", parent=parent, buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK))
+		
+		self.label1=Gtk.Label('Enter a filename:')
+		self.namebox=Gtk.Entry()
+		box=self.get_content_area()
+		box.add(self.label1)
+		box.add(self.namebox)
 		self.show_all()
 
 '''

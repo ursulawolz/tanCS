@@ -2,7 +2,7 @@
 from gi.repository import GtkClutter
 from gi.repository import Gtk,GObject,GtkSource,Clutter
 from gi.repository import Gdk
-from objectcode import Account,Comment,Borrow
+from objectcode import *
 import datetime, sys
 import pdb
 #from mainproto2 import on_window_mode_changed
@@ -176,8 +176,8 @@ class TempWindow(Gtk.Window):
 		self.vbox.pack2(vbox5,True,True)
 		#vbox.pack_start(embed,True,True,0)
 
-		self.thecode.connect('button-press-event',self.code_clicked)
-		#self.thecode.connect('populate-popup',self.code_popup)
+		#self.thecode.connect('button-press-event',self.code_clicked)
+		self.thecode.connect('populate-popup',self.code_popup)
 
 		if not renderall:
 			self.thecodebuffer.set_text('Please select a file to view from one of the revisions on the map at left.')
@@ -529,7 +529,7 @@ class TempWindow(Gtk.Window):
 		self.toolbar.set_size_request(self.x-150,10)
 		button_new=Gtk.ToolButton.new_from_stock(Gtk.STOCK_NEW)
 		self.toolbar.insert(button_new, 0)
-		#button_new.connect("clicked", self.create_new)
+		button_new.connect("clicked", self.create_new)
 
 		button_copy=Gtk.ToolButton.new_from_stock(Gtk.STOCK_COPY)
 		self.toolbar.insert(button_copy, 1)
@@ -560,8 +560,9 @@ class TempWindow(Gtk.Window):
 
 	def code_clicked(self,widget,event):
 		if self.linebutton.get_sensitive(): #means a file is already open
-			[x,y]=self.thecode.translate_coordinates(self,event.x,event.y) #this doesn't work
-			#[x,y]=self.thecode.window_to_buffer_coords(Gtk.TextWindowType.WIDGET,event.x,event.y) #this doesn't either
+			[x,y]=self.get_pointer()
+			#[x,y]=self.thecode.translate_coordinates(self,event.x,event.y) #this doesn't work
+			[x,y]=self.thecode.window_to_buffer_coords(Gtk.TextWindowType.WIDGET,x,y) #this doesn't either
 			#pdb.set_trace()
 			menu=Gtk.Menu()
 			copyitem=Gtk.MenuItem('Copy')
@@ -580,29 +581,28 @@ class TempWindow(Gtk.Window):
 				menu.popup(None,None,lambda a,b: (event.x,event.y,True),None,event.button,event.time)
 			#widget.stop_emission("button-press-event")
 		return True
-	'''
+	
 	def code_popup(self,widget,menu):
-		#pdb.set_trace()
-		sep=menu.get_children()[4]
+		#The following code is rather hackish. The location of the pointer is off by about 3 lines, so I fixed it manually.
+		[x,y]=self.get_pointer()
+		[x,y]=self.thecode.window_to_buffer_coords(Gtk.TextWindowType.WIDGET,x,y)
+		lineiter=self.thecode.get_iter_at_location(x,y)
+		linenum=lineiter.get_line()-3
 		for i in menu.get_children():
 			menu.remove(i)
 		copyitem=Gtk.MenuItem('Copy')
 		copyitem.show()
 		copyitem.connect('button-press-event',self.copy_text)
 		menu.append(copyitem)
-		menu.append(sep)
 		commentitem=Gtk.MenuItem('Comment on this line')
 		commentitem.show()
+		commentitem.connect('button-press-event',self.comment_from_contextmenu,linenum)
 		menu.append(commentitem)
 		menu.show_all()
 		#pdb.set_trace()
-		#return menu'''
+		#return menu
 
-	def comment_from_contextmenu(self,widget,event,data):
-		x=data[0]
-		y=data[1]
-		linenum=10 #implement this
-
+	def comment_from_contextmenu(self,widget,event,linenum):
 		dialog=LineCommentDialog(self,linenum)
 		endresult=dialog.run()
 		self.entry.get_buffer().set_text('')
@@ -617,13 +617,26 @@ class TempWindow(Gtk.Window):
 			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
 				self.copy_text()
 
+	def create_new(self,widget):
+		dialog = NewFileDialog(self)
+		response = dialog.run()
+		name=dialog.namebox.get_text()
+		if len(name)>0:
+			if len(name)>3:
+				#pdb.set_trace()
+				if not name[-3:]=='.py':
+					#pdb.set_trace()
+					name=name+'.py'
+			newfile=File(self.activeproject,self.activerev,name,'')
+			self.activefile=name
+			self.thecodebuffer.set_text('')
+		dialog.destroy()
+		self.reset_clutter()
+
 	def copy_text(self,widget=None,data=None):
 		date=datetime.date.today()
 		select=self.thecodebuffer.get_selection_bounds()
-		if select==():
-			#self.parent.borrows[0].get_text() #Wat.
-			pass
-		else:
+		if not select==():
 			line1=select[0].get_line()
 			line2=select[1].get_line()
 			lineoffset1=select[0].get_line_offset()
@@ -690,7 +703,6 @@ class LineCommentDialog(Gtk.Dialog):
 		self.dlabel2=Gtk.Label('Comment:')
 		self.spinsubmit.connect("clicked", self.dialog_toggle_line_comment,self.spinbutton,parent)
 		#Note that this uses parent!!!!!!!!!! do not change the name of entry!
-		print linenum
 		dvbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
 		#this does nothing, remove later?
 		dhbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
@@ -719,3 +731,14 @@ class LineCommentDialog(Gtk.Dialog):
 		if len(thetext)>0:
 			parent.submit_line_comment(thetext,str(spinner.get_value()))
 		self.destroy()
+
+class NewFileDialog(Gtk.Dialog):
+	def __init__(self,parent):
+		Gtk.Dialog.__init__(self, flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT, title="New File", parent=parent, buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OK, Gtk.ResponseType.OK))
+		
+		self.label1=Gtk.Label('Enter a filename:')
+		self.namebox=Gtk.Entry()
+		box=self.get_content_area()
+		box.add(self.label1)
+		box.add(self.namebox)
+		self.show_all()

@@ -13,9 +13,9 @@ import subprocess
 import pdb
 
 #------TODOS------
-# Implement missing methods in Editor (new file, etc)
+# Implement forking projects
+# Do error testing
 # Long-term: Create massive Clutter borrow map
-# Fix Viewer popup menu positioning
 
 
 #-------DONE-------
@@ -26,6 +26,8 @@ import pdb
 # Add click-drag-resize ability to Viewer (hooray, Brendan!)
 # Add copy/paste override to context menu
 # Add line comment to context menu
+# Viewer popup menu is fixed, for certain definitions of fixed.
+# Implemented new file button in Viewer and Editor
 
 class tanCS(object):
 
