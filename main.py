@@ -11,11 +11,13 @@ import os
 import platform
 import subprocess
 import pdb
+import datetime
 
 #------TODOS------
 # Implement forking projects
 # Do error testing
 # Long-term: Create massive Clutter borrow map
+# Change color of Explorer labels on mouse-over
 
 
 #-------DONE-------
@@ -57,39 +59,39 @@ class tanCS(object):
 		'''
 		
 		#in the process of creating default objects
-		self.defaultgroup=Group('groupHASH',set('userHASH'),'godHASH',"default group")
-		self.defaultaccount=Account('userHASH', 'oranges', 'kiwi', 'explorer-icon.png')
-		self.defaultproject=Project('The default!','A dummy project.', 'proj01',None, 8, 'groupHASH')
+		self.defaultgroup=Group('groupHASH','godHASH',"default group",datetime.date.today(),set('userHASH'))
+		self.defaultaccount=Account('userHASH', 'oranges', 'kiwi', 'explorer-icon.png',datetime.date.today())
+		self.defaultproject=Project('The default!','A dummy project.', 'proj01',None, 8, 'groupHASH',datetime.date.today())
 		#THESE SHOULDS BE OF A FUNCTION
 		f=open("testingtk3.py")
-		file1=File(self.defaultproject, 0, 'testingtk3.py0', f.read())
+		file1=File(self.defaultproject, 0, 'testingtk3.py0', f.read(), datetime.date.today())
 		f.close()
 		self.defaultfile=file1
 		f=open("testingtk3.py")
-		file2=File(self.defaultproject, 1, 'testingtk3.py1', f.read())
+		file2=File(self.defaultproject, 1, 'testingtk3.py1', f.read(), datetime.date.today())
 		f.close()
 		f=open("cluttertest3.py")
-		file3=File(self.defaultproject, 1, 'cluttertest3.py1', f.read())
+		file3=File(self.defaultproject, 1, 'cluttertest3.py1', f.read(), datetime.date.today())
 		f.close()
 
 		f=open("testingtk3.py")
-		file1=File(self.defaultproject, 2, 'testingtk3.py2', f.read())
+		file1=File(self.defaultproject, 2, 'testingtk3.py2', f.read(), datetime.date.today())
 		f.close()
 		f=open("testingtk3.py")
-		file2=File(self.defaultproject, 3, 'testingtk3.py3', f.read())
+		file2=File(self.defaultproject, 3, 'testingtk3.py3', f.read(), datetime.date.today())
 		f.close()
 		f=open("cluttertest3.py")
-		file3=File(self.defaultproject, 4, 'cluttertest3.py4', f.read())
+		file3=File(self.defaultproject, 4, 'cluttertest3.py4', f.read(), datetime.date.today())
 		f.close()
 
 		f=open("testingtk3.py")
-		file1=File(self.defaultproject, 5, 'testingtk3.py5', f.read())
+		file1=File(self.defaultproject, 5, 'testingtk3.py5', f.read(), datetime.date.today())
 		f.close()
 		f=open("testingtk3.py")
-		file2=File(self.defaultproject, 6, 'testingtk3.py6', f.read())
+		file2=File(self.defaultproject, 6, 'testingtk3.py6', f.read(), datetime.date.today())
 		f.close()
 		f=open("cluttertest3.py")
-		file3=File(self.defaultproject, 7, 'cluttertest3.py7', f.read())
+		file3=File(self.defaultproject, 7, 'cluttertest3.py7', f.read(), datetime.date.today())
 		f.close()
 
 		f.close()

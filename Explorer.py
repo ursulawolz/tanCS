@@ -1,6 +1,7 @@
 from gi.repository import Gtk,GObject
 from gi.repository import Gdk
 from objectcode import *
+import datetime
 import pdb
 
 def change_window(widget,new_window_name,parent_window,top_parent):
@@ -135,7 +136,7 @@ class explorer_window(Gtk.Window):
 		to_revision_map.connect("clicked",change_window,"Viewer",self,self.parent)
 		#TODO 
 		#Search for project's group
-		fake_group=Group('','BLARG','','','')
+		fake_group=Group('','BLARG','',datetime.date.today(),'','','')
 		back_to_group=Gtk.Button("Return to Group Page")
 		back_to_group.connect("clicked",self.on_group_display_clicked,'',toplevel,fake_group)
 		self.return_box.pack_start(title,False,False,0)
@@ -174,7 +175,7 @@ class explorer_window(Gtk.Window):
 		return self.return_box2
 		
 	def submit_new_project(self,widget,title,desc,toplevel):
-		the_new_project=Project(title.get_text(),desc.get_text(),'a','b',0,'c')
+		the_new_project=Project(title.get_text(),desc.get_text(),'a','b',1,'c',datetime.date.today())
 		print the_new_project.title,the_new_project.description
 		#TODO 
 		#ADD
@@ -197,7 +198,7 @@ class explorer_window(Gtk.Window):
 		user_title=Gtk.Label("Username: ")
 		pass_title=Gtk.Label("Password: ")
 		avatar_title=Gtk.Label("Avatar: ")
-		new_account=Account('','Add a Username Here','Add a Password Here',"")
+		new_account=Account('newHASH','Add a Username Here','Add a Password Here','avatar.png',datetime.date.today())
 		username_label=Gtk.Entry()
 		username_label.set_text(new_account.username)
 		password_label=Gtk.Entry()
@@ -252,7 +253,7 @@ class explorer_window(Gtk.Window):
 
 		description=Gtk.Label(group.description)
 		admin=Gtk.Label(self.get_results("accounts","FakeID").username)
-		temp_group=Group('','','','','','')
+		temp_group=Group('','','',datetime.date.today(),'','','')
 		accounts=self.make_search_results("accounts",temp_group)
 		projects=self.make_search_results("projects",temp_group)
 		new_project_button=Gtk.Button("Create New Project")
@@ -398,7 +399,7 @@ class explorer_window(Gtk.Window):
 		#
 		#check to see if the account is valid
 		#Account=get_account(username.get_text(),password.get_text())
-		account=Account("account ID","Userman37","password","fork-icon.png")
+		account=Account("account ID","Userman37","password","fork-icon.png",datetime.date.today())
 		if not account==None:
 			self.parent.user=account
 			self.alert.set_text("You have logged in!")
@@ -455,9 +456,9 @@ class explorer_window(Gtk.Window):
 		#title="Title goes here"
 		#comment="Comment goes here. This should be very long and take up ALL of the space"
 		#other_info="Other info goes here"
-		temp_group=Group('','','','')
-		temp_project=Project('','','','',4,'')
-		temp_account=Account('','','',"fork-icon.png")
+		temp_group=Group('','','',datetime.date.today(),'')
+		temp_project=Project('','','','',4,'',datetime.date.today())
+		temp_account=Account('','','',"fork-icon.png",datetime.date.today())
 
 		outer_padding=Gtk.EventBox()
 		outer_frame=Gtk.Frame()
@@ -531,9 +532,9 @@ class explorer_window(Gtk.Window):
 		self.create_new_page(toplevel,self.the_new_page)
 
 	def what_display(self,result):
-		temp_group=Group('','','','')
-		temp_project=Project('','','','',4,'')
-		temp_account=Account('','','','')
+		temp_group=Group('','','','',datetime.date.today())
+		temp_project=Project('','','','',4,'',datetime.date.today())
+		temp_account=Account('','','','',datetime.date.today())
 		#print result
 		if type(result)==type(temp_account):
 			title=result.username
@@ -596,7 +597,7 @@ class explorer_window(Gtk.Window):
 	def on_help_clicked(self,widget,something,toplevel):
 		#print("Help clicked")
 		#self.the_new_page=self.make_help()
-		temp=Group("GroupID","GodID","I can't believe its not recursion","This is a group that uses iteration for literally everything.",'a','a')
+		temp=Group("GroupID","GodID","I can't believe its not recursion",datetime.date.today(),"This is a group that uses iteration for literally everything.",'a','a')
 		self.the_new_page=self.make_display_group(temp,toplevel)
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Help Page")
@@ -618,30 +619,30 @@ class explorer_window(Gtk.Window):
 	#TODO
 	#EVERYTHING
 	def get_results(self,type_results,identifier):
-		temp_account=Account("Userman37","caynessian",'',"fork-icon.png")
-		temp_group=Group('','','','','')
+		temp_account=Account("Userman37","caynessian",'',"fork-icon.png",datetime.date.today())
+		temp_group=Group('','','',datetime.date.today(),'','')
 		if type_results=="groups" and type(identifier)==type(temp_account):			
-			result1=Group("gId",["aID","aID2"],"Tauntology Group","Title1")
+			result1=Group("gId",["aID","aID2"],"Tauntology Group",datetime.date.today(),"Title1")
 			result1.description="The tauntology group is of course, the tauntology group"
-			result2=Group("gId","aID","Nonexistant Group","Title2")
+			result2=Group("gId","aID","Nonexistant Group",datetime.date.today(),"Title2")
 			result2.description="Nihilism FTW"
-			result3=Group("gId","aID","Blue","Title3")
+			result3=Group("gId","aID","Blue",datetime.date.today(),"Title3")
 			result3.description="The introspective postmodern perspective of art majors"
 			results=[result1,result2,result3]
 			print "working in get results"
 			return results
 		elif type_results=="projects" and type(identifier)==type(temp_account):
-			result1=Project("TanCS","Community of practice, game and totally awesome",'','',4,'')
-			result2=Project("Optional Project","You don't really need to work on this project",'','',4,'')
-			result3=Project("Physics Simulations and More","Everything from electricity and magnetism to mechanics",'','',4,'')
-			result4=Project("The Space Core","SPAAAAAAAACE",'','',4,'')
+			result1=Project("TanCS","Community of practice, game and totally awesome",'','',4,'',datetime.date.today())
+			result2=Project("Optional Project","You don't really need to work on this project",'','',4,'',datetime.date.today())
+			result3=Project("Physics Simulations and More","Everything from electricity and magnetism to mechanics",'','',4,'',datetime.date.today())
+			result4=Project("The Space Core","SPAAAAAAAACE",'','',4,'',datetime.date.today())
 			results=[result1,result2,result3,result4]
 			return results
 			
 		elif type_results=="projects" and type(identifier)==type(temp_group):
-			result1=Project("TanCS","Community of practice, game and totally awesome",'','',4,'')
-			result2=Project("Optional Project","You don't really need to work on this project",'','',4,'')
-			result3=Project("Physics Simulations and More","Everything from electricity and magnetism to mechanics",'','',4,'')
+			result1=Project("TanCS","Community of practice, game and totally awesome",'','',4,'',datetime.date.today())
+			result2=Project("Optional Project","You don't really need to work on this project",'','',4,'',datetime.date.today())
+			result3=Project("Physics Simulations and More","Everything from electricity and magnetism to mechanics",'','',4,'',datetime.date.today())
 			results=[result1,result2,result3]
 			return results
 		elif type_results=="accounts" and type(identifier)==type(temp_group):

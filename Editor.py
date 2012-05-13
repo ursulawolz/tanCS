@@ -152,9 +152,9 @@ class Editor(Gtk.Window):
 			offset1=select[0].get_offset()
 			offset2=select[1].get_offset()
 			if line1==line2:
-				self.copy=Borrow(date,self.activeproject,self.activerev,self.activefile,(line1,line1),(lineoffset1,lineoffset2))
+				self.copy=Borrow('newHASH',date,self.activeproject,self.activerev,self.activefile,(line1,line1),(lineoffset1,lineoffset2))
 			else:
-				self.copy=Borrow(date,self.activeproject,self.activerev,self.activefile,(line1,line2),(lineoffset1,lineoffset2))
+				self.copy=Borrow('newHASH',date,self.activeproject,self.activerev,self.activefile,(line1,line2),(lineoffset1,lineoffset2))
 			self.parent.borrows.append(self.copy)
 			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.sbuff.get_text(select[0],select[1],True),-1)
 
@@ -325,7 +325,7 @@ class Editor(Gtk.Window):
 			if len(name)>3:
 				if not name[-3:]=='.py':
 					name=name+'.py'
-			newfile=File(self.activeproject,self.activerev,name,'')
+			newfile=File(self.activeproject,self.activerev,name,'',datetime.date.today())
 			self.activefile=name
 			self.sbuff.set_text('')
 		dialog.destroy()
@@ -420,32 +420,11 @@ class Editor(Gtk.Window):
 		self.toolbar.insert(button_level, 13)
 		button_level.connect("clicked",self.level_select)
 
-		'''
-		button_open=Gtk.ToolButton.new_from_stock(Gtk.STOCK_OPEN)
-		self.toolbar.insert(button_open, 1)
-		button_open.set_tooltip_text('Open File')
-		button_open.connect("clicked", self.open_file)'''
-
 		self.toolbar.show_all()
 
 	def on_destroy(self,window=None):
 		f=open(self.activefile,'wb')
 		f.write(self.activeproject.revisions[self.activerev].files[self.activefile].content)
-
-	def open_file(self,widget):
-		dialog=Gtk.FileChooserDialog('Open File',self,Gtk.FileChooserAction.OPEN,(Gtk.STOCK_CANCEL,Gtk.ResponseType.CANCEL,Gtk.STOCK_OK,Gtk.ResponseType.ACCEPT))
-		filter_py = Gtk.FileFilter()
-		filter_py.set_name("Python files")
-		filter_py.add_mime_type("text/x-python")
-		dialog.add_filter(filter_py)
-		response=dialog.run()
-		if response==Gtk.ResponseType.ACCEPT:
-			filename=dialog.get_filename()
-			f=open(filename)
-			newfile=File('newHASH', 0, filename, f.read())
-			self.parent.defaultfile=newfile
-			self.sbuff.set_text(self.parent.defaultfile.content)
-		dialog.destroy()
 
 	def on_text_changed(self,sbuff):
 		self.activeproject.revisions[self.activerev].files[self.activefile].content=sbuff.get_text(sbuff.get_start_iter(),sbuff.get_end_iter(),True)

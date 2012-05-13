@@ -40,7 +40,7 @@ class TempWindow(Gtk.Window):
 		self.activefile=activefile
 
 		#TODO: remove this, integrate account with explorer
-		self.fake_user=Account("Random Hash","The instigator","Password","Avatar")
+		self.fake_user=Account("Random Hash","The instigator","Password","Avatar",datetime.date.today())
 
 		color=Gdk.Color(1000,1000,1000)
 		#self.set_resizable(False)
@@ -180,7 +180,11 @@ class TempWindow(Gtk.Window):
 		self.thecode.connect('populate-popup',self.code_popup)
 
 		if not renderall:
-			self.thecodebuffer.set_text('Please select a file to view from one of the revisions on the map at left.')
+			if len(self.activeproject.revisions)==1:
+				self.activerev=0
+			else:
+				self.toolbar.get_nth_item(0).set_sensitive(False)
+			self.thecodebuffer.set_text('Please select a file to view from one of the revisions on the map at left.\nIf this is an empty project, create a new file above.')
 			self.linebutton.set_sensitive(False)
 			self.filebutton.set_sensitive(False)
 			self.submitcomment.set_sensitive(False)
@@ -374,6 +378,7 @@ class TempWindow(Gtk.Window):
 			self.filebutton.set_sensitive(True)
 			self.submitcomment.set_sensitive(True)
 			self.submitlinecomment.set_sensitive(True)
+			self.toolbar.get_nth_item(0).set_sensitive(True)
 			self.toolbar.get_nth_item(2).set_sensitive(True)
 			self.toolbar.get_nth_item(4).set_sensitive(True)
 			self.on_File_toggled(self.filebutton)
@@ -627,9 +632,19 @@ class TempWindow(Gtk.Window):
 				if not name[-3:]=='.py':
 					#pdb.set_trace()
 					name=name+'.py'
-			newfile=File(self.activeproject,self.activerev,name,'')
+			pdb.set_trace()
+			newfile=File(self.activeproject,self.activerev,name,'',datetime.date.today())
 			self.activefile=name
 			self.thecodebuffer.set_text('')
+		if self.filebutton.get_sensitive()==False:
+			self.linebutton.set_sensitive(True)
+			self.filebutton.set_sensitive(True)
+			self.submitcomment.set_sensitive(True)
+			self.submitlinecomment.set_sensitive(True)
+			self.toolbar.get_nth_item(0).set_sensitive(True)
+			self.toolbar.get_nth_item(2).set_sensitive(True)
+			self.toolbar.get_nth_item(4).set_sensitive(True)
+			self.on_File_toggled(self.filebutton)
 		dialog.destroy()
 		self.reset_clutter()
 
@@ -644,9 +659,9 @@ class TempWindow(Gtk.Window):
 			offset1=select[0].get_offset()
 			offset2=select[1].get_offset()
 			if line1==line2:
-				self.copy=Borrow(date,self.activeproject,self.activerev,self.activefile,(line1,line1),(lineoffset1,lineoffset2))
+				self.copy=Borrow('newHASH',date,self.activeproject,self.activerev,self.activefile,(line1,line1),(lineoffset1,lineoffset2))
 			else:
-				self.copy=Borrow(date,self.activeproject,self.activerev,self.activefile,(line1,line2),(lineoffset1,lineoffset2))
+				self.copy=Borrow('newHASH',date,self.activeproject,self.activerev,self.activefile,(line1,line2),(lineoffset1,lineoffset2))
 			self.parent.borrows.append(self.copy)
 			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.thecodebuffer.get_text(select[0],select[1],True),-1)
 
