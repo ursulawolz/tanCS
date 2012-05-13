@@ -6,6 +6,22 @@ from objectcode import Account,Comment,Borrow
 import datetime, sys
 import pdb
 #from mainproto2 import on_window_mode_changed
+
+
+#------TODOS------
+# Implement missing methods in Editor (new file, etc)
+# Long-term: Create massive Clutter borrow map
+# Add copy/paste override to context menu
+# Add line comment to context menu
+
+#-------DONE-------
+# Implemented make revision and cut in Editor
+# Implemented deepcopy stuff so that objects are actually copied over, esp File
+# Fixed Borrow linking
+# Add borrow "to" attributes (done, I think)
+# Add click-drag-resize ability to Viewer (hooray, Brendan!)
+
+
 ###-------------------------------Main Functions---------------------------###
 
 #How the user creates line comments. Should involve clicking on the line or something like that. So this will get called by a button I think.Should add a line comment to the code.

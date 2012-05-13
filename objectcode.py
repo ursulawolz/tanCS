@@ -49,11 +49,12 @@ class Borrow:
         self.project_to=project_to
         self.revision_to=revision_to
         self.file_to=file_to
+        self.project_to.add_borrow(self)
 
     def get_text(self):
         #returns the borrowed text
         text=''
-        codefile = open("testingtk3.py")
+        codefile = open(self.project_from.revisions[self.revision_from].files[self.file_from].file_name)
         count=0
         while 1:
             line = codefile.readline()

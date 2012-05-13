@@ -1,19 +1,6 @@
 from gi.repository import Gtk, Gdk, GtkSource, GObject
 from objectcode import *
 
-#------TODOS------
-# Add borrow "to" attributes
-# Implement missing methods in Editor (new file, etc)
-# Long-term: Create massive Clutter borrow map
-# Add copy/paste override to context menu
-# Add line comment to context menu
-# Add click-drag-resize ability to Viewer
-
-#-------DONE-------
-# Implemented make revision and cut in Editor
-# Implemented deepcopy stuff so that objects are actually copied over, esp File
-
-
 class Editor(Gtk.Window):
 
 	def __init__(self,parent,activeproject,activerev,activefile):
@@ -219,12 +206,11 @@ class Editor(Gtk.Window):
 		return False
 
 	def checkBorrow(self,text):
-		if self.borrows==[]:
-			return [False,-1]
-		else:
-			for item in self.parent.borrows:
-				if item.get_text()==text:
-					return [True,item]
+		pdb.set_trace()
+		for item in self.parent.borrows:
+			if item.get_text()==text:
+				pdb.set_trace()
+				return [True,item]
 		return [False,-1]
 
 	def indent_block(self,widget):
