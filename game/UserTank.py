@@ -163,7 +163,7 @@ class UserTank:
         '''
         return self.__tank.distanceScan()
 
-    def scan(self, num_points = 360, rel_angle_range = (-180, 180), height = 1):
+    def scan(self, num_points = 360, rel_angle_range = (-180, 180), height = 2):
         '''
         This function scans the map to find the other objects on it. The scan 
         works iteratively, based on the angle range (given relative to the 
@@ -173,30 +173,47 @@ class UserTank:
         '''
         return self.__tank.scan(num_points, rel_angle_range, height)
 
-    def ping_points(self, num_points = 360, rel_angle_range = (-180, 180), height = 1):
+    def ping_one(self, angle = 0, give_distance = True, height = 2):
+        '''Returns either a distance or a point (relative) based on give_distance. 
+        angle is relative to the tank's heading.
+        height is the height at which the ping is sent.
+        Returns -1 if there is no collision'''
+
+        if give_distance:
+            ping_res = self.ping_distance(1, (angle, angle), height)
+        else:
+            ping_res = self.ping_points(1, (angle, angle), height)
+
+        if ping_res == []:
+            return -1
+        else:
+            return ping_res[0][0]
+
+
+    def ping_points(self, num_points = 360, rel_angle_range = (-180, 180), height = 2):
         '''Returns a list of tuples. Each tuple contains the point that can be seen from the tank
         relative to the tank, the relative angle that point was seen at, and the name of the 
         object hit, respectively'''
 
 
-        return self.__tank.pingPoints(self. num_points, rel_angle_range, height)
+        return self.__tank.pingPoints(num_points, rel_angle_range, height)
 
-    def ping_points_abs(self, num_points = 360, rel_angle_range = (-180, 180), height = 1):
+    def ping_points_abs(self, num_points = 360, rel_angle_range = (-180, 180), height = 2):
         '''Returns a list of tuples. Each tuple contains the point that can be seen from the tank
         in absolute coordinates, the relative angle that point was seen at, and the name of the 
         object hit, respectively'''
 
 
-        return self.__tank.pingPointsAbs(self. num_points, rel_angle_range, height)
+        return self.__tank.pingPointsAbs(num_points, rel_angle_range, height)
 
 
-    def ping_points(self, num_points = 360, rel_angle_range = (-180, 180), height = 1):
+    def ping_distance(self, num_points = 360, rel_angle_range = (-180, 180), height = 2):
         '''Returns a list of tuples. Each tuple contains the distance to the point that can be 
         seen from the tank relative to the tank, the relative angle that point was seen at, 
         and the name of the object hit, respectively'''
 
 
-        return self.__tank.pingDistance(self. num_points, rel_angle_range, height)
+        return self.__tank.pingDistance(num_points, rel_angle_range, height)
 
     #WEAPON CONTROL
 

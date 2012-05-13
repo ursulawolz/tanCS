@@ -22,7 +22,7 @@ class Tank(DynamicWorldObject):
 
         #Constant Relevant Instatiation Parameters
         self._tankSize = Vec3(1, 1.5, .5) # Actually a half-size
-        self._tankSideLength = max(self._tankSize)*2
+        self._tankSideLength = max(self._tankSize)
         friction = .3
         tankMass = 800.0
 
@@ -180,21 +180,26 @@ class Tank(DynamicWorldObject):
 
         distanceOfMap = 100000
         results = []
-        scanResolution = numPoints / 360.0
+        #scanResolution = numPoints / 360.0
+        angleSweep = relAngleRange[1] - relAngleRange[0] + 0.0
         pos = self._nodePath.getPos()
         heading = self._nodePath.getH()
         
-        for i in range(int(relAngleRange[0] * scanResolution), 
-                int(relAngleRange[1] * scanResolution) + 1):
-            
-            angle = i * math.pi / (180 * scanResolution) + heading
+        for i in range(numPoints):
+
+            if angleSweep == 0:
+                angle = (heading + relAngleRange[0]) * (math.pi / 180)
+            else:
+                angle = (i / angleSweep + heading + relAngleRange[0]) * (math.pi / 180)
+
             pFrom = Point3(math.sin(angle) * self._tankSideLength + pos[0], 
                     math.cos(angle) *  self._tankSideLength + pos[1], height)
             pTo = Point3(math.sin(angle) * distanceOfMap + pos[0], 
                     math.cos(angle) * distanceOfMap + pos[1], height)
             result = self._tankWorld.getPhysics().rayTestClosest(pFrom, pTo)
 
-            results.append((result, (angle - heading)*180 / math.pi))
+            results.append((result, angle * 180 / math.pi - heading))
+
         return results
 
     
@@ -235,7 +240,7 @@ class Tank(DynamicWorldObject):
             if result.hasHit():
                 newNode = result.getNode()
                 found.append((result.getHitPos(), item[1], newNode.getName()))
-                
+            
         return found
 
     def pingPoints(self, numPoints = 360, relAngleRange = (-180, 180), height = 1):
