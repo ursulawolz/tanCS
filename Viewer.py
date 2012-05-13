@@ -42,7 +42,7 @@ class TempWindow(Gtk.Window):
 		self.fake_user=Account("Random Hash","The instigator","Password","Avatar")
 
 		color=Gdk.Color(1000,1000,1000)
-		self.set_resizable(False)
+		#self.set_resizable(False)
 		self.x=840
 		self.y=280
 		self.set_size_request(self.x,self.y)
@@ -75,17 +75,19 @@ class TempWindow(Gtk.Window):
 
 		imageframe=Gtk.Frame()
 		imageframe.add(imagebox)
-		self.embed.set_size_request(200,800)
-
-		self.toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+		self.embed.set_size_request(200,600)
+		#TODO
+		self.toplevel=Gtk.HPaned()
+		#self.toplevel=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		self.toplevel.set_size_request(self.x,self.y)
 		self.add(self.toplevel)
 		#self.toplevel.pack_start(menubar,False,False,0)
-		self.toplevel.pack_start(imageframe,True,True,0)
+		self.toplevel.pack1(imageframe,True,True)
 
 
-		vbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+		#vbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
 		#self.add(vbox)
+		vbox=Gtk.VPaned()
 
 		self.thecode=GtkSource.View()
 		self.thecodebuffer = GtkSource.Buffer()
@@ -93,7 +95,7 @@ class TempWindow(Gtk.Window):
 		if renderall:
 			self.thecodebuffer.set_text(self.activeproject.revisions[activerev].files[activefile].content)
 		self.thecode.set_show_line_numbers(True)
-		self.thecode.set_size_request(self.x-150,560)
+		#self.thecode.set_size_request(self.x-150,560)
 		self.thecodeframe=Gtk.Frame()
 		self.thecodeframe.add(self.thecode)
 		self.thecode.set_editable(False)
@@ -103,9 +105,12 @@ class TempWindow(Gtk.Window):
 		codescroll=Gtk.ScrolledWindow()
 		codescroll.add_with_viewport(self.thecodeframe)
 		#codescroll.set_size_request(self.x-150,390)
-		codescroll.set_size_request(self.x-150,300)	
-		vbox.pack_start(self.toolbar,False,True,0)
-		vbox.pack_start(codescroll,False,False,0)	
+		codescroll.set_size_request(self.x-150,260)
+		vbox4=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+		vbox4.pack_start(self.toolbar,False,False,0)
+		vbox4.pack_start(codescroll,True,True,0)
+		
+		vbox.pack1(vbox4,True,True)
 
 		hbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		self.vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
@@ -123,7 +128,7 @@ class TempWindow(Gtk.Window):
 		#vbox.pack_start(hbox, False, False,0)
 
 		commentswindow = Gtk.ScrolledWindow()
-		commentswindow.set_size_request(200,95)
+		#commentswindow.set_size_request(200,95)
 		commentswindow.set_hexpand(True)
 		commentswindow.set_vexpand(True)
 		
@@ -134,10 +139,10 @@ class TempWindow(Gtk.Window):
 		self.padding.add(self.vbox2)
 		
 		commentswindow.add_with_viewport(self.padding)
-		commentswindow.set_size_request(self.x-150,240)
+		#commentswindow.set_size_request(self.x-150,180)
 		commentbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
 		commentbox.pack_start(hbox,False,False,0)
-		commentbox.pack_start(commentswindow,False,False,0)
+		commentbox.pack_start(commentswindow,True,True,0)
 		frame.add(commentbox)
 
 		hbox2=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
@@ -150,7 +155,7 @@ class TempWindow(Gtk.Window):
 
 		commentscroll=Gtk.ScrolledWindow()
 		commentscroll.add_with_viewport(entryframe)
-		commentscroll.set_size_request(self.x-150,60)
+		#commentscroll.set_size_request(self.x-150,60)
 
 		self.submitcomment=Gtk.Button("Submit")
 		self.submitcomment.connect("clicked", self.toggle_file_comment)
@@ -164,9 +169,10 @@ class TempWindow(Gtk.Window):
 
 		hbox2.pack_start(commentscroll,True,True,0)
 		hbox2.pack_start(vbox3,False,False,0)
-
-		vbox.pack_start(frame,False,False,0)
-		vbox.pack_start(hbox2,False,False,0)
+		vbox5=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+		vbox5.pack_start(frame,True,True,0)
+		vbox5.pack_start(hbox2,False,False,0)
+		vbox.pack2(vbox5,True,True)
 		#vbox.pack_start(embed,True,True,0)
 
 		self.connect('button-press-event',self.code_clicked)
@@ -180,7 +186,7 @@ class TempWindow(Gtk.Window):
 			self.toolbar.get_nth_item(2).set_sensitive(False)
 			self.toolbar.get_nth_item(4).set_sensitive(False)
 
-		self.toplevel.pack_start(vbox,False,False,0)
+		self.toplevel.pack2(vbox,True,True)
 		#Gtk.UIManager()
 
 ###---------------------------------METHODS--------------------------------###
