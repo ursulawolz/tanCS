@@ -169,7 +169,7 @@ class TempWindow(Gtk.Window):
 		vbox.pack_start(hbox2,False,False,0)
 		#vbox.pack_start(embed,True,True,0)
 
-		self.thecode.connect('populate-popup',self.code_clicked)
+		self.connect('button-press-event',self.code_clicked)
 
 		if not renderall:
 			self.thecodebuffer.set_text('Please select a file to view from one of the revisions on the map at left.')
@@ -274,7 +274,6 @@ class TempWindow(Gtk.Window):
 				#files=self.activeproject.head.files
 			#else:
 			files=self.activeproject.revisions[len(self.activeproject.revisions)-revnum-1].files
-			print files
 			#pdb.set_trace()
 			for f in files:
 				numfiles+=1
@@ -353,12 +352,9 @@ class TempWindow(Gtk.Window):
 		self.scrollOn=False
 
 	def openfile(self,widget=None,data=None,f=None):
-		print 'Opening '+f.file_name
 		self.thecodebuffer.set_text(f.content)
 		self.activerev=f.rev_number
 		self.activefile=f.file_name
-
-		print self.activerev
 
 		if self.filebutton.get_active()==True:
 			self.on_File_toggled(self.filebutton)
@@ -562,12 +558,23 @@ class TempWindow(Gtk.Window):
 
 		self.toolbar.show_all()
 
-	def code_clicked(self,widget,menu,event=None):
+	def code_clicked(self,widget,event):
 		#print event.button
-		menu.append(Gtk.MenuItem('hello'))
-		print 'clicked'
-		return menu
-		#Gtk.Menu.popup(Gtk.Menu(),None,None,None,None,event.button,event.time)
+		#menu.append(Gtk.MenuItem('hello'))
+		#print 'clicked'
+		#return menu
+		newmenu=Gtk.Menu()
+		newitem=Gtk.MenuItem('hello')
+		newmenu.append(newitem)
+		newitem1=Gtk.MenuItem('goodbye')
+		newmenu.append(newitem1)
+		newitem.show()
+		newitem1.show()
+		#pdb.set_trace()
+		newmenu.popup(None,None,None,None,event.button,event.time)
+		widget.stop_emission("button-press-event")
+		print 'popped'
+		return False
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed

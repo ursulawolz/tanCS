@@ -228,7 +228,6 @@ class Editor(Gtk.Window):
 		return [False,-1]
 
 	def indent_block(self,widget):
-		print 'indenting block'
 		select=self.sbuff.get_selection_bounds()
 		if not select==():
 			lines=self.get_lines_from_block(select)
@@ -241,7 +240,6 @@ class Editor(Gtk.Window):
 			count+=4
 
 	def unindent_block(self,widget):
-		print 'unindenting block'
 		select=self.sbuff.get_selection_bounds()
 		if not select==():
 			lines=self.get_lines_from_block(select)
@@ -286,7 +284,6 @@ class Editor(Gtk.Window):
 		if not select==():
 			lines=self.get_lines_from_block(select)
 			count=0
-			print lines
 			uncomment=True
 			#PRE: lines must be ordered lowest to highest
 			for line in lines:
@@ -300,7 +297,6 @@ class Editor(Gtk.Window):
 					offset+=1
 				if uncomment:
 					uncomment = (txt=='#')
-				print uncomment
 
 			for line in lines:
 				line+=count
@@ -312,11 +308,9 @@ class Editor(Gtk.Window):
 					txt=self.sbuff.get_slice(itera,iterb,True)
 					offset+=1
 				if uncomment:
-					print 'delete'
 					self.sbuff.delete(itera,iterb)
 					count-=1
 				else:
-					print 'comment'
 					self.sbuff.insert(itera,'#')
 					count+=1
 		else:
@@ -329,17 +323,14 @@ class Editor(Gtk.Window):
 				txt=self.sbuff.get_slice(itera,iterb,True)
 				offset+=1
 			if txt=='#':
-				print 'delete'
 				self.sbuff.delete(itera,iterb)
 			else:
-				print 'comment'
 				self.sbuff.insert(itera,'#')
 
 	##TODO: implement
 	def create_new(self,widget):
 		pass
 
-	##TODO: implement
 	def create_save_point(self,widget):
 		dialog = Gtk.Dialog("My dialog",parent=self,flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
 		label1=Gtk.Label('Create a new revision of your whole project?')
@@ -404,14 +395,14 @@ class Editor(Gtk.Window):
 		button_viewer.set_icon_widget(viewer_icon)
 		button_viewer.set_tooltip_text('Switch to Viewer')
 		self.toolbar.insert(button_viewer, 9)
-		button_viewer.connect("clicked", change_window,"Viewer",self,self.parent,self.activeproject,self.activerev,self.activefile)
+		button_viewer.connect("clicked", change_window,"Viewer",self,self.parent)
 
 		explorer_icon=Gtk.Image.new_from_file('explorer-icon.png')
 		button_explorer=Gtk.ToolButton()
 		button_explorer.set_icon_widget(explorer_icon)
 		button_explorer.set_tooltip_text('Switch to Explorer')
 		self.toolbar.insert(button_explorer, 10)
-		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent,self.activeproject,self.activerev,self.activefile)
+		button_explorer.connect("clicked",change_window,"Explorer",self,self.parent)
 
 		sep2=Gtk.SeparatorToolItem()
 		self.toolbar.insert(sep2,11)
@@ -466,9 +457,9 @@ class Editor(Gtk.Window):
 	def run_file(self,widget):
 		pass
 
-def change_window(widget,new_window_name,parent_window,top_parent,activeproject,activerev,activefile):
+def change_window(widget,new_window_name,parent_window,top_parent):
 	parent_window.on_destroy()
-	top_parent.on_window_mode_changed(new_window_name,parent_window,activeproject,activerev,activefile)
+	top_parent.on_window_mode_changed(new_window_name,parent_window,parent_window.activeproject,parent_window.activerev,parent_window.activefile)
 
 
 class ReferenceDialog(Gtk.Dialog):
