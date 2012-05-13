@@ -15,8 +15,8 @@ import pdb
 #------TODOS------
 # Implement missing methods in Editor (new file, etc)
 # Long-term: Create massive Clutter borrow map
-# Add copy/paste override to context menu
-# Add line comment to context menu
+# Fix Viewer popup menu positioning
+
 
 #-------DONE-------
 # Implemented make revision and cut in Editor
@@ -24,6 +24,8 @@ import pdb
 # Fixed Borrow linking
 # Add borrow "to" attributes (done, I think)
 # Add click-drag-resize ability to Viewer (hooray, Brendan!)
+# Add copy/paste override to context menu
+# Add line comment to context menu
 
 class tanCS(object):
 

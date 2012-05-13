@@ -8,13 +8,13 @@ import pdb
 #from mainproto2 import on_window_mode_changed
 
 ###-------------------------------Main Functions---------------------------###
-
+'''
 #How the user creates line comments. Should involve clicking on the line or something like that. So this will get called by a button I think.Should add a line comment to the code.
 def submit_line_comment(self,account,linenum,text):
 	time=datetime.date.today()
 	new_comment=Comment(text,time,"Hash","Which_file",self.fake_user,linenum)
 	print(account+" says: '"+text+"' on line "+linenum)
-	return
+	return'''
 
 def add_mode_menu_actions(action_group,on_window_mode_changed,parent_window):
 	action_modemenu=Gtk.Action("ModeMenu","Mode",None,None)
@@ -419,11 +419,9 @@ class TempWindow(Gtk.Window):
 		fake3=Comment(text3,"10:47","Random Hash",1,"This file",self.fake_user,-1)
 		fake4=Comment(text4,"11:00","Random Hash",1,"This file",self.fake_user,-1)
 		filecommentlist=[]
-		#pdb.set_trace()
 		for comment in self.activeproject.revisions[self.activerev].files[self.activefile].comments:
 			if comment.linenum==-1:
 				filecommentlist.append(comment)
-		#filecommentlist=[fake1,fake2,fake3,fake4]
 		return filecommentlist
 
 #should unpack the line comments from where they are in revision and make a list of all of them so that they can be displayed.
@@ -436,7 +434,10 @@ class TempWindow(Gtk.Window):
 		fake2=Comment(text2,"10:35","Random Hash",1,"This file",self.fake_user,4)
 		fake3=Comment(text3,"10:47","Random Hash",1,"This file",self.fake_user,32)
 		fake4=Comment(text4,"11:00","Random Hash",1,"This file",self.fake_user,12)
-		linecommentlist=[fake4,fake3,fake2,fake1]
+		linecommentlist=[]
+		for comment in self.activeproject.revisions[self.activerev].files[self.activefile].comments:
+			if not comment.linenum==-1:
+				linecommentlist.append(comment)
 		return linecommentlist
 
 # Not quite sure how to do this one. It needs to dynamically create a revision map for the whole project and allow you to move from one revision to another as well as load those revision. 
@@ -487,47 +488,38 @@ class TempWindow(Gtk.Window):
 
 #What happens when you hit the submit line comment button
 	def toggle_line_comment(self,widget):
-		tempbuffer=self.entry.get_buffer()
-		startiter = tempbuffer.get_start_iter()
-		enditer = tempbuffer.get_end_iter()
-		thetext=tempbuffer.get_text(startiter,enditer,False)
-		if len(thetext)>0:
-			dialog=LineCommentDialog(self)
-			endresult=dialog.run()
-			tempbuffer.set_text('')
+		dialog=LineCommentDialog(self)
+		endresult=dialog.run()
+		tempbuffer.set_text('')
 
 #What happens when you hit the submit file comment button.
 	def toggle_file_comment(self,widget):
-		#account=get_account()
-		account="The Instigater"
 		tempbuffer=self.entry.get_buffer()
 		startiter = tempbuffer.get_start_iter()
 		enditer = tempbuffer.get_end_iter()
 		thetext=tempbuffer.get_text(startiter,enditer,False)
 		if len(thetext)>0:
-			self.submit_file_comment(account,thetext)
+			self.submit_file_comment(thetext)
 			tempbuffer.set_text('')
 		return
 
 	#How the user creates file comments. This involves just typing what the comment is in the gtkentry at the bottom. When they hit submit this function will be called and this will add a file comment to the code.
-	def submit_file_comment(self,account,text):
+	def submit_file_comment(self,text):
 		time=datetime.date.today()
 		new_comment=Comment(text,time,"Hash",self.activerev,self.activefile,self.fake_user,-1)
 		self.activeproject.revisions[self.activerev].files[self.activefile].comments.append(new_comment)
 		if self.filebutton.get_active():
 			self.vbox2.pack_start(self.create_comment(new_comment),False,False,0)
 			self.vbox2.show_all()
-		print(account+" says: '"+text+"' about this file")
 		return
 
-	def submit_line_comment(self,account,text,linenum):
+	def submit_line_comment(self,text,linenum):
 		time=datetime.date.today()
 		new_comment=Comment(text,time,"Hash",self.activerev,self.activefile,self.fake_user,linenum)
 		self.activeproject.revisions[self.activerev].files[self.activefile].comments.append(new_comment)
 		if self.linebutton.get_active():
 			self.vbox2.pack_start(self.create_comment(new_comment),False,False,0)
 			self.vbox2.show_all()
-		print(account+" says: '"+text+"' about this file")
 		return
 
 #Creates the top toolbar for the window.
@@ -567,25 +559,26 @@ class TempWindow(Gtk.Window):
 		self.toolbar.show_all()
 
 	def code_clicked(self,widget,event):
-		[x,y]=self.thecode.translate_coordinates(self,event.x,event.y) #this doesn't work
-		#[x,y]=self.thecode.window_to_buffer_coords(Gtk.TextWindowType.WIDGET,event.x,event.y) #this doesn't either
-		#pdb.set_trace()
-		menu=Gtk.Menu()
-		copyitem=Gtk.MenuItem('Copy')
-		copyitem.show()
-		copyitem.connect('button-press-event',self.copy_text)
-		menu.append(copyitem)
-		commentitem=Gtk.MenuItem('Comment on this line')
-		commentitem.show()
-		commentitem.connect('button-press-event',self.comment_from_contextmenu,(event.x,event.y))
-		menu.append(commentitem)
+		if self.linebutton.get_sensitive(): #means a file is already open
+			[x,y]=self.thecode.translate_coordinates(self,event.x,event.y) #this doesn't work
+			#[x,y]=self.thecode.window_to_buffer_coords(Gtk.TextWindowType.WIDGET,event.x,event.y) #this doesn't either
+			#pdb.set_trace()
+			menu=Gtk.Menu()
+			copyitem=Gtk.MenuItem('Copy')
+			copyitem.show()
+			copyitem.connect('button-press-event',self.copy_text)
+			menu.append(copyitem)
+			commentitem=Gtk.MenuItem('Comment on this line')
+			commentitem.show()
+			commentitem.connect('button-press-event',self.comment_from_contextmenu,(event.x,event.y))
+			menu.append(commentitem)
 
-		#Testing out two different ways of doing it. If right click, use translated coords. If other, use given event coords.
-		if event.button==3:
-			menu.popup(None,None,lambda a,b: (b[0],b[1],True),(x,y),event.button,event.time)
-		else:
-			menu.popup(None,None,lambda a,b: (event.x,event.y,True),None,event.button,event.time)
-		#widget.stop_emission("button-press-event")
+			#Testing out two different ways of doing it. If right click, use translated coords. If other, use given event coords.
+			if event.button==3:
+				menu.popup(None,None,lambda a,b: (b[0],b[1],True),(x,y),event.button,event.time)
+			else:
+				menu.popup(None,None,lambda a,b: (event.x,event.y,True),None,event.button,event.time)
+			#widget.stop_emission("button-press-event")
 		return True
 	'''
 	def code_popup(self,widget,menu):
@@ -608,6 +601,11 @@ class TempWindow(Gtk.Window):
 	def comment_from_contextmenu(self,widget,event,data):
 		x=data[0]
 		y=data[1]
+		linenum=10 #implement this
+
+		dialog=LineCommentDialog(self,linenum)
+		endresult=dialog.run()
+		self.entry.get_buffer().set_text('')
 
 
 	def on_key_press(self,widget,data):
@@ -669,10 +667,11 @@ class TempWindow(Gtk.Window):
 
 ###-------------------------ADDITIONAL WINDOWS-----------------------###
 class LineCommentDialog(Gtk.Dialog):
-	def __init__(self, parent):
+	def __init__(self, parent, linenum=1):
 		Gtk.Dialog.__init__(self,"Submit Line Comment",parent,0)
+		self.connect("delete-event",lambda x,y: self.destroy())
 		label=Gtk.Label("Testing")
-		adjustment = Gtk.Adjustment(1, 1, parent.thecode.get_buffer().get_line_count(), 1, 10, 0)
+		adjustment = Gtk.Adjustment(linenum, 1, parent.thecode.get_buffer().get_line_count(), 1, 10, 0)
 		#Note that the limits on the spinner can change, don't exceed line numbs
 		self.spinbutton = Gtk.SpinButton()
 		self.spinbutton.set_adjustment(adjustment)
@@ -682,18 +681,29 @@ class LineCommentDialog(Gtk.Dialog):
 		self.dentry=Gtk.TextView()
 		dframe.add(self.dentry)
 		self.dtext_buffer=self.dentry.get_buffer()"""
+		self.commentframe=Gtk.Frame()
+		self.entry=Gtk.TextView()
+		self.entry.set_editable(True)
+		self.entry.get_buffer().set_text(parent.entry.get_buffer().get_text(parent.entry.get_buffer().get_start_iter(),parent.entry.get_buffer().get_end_iter(),True))
+		self.commentframe.add(self.entry)
 		self.dlabel=Gtk.Label("Line Number")
+		self.dlabel2=Gtk.Label('Comment:')
 		self.spinsubmit.connect("clicked", self.dialog_toggle_line_comment,self.spinbutton,parent)
 		#Note that this uses parent!!!!!!!!!! do not change the name of entry!
-
+		print linenum
 		dvbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3)
 		#this does nothing, remove later?
 		dhbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		dhbox.pack_start(self.dlabel,False,False,0)
 		dhbox.pack_start(self.spinbutton,False,False,0)
 		dhbox.pack_end(self.spinsubmit,False,False,0)
-		
+
+		dhbox2=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+		dhbox2.pack_start(self.dlabel2,False,False,0)
+		dhbox2.pack_start(self.commentframe,True,True,0)
+
 		dvbox.pack_start(dhbox,False,False,0)
+		dvbox.pack_start(dhbox2,True,True,0)
 		# same as above
 		box=self.get_content_area()
 		box.add(dvbox)
@@ -702,10 +712,10 @@ class LineCommentDialog(Gtk.Dialog):
 	def dialog_toggle_line_comment(self,button,spinner,parent):
 		#account=get_account()
 		entry=parent.entry
-		account="The Instigater"
 		tempbuffer=entry.get_buffer()
 		startiter = tempbuffer.get_start_iter()
 		enditer = tempbuffer.get_end_iter()
 		thetext=tempbuffer.get_text(startiter,enditer,False)
-		parent.submit_line_comment(account,thetext,str(spinner.get_value()))
+		if len(thetext)>0:
+			parent.submit_line_comment(thetext,str(spinner.get_value()))
 		self.destroy()
