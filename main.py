@@ -12,6 +12,19 @@ import platform
 import subprocess
 import pdb
 
+#------TODOS------
+# Implement missing methods in Editor (new file, etc)
+# Long-term: Create massive Clutter borrow map
+# Add copy/paste override to context menu
+# Add line comment to context menu
+
+#-------DONE-------
+# Implemented make revision and cut in Editor
+# Implemented deepcopy stuff so that objects are actually copied over, esp File
+# Fixed Borrow linking
+# Add borrow "to" attributes (done, I think)
+# Add click-drag-resize ability to Viewer (hooray, Brendan!)
+
 class tanCS(object):
 
 	def __init__(self):

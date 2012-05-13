@@ -7,21 +7,6 @@ import datetime, sys
 import pdb
 #from mainproto2 import on_window_mode_changed
 
-
-#------TODOS------
-# Implement missing methods in Editor (new file, etc)
-# Long-term: Create massive Clutter borrow map
-# Add copy/paste override to context menu
-# Add line comment to context menu
-
-#-------DONE-------
-# Implemented make revision and cut in Editor
-# Implemented deepcopy stuff so that objects are actually copied over, esp File
-# Fixed Borrow linking
-# Add borrow "to" attributes (done, I think)
-# Add click-drag-resize ability to Viewer (hooray, Brendan!)
-
-
 ###-------------------------------Main Functions---------------------------###
 
 #How the user creates line comments. Should involve clicking on the line or something like that. So this will get called by a button I think.Should add a line comment to the code.
@@ -103,7 +88,7 @@ class TempWindow(Gtk.Window):
 
 		#vbox=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
 		#self.add(vbox)
-		vbox=Gtk.VPaned()
+		self.vbox=Gtk.VPaned()
 
 		self.thecode=GtkSource.View()
 		self.thecodebuffer = GtkSource.Buffer()
@@ -118,15 +103,15 @@ class TempWindow(Gtk.Window):
 		self.thecode.connect("key-press-event",self.on_key_press)
 		lang = GtkSource.LanguageManager.get_default().get_language('python')
 		self.thecodebuffer.set_language(lang)
-		codescroll=Gtk.ScrolledWindow()
-		codescroll.add_with_viewport(self.thecodeframe)
+		self.codescroll=Gtk.ScrolledWindow()
+		self.codescroll.add_with_viewport(self.thecodeframe)
 		#codescroll.set_size_request(self.x-150,390)
-		codescroll.set_size_request(self.x-150,260)
-		vbox4=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
-		vbox4.pack_start(self.toolbar,False,False,0)
-		vbox4.pack_start(codescroll,True,True,0)
+		self.codescroll.set_size_request(self.x-150,260)
+		self.vbox4=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
+		self.vbox4.pack_start(self.toolbar,False,False,0)
+		self.vbox4.pack_start(self.codescroll,True,True,0)
 		
-		vbox.pack1(vbox4,True,True)
+		self.vbox.pack1(self.vbox4,True,True)
 
 		hbox=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
 		self.vbox2=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
@@ -188,10 +173,11 @@ class TempWindow(Gtk.Window):
 		vbox5=Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=20)
 		vbox5.pack_start(frame,True,True,0)
 		vbox5.pack_start(hbox2,False,False,0)
-		vbox.pack2(vbox5,True,True)
+		self.vbox.pack2(vbox5,True,True)
 		#vbox.pack_start(embed,True,True,0)
 
-		self.connect('button-press-event',self.code_clicked)
+		self.thecode.connect('button-press-event',self.code_clicked)
+		#self.thecode.connect('populate-popup',self.code_popup)
 
 		if not renderall:
 			self.thecodebuffer.set_text('Please select a file to view from one of the revisions on the map at left.')
@@ -202,7 +188,7 @@ class TempWindow(Gtk.Window):
 			self.toolbar.get_nth_item(2).set_sensitive(False)
 			self.toolbar.get_nth_item(4).set_sensitive(False)
 
-		self.toplevel.pack2(vbox,True,True)
+		self.toplevel.pack2(self.vbox,True,True)
 		#Gtk.UIManager()
 
 ###---------------------------------METHODS--------------------------------###
@@ -581,22 +567,48 @@ class TempWindow(Gtk.Window):
 		self.toolbar.show_all()
 
 	def code_clicked(self,widget,event):
-		#print event.button
-		#menu.append(Gtk.MenuItem('hello'))
-		#print 'clicked'
-		#return menu
-		newmenu=Gtk.Menu()
-		newitem=Gtk.MenuItem('hello')
-		newmenu.append(newitem)
-		newitem1=Gtk.MenuItem('goodbye')
-		newmenu.append(newitem1)
-		newitem.show()
-		newitem1.show()
+		[x,y]=self.thecode.translate_coordinates(self,event.x,event.y) #this doesn't work
+		#[x,y]=self.thecode.window_to_buffer_coords(Gtk.TextWindowType.WIDGET,event.x,event.y) #this doesn't either
 		#pdb.set_trace()
-		newmenu.popup(None,None,None,None,event.button,event.time)
-		widget.stop_emission("button-press-event")
-		print 'popped'
-		return False
+		menu=Gtk.Menu()
+		copyitem=Gtk.MenuItem('Copy')
+		copyitem.show()
+		copyitem.connect('button-press-event',self.copy_text)
+		menu.append(copyitem)
+		commentitem=Gtk.MenuItem('Comment on this line')
+		commentitem.show()
+		commentitem.connect('button-press-event',self.comment_from_contextmenu,(event.x,event.y))
+		menu.append(commentitem)
+
+		#Testing out two different ways of doing it. If right click, use translated coords. If other, use given event coords.
+		if event.button==3:
+			menu.popup(None,None,lambda a,b: (b[0],b[1],True),(x,y),event.button,event.time)
+		else:
+			menu.popup(None,None,lambda a,b: (event.x,event.y,True),None,event.button,event.time)
+		#widget.stop_emission("button-press-event")
+		return True
+	'''
+	def code_popup(self,widget,menu):
+		#pdb.set_trace()
+		sep=menu.get_children()[4]
+		for i in menu.get_children():
+			menu.remove(i)
+		copyitem=Gtk.MenuItem('Copy')
+		copyitem.show()
+		copyitem.connect('button-press-event',self.copy_text)
+		menu.append(copyitem)
+		menu.append(sep)
+		commentitem=Gtk.MenuItem('Comment on this line')
+		commentitem.show()
+		menu.append(commentitem)
+		menu.show_all()
+		#pdb.set_trace()
+		#return menu'''
+
+	def comment_from_contextmenu(self,widget,event,data):
+		x=data[0]
+		y=data[1]
+
 
 	def on_key_press(self,widget,data):
 		#runs when any key is pressed
@@ -607,12 +619,12 @@ class TempWindow(Gtk.Window):
 			if Gdk.ModifierType.CONTROL_MASK&data.state==Gdk.ModifierType.CONTROL_MASK:
 				self.copy_text()
 
-	def copy_text(self,widget=None):
+	def copy_text(self,widget=None,data=None):
 		date=datetime.date.today()
 		select=self.thecodebuffer.get_selection_bounds()
 		if select==():
-			self.parent.borrows[0].get_text()
-			print 'There\'s nothing selected, you kiwi.'
+			#self.parent.borrows[0].get_text() #Wat.
+			pass
 		else:
 			line1=select[0].get_line()
 			line2=select[1].get_line()

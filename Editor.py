@@ -24,8 +24,6 @@ class Editor(Gtk.Window):
 		#toolbar
 		self.create_toolbar()
 
-		self.borrows=()
-
 		self.vbox_top.pack_start(self.toolbar,False,True,0)
 		self.vbox_top.pack_start(self.scrolledwindow,True,True,0)
 		self.vbox_top.pack_start(self.statusbar,False,True,0)
@@ -146,11 +144,10 @@ class Editor(Gtk.Window):
 		if not select==():
 			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.sbuff.get_text(select[0],select[1],True),-1)
 
-	##TODO: implement
 	def cut_text(self,widget=None):
 		select=self.sbuff.get_selection_bounds()
 		if not select==():
-			Gtk.Clipboard.set_text(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD),self.sbuff.get_text(select[0],select[1],True),-1)
+			self.copy_text()
 			self.sbuff.delete(select[0],select[1])
 
 	def paste_text(self,widget=None):
