@@ -596,9 +596,9 @@ class explorer_window(Gtk.Window):
 
 	def on_help_clicked(self,widget,something,toplevel):
 		#print("Help clicked")
-		#self.the_new_page=self.make_help()
-		temp=Group("GroupID","GodID","I can't believe its not recursion",datetime.date.today(),"This is a group that uses iteration for literally everything.",'a','a')
-		self.the_new_page=self.make_display_group(temp,toplevel)
+		self.the_new_page=self.make_help()
+		#temp=Group("GroupID","GodID","I can't believe its not recursion",datetime.date.today(),"This is a group that uses iteration for literally everything.",'a','a')
+		#self.the_new_page=self.make_display_group(temp,toplevel)
 		self.create_new_page(toplevel,self.the_new_page)
 		self.alert.set_text("Help Page")
 
