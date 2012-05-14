@@ -174,7 +174,7 @@ class Editor(Gtk.Window):
 			self.statusbar.push(1,'Lines '+str(line1+1)+' through '+str(line2+1)+' from file $FILE have been linked to this document.')
 			timeout=GObject.timeout_add(4000,self.clear_statusbar,1)
 		else:
-			if isborrow[0]==-1:
+			if isborrow[1]==-1:
 				dialog = ReferenceDialog(self,pasted)
 				response = dialog.run()
 				if response==Gtk.ResponseType.OK:

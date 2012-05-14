@@ -219,6 +219,11 @@ class TempWindow(Gtk.Window):
 
 		num_revs=len(self.activeproject.revisions)
 
+		arrow=Clutter.Texture.new_from_file("arrow.png");
+		arrow.set_anchor_point(arrow.get_size()[0]/2.0,arrow.get_size()[1]/2.0)
+		#Clutter.Container.add_actor(self.stage, arrow)
+		arrow.set_position(100,163)
+
 		#pdb.set_trace()
 
 		#nested lists containing the various clutter objects within a revision circle
@@ -326,8 +331,8 @@ class TempWindow(Gtk.Window):
 		self.embed.grab_focus()
 
 	def mouse_moved(self,widget,event):
-		miny=200
-		maxy=self.embed.get_allocation().height-200
+		miny=125
+		maxy=self.embed.get_allocation().height-125
 		self.curr_y=event.get_coords()[1]
 		if self.curr_y<miny:
 			GObject.timeout_add(50,self.scrollup)
@@ -340,8 +345,8 @@ class TempWindow(Gtk.Window):
 		if self.scroll<0:
 			self.scroll+=.5
 			self.reset_clutter()
-			miny=150
-			maxy=self.embed.get_allocation().height-200
+			miny=125
+			maxy=self.embed.get_allocation().height-125
 			if self.curr_y<miny:
 				return self.scrollOn
 			else:
@@ -352,8 +357,8 @@ class TempWindow(Gtk.Window):
 	def scrolldown(self,data=None):
 		self.scroll-=.5
 		self.reset_clutter()
-		miny=100
-		maxy=self.embed.get_allocation().height-200
+		miny=125
+		maxy=self.embed.get_allocation().height-125
 		if self.curr_y>maxy:
 			return self.scrollOn
 		else:
@@ -559,7 +564,7 @@ class TempWindow(Gtk.Window):
 		button_fork=Gtk.ToolButton()
 		button_fork.set_icon_widget(fork_icon)
 		self.toolbar.insert(button_fork, 5)
-		button_explorer.connect("clicked",self.fork_file)
+		button_fork.connect("clicked",self.fork_project)
 
 		self.toolbar.show_all()
 
@@ -689,9 +694,28 @@ class TempWindow(Gtk.Window):
 		else:
 			return [-1]
 
-	def fork_file(self,widget):
-		print 'Would you like a spoon instead?'
-		pass
+	def fork_project(self,widget):
+		dialog = Gtk.Dialog("Fork project",parent=self,flags=Gtk.DialogFlags.MODAL | Gtk.DialogFlags.DESTROY_WITH_PARENT,buttons=(Gtk.STOCK_CANCEL, Gtk.ResponseType.REJECT, Gtk.STOCK_OK, Gtk.ResponseType.ACCEPT))
+		dialog.connect("delete-event",lambda x,y: dialog.destroy())
+		label1=Gtk.Label('Enter a title and a description for the forked project:')
+		dialog.vbox.pack_start(label1,False,False,0)
+		hbox1=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+		hbox2=Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+		label2=Gtk.Label('New title:')
+		label3=Gtk.Label('New description:')
+		hbox1.pack_start(label2,False,False,0)
+		hbox2.pack_start(label3,False,False,0)
+		dialog.entry1=Gtk.Entry()
+		dialog.entry2=Gtk.Entry()
+		hbox1.pack_start(dialog.entry1,False,False,0)
+		hbox2.pack_start(dialog.entry2,False,False,0)
+		dialog.vbox.pack_start(hbox1,False,False,0)
+		dialog.vbox.pack_start(hbox2,False,False,0)
+		dialog.show_all()
+		response = dialog.run()
+		dialog.destroy()
+		if response==Gtk.ResponseType.ACCEPT:
+			pass
 
 ###-------------------------ADDITIONAL WINDOWS-----------------------###
 class LineCommentDialog(Gtk.Dialog):
