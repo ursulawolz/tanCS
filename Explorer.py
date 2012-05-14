@@ -10,7 +10,7 @@ def change_window(widget,new_window_name,parent_window,top_parent):
 ###------------------------Explorer Class--------------------------###
 class explorer_window(Gtk.Window):
 	def __init__(self,parent):
-		Gtk.Window.__init__(self,title="Entry Demo")
+		Gtk.Window.__init__(self,title="tanCS IDE - Explorer")
 
 		self.x=640
 		self.y=280
@@ -622,8 +622,8 @@ class explorer_window(Gtk.Window):
 		temp_account=Account("Userman37","caynessian",'',"fork-icon.png",datetime.date.today())
 		temp_group=Group('','','',datetime.date.today(),'','')
 		if type_results=="groups" and type(identifier)==type(temp_account):			
-			result1=Group("gId",["aID","aID2"],"Tauntology Group",datetime.date.today(),"Title1")
-			result1.description="The tauntology group is of course, the tauntology group"
+			result1=Group("gId",["aID","aID2"],"Tautology Group",datetime.date.today(),"Title1")
+			result1.description="The tautology group is of course, the tautology group"
 			result2=Group("gId","aID","Nonexistant Group",datetime.date.today(),"Title2")
 			result2.description="Nihilism FTW"
 			result3=Group("gId","aID","Blue",datetime.date.today(),"Title3")
