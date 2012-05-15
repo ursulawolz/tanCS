@@ -65,37 +65,36 @@ class tanCS(object):
 		self.defaultproject=Project('The default!','A dummy project.', 'proj01',None, 8, 'groupHASH',datetime.date.today())
 		#THESE SHOULDS BE OF A FUNCTION
 		f=open("testingtk3.py")
-		file1=File(self.defaultproject, 0, 'testingtk3.py0', f.read(), datetime.date.today())
+		file1=File(self.defaultproject, 0, 'testingtk3.py', f.read(), datetime.date.today())
 		f.close()
 		self.defaultfile=file1
 		f=open("testingtk3.py")
-		file2=File(self.defaultproject, 1, 'testingtk3.py1', f.read(), datetime.date.today())
+		file2=File(self.defaultproject, 1, 'testingtk3.py', f.read(), datetime.date.today())
 		f.close()
 		f=open("cluttertest3.py")
-		file3=File(self.defaultproject, 1, 'cluttertest3.py1', f.read(), datetime.date.today())
+		file3=File(self.defaultproject, 1, 'cluttertest3.py', f.read(), datetime.date.today())
 		f.close()
 
 		f=open("testingtk3.py")
-		file1=File(self.defaultproject, 2, 'testingtk3.py2', f.read(), datetime.date.today())
+		file1=File(self.defaultproject, 2, 'testingtk3.py', f.read(), datetime.date.today())
 		f.close()
 		f=open("testingtk3.py")
-		file2=File(self.defaultproject, 3, 'testingtk3.py3', f.read(), datetime.date.today())
+		file2=File(self.defaultproject, 3, 'testingtk3.py', f.read(), datetime.date.today())
 		f.close()
 		f=open("cluttertest3.py")
-		file3=File(self.defaultproject, 4, 'cluttertest3.py4', f.read(), datetime.date.today())
+		file3=File(self.defaultproject, 4, 'cluttertest3.py', f.read(), datetime.date.today())
 		f.close()
 
 		f=open("testingtk3.py")
-		file1=File(self.defaultproject, 5, 'testingtk3.py5', f.read(), datetime.date.today())
+		file1=File(self.defaultproject, 5, 'testingtk3.py', f.read(), datetime.date.today())
 		f.close()
 		f=open("testingtk3.py")
-		file2=File(self.defaultproject, 6, 'testingtk3.py6', f.read(), datetime.date.today())
+		file2=File(self.defaultproject, 6, 'testingtk3.py', f.read(), datetime.date.today())
 		f.close()
 		f=open("cluttertest3.py")
-		file3=File(self.defaultproject, 7, 'cluttertest3.py7', f.read(), datetime.date.today())
+		file3=File(self.defaultproject, 7, 'cluttertest3.py', f.read(), datetime.date.today())
 		f.close()
 
-		f.close()
 		self.defaultproject.create_revision() #make a new head
 
 		self.defaultrevision=7
